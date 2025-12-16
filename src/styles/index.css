@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+
+/* Customised design */
+
+.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding-bottom: 20px;
+}
+
+.loader {
+  width: 50px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #0090c763;
+  --_m: conic-gradient(#0000 10%, #000), linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+  mask: var(--_m);
+  -webkit-mask-composite: source-out;
+  mask-composite: subtract;
+  animation: l3 1s infinite linear;
+}
+
+@keyframes l3 {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/** Generic Skeleton Loader Starts */
+.skeleton-loader {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.skeleton-loader:after {
+  border-radius: var(--skeleton-radius, 15px);
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-repeat: no-repeat;
+  /* background-image:
+    linear-gradient(90deg, rgba(154, 160, 174, 0), rgba(154, 160, 174, 0.8) 50%, rgba(154, 160, 174, 0) 100%),
+    linear-gradient(#3b444e 1000px, transparent 0),
+    linear-gradient(#1a2335 100%, transparent 0); */
+  /* background-size: 500px 100%, 1000px 1000px, 100% 100%; */
+  background-image:
+    linear-gradient(90deg,
+      rgba(154, 160, 174, 0),
+      rgba(154, 160, 174, 0.8) 50%,
+      rgba(154, 160, 174, 0) 100%),
+    linear-gradient(#3b444e 100%, transparent 0), linear-gradient(#1a2335 100%, transparent 0);
+  background-size:
+    500px 100%,
+    100% 100%,
+    100% 100%;
+  background-position:
+    0 0,
+    0px 0px,
+    0 0;
+  animation: skeleton-animation 1200ms infinite;
+}
+
+@keyframes skeleton-animation {
+  to {
+    background-position:
+      100% 0,
+      0px 0px,
+      0 0;
+  }
+}
+
+/** Generic Skeleton Loader Ends */
+
+.level-dropdown {
+  background: #1b2335;
+  color: #97a2b8;
+  border-radius: 40px;
+}
