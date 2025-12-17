@@ -16,8 +16,8 @@ export function Dashboard() {
   const { report, loading: reportLoading, fetchReport } = useReportStore();
   // use store values directly
 
-  const [flashGameLevel, setFlashGameLevel] = useState('a1');
-  const [regularGameLevel, setRegularGameLevel] = useState('a1');
+  const [_flashGameLevel, setFlashGameLevel] = useState('a1');
+  const [_regularGameLevel, setRegularGameLevel] = useState('a1');
 
   const onMCQPractice = () => navigate('/mcq');
 

@@ -8,6 +8,7 @@ import CONSTANTS from './utils/constants';
 import { useConfigStore } from './store/useConfigStore';
 import { LoginScreen } from './components/LoginScreen';
 import { OnboardingFlow } from './components/OnboardingFlow';
+import { supabase } from './libs/supabaseClient';
 
 export interface Tournament {
   id: string;
@@ -43,17 +44,35 @@ export default function App() {
     }
   };
 
+  const [user, setUser] = useState<any>();
    
   useEffect(() => {
     try {
       UXConfigLogics();
-      // onboardingUser();
-      const storedUser = localStorage.getItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
-      if (storedUser) {
-        const authResponse = JSON.parse(storedUser);
-        setAuthenticatedUser({ token: authResponse.token, email: authResponse.email });
-        console.log(authenticatedUser);
-      }
+
+      // const storedUser = localStorage.getItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
+      // if (storedUser) {
+      //   const authResponse = JSON.parse(storedUser);
+      //   setAuthenticatedUser({ token: authResponse.token, email: authResponse.email });
+      //   console.log(authenticatedUser);
+      // }
+
+      // Check active sessions
+    supabase.auth.getSession().then((data:any) => {
+      console.log('getSession');
+      console.log(data);
+      setUser(data?.user ?? null)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      console.log('onAuthStateChange');
+      console.log(session);
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+
     } finally {
       setIsAuthLoading(false);
     }

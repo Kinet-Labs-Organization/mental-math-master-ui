@@ -2,11 +2,7 @@ import { useState } from 'react';
 import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowRight, Apple } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useUserStore } from '../store/useUserStore';
-
-// export interface LoginResponse {
-//   token: string;
-//   email: string;
-// }
+import { supabase } from '../libs/supabaseClient';
 
 export function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false);
@@ -14,7 +10,31 @@ export function LoginScreen() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loginError, loginLoading } = useUserStore();
+  const { login, loginError, loginLoading } = useUserStore.getState();
+
+  // useEffect(() => {
+  //   // Check active sessions
+  //   supabase.auth.getSession().then(({ data: { session } }) => {
+  //     setUser(session?.user ?? null)
+  //   })
+
+  //   // Listen for auth changes
+  //   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+  //     setUser(session?.user ?? null)
+  //   })
+
+  //   return () => subscription.unsubscribe()
+  // }, [])
+
+  const handleGoogleSignIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google'
+    })
+  }
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -183,6 +203,7 @@ export function LoginScreen() {
           {/* Social Login Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <button
+              onClick={handleGoogleSignIn}
               type="button"
               className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 text-white transition-all"
             >

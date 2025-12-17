@@ -1,10 +1,13 @@
 const ApiURL = {
+  auth: {
+    signin: `auth/signin`,
+  },
   game: {
-    fetchPracticeGame: `practiceGames`,
-    fetchTournamentGame: `tournamentGames`,
+    fetchPracticeGame: `user/practiceGames`,
+    fetchTournamentGame: `user/tournamentGames`,
   },
   report: {
-    fetchProgressReport: `progressReports`,
+    fetchProgressReport: `user/progressReports`,
   },
 };
 
