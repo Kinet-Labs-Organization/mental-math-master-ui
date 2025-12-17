@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { Settings, Volume2, Bell, Moon, Globe, Info, LogOut } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
+import { supabase } from '../libs/supabaseClient';
 
 export function SettingsPage() {
   const settingsSections = [
@@ -32,10 +33,16 @@ export function SettingsPage() {
   ];
 
   const { removeAuthenticatedUser } = useUserStore();
-  const handleSignOut = () => {
-    // navigate('/paywall');
+
+  const handleSignOut = async () => {
+    // navigate('/paywall');?
+    await supabaseSignOut();
     removeAuthenticatedUser();
   };
+
+  const supabaseSignOut = async () => {
+    await supabase.auth.signOut()
+  }
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -65,9 +72,8 @@ export function SettingsPage() {
                 return (
                   <button
                     key={item.label}
-                    className={`w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all ${
-                      index !== section.items.length - 1 ? 'border-b border-white/10' : ''
-                    }`}
+                    className={`w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all ${index !== section.items.length - 1 ? 'border-b border-white/10' : ''
+                      }`}
                   >
                     <div className="flex items-center gap-4">
                       <div

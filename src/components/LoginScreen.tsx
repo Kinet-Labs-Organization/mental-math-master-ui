@@ -12,28 +12,10 @@ export function LoginScreen() {
   const [password, setPassword] = useState('');
   const { login, loginError, loginLoading } = useUserStore.getState();
 
-  // useEffect(() => {
-  //   // Check active sessions
-  //   supabase.auth.getSession().then(({ data: { session } }) => {
-  //     setUser(session?.user ?? null)
-  //   })
-
-  //   // Listen for auth changes
-  //   const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-  //     setUser(session?.user ?? null)
-  //   })
-
-  //   return () => subscription.unsubscribe()
-  // }, [])
-
   const handleGoogleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google'
-    })
-  }
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut()
+    });
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

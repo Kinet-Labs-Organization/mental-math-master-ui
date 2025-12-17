@@ -4,11 +4,12 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import { AppRoutes } from './routes';
 import { Navigation, type NavSection } from './components/Navigation';
 import { useUserStore } from './store/useUserStore';
-import CONSTANTS from './utils/constants';
 import { useConfigStore } from './store/useConfigStore';
 import { LoginScreen } from './components/LoginScreen';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { supabase } from './libs/supabaseClient';
+import api from './utils/api';
+import ApiURL from './utils/apiurl';
 
 export interface Tournament {
   id: string;
@@ -25,7 +26,8 @@ export interface Tournament {
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser } = useUserStore();
+  const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser, removeAuthenticatedUser } =
+    useUserStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
 
@@ -44,40 +46,65 @@ export default function App() {
     }
   };
 
-  const [user, setUser] = useState<any>();
-   
   useEffect(() => {
-    try {
-      UXConfigLogics();
+    let subscription: any;
 
-      // const storedUser = localStorage.getItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
-      // if (storedUser) {
-      //   const authResponse = JSON.parse(storedUser);
-      //   setAuthenticatedUser({ token: authResponse.token, email: authResponse.email });
-      //   console.log(authenticatedUser);
-      // }
+    const init = async () => {
+      try {
+        UXConfigLogics(location.pathname);
 
-      // Check active sessions
-    supabase.auth.getSession().then((data:any) => {
-      console.log('getSession');
-      console.log(data);
-      setUser(data?.user ?? null)
-    })
+        // Check active sessions (await to ensure we capture returned session before clearing loading)
+        const { data } = await supabase.auth.getSession();
+        const session = data.session;
+        if (session) {
+          const token = session.access_token ?? null;
+          const email = session.user?.email ?? null;
+          setAuthenticatedUser({ token, email });
+        }
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      console.log('onAuthStateChange');
-      console.log(session);
-      setUser(session?.user ?? null)
-    })
+        // Listen for auth changes and mirror them to the app store
+        const resp: any = supabase.auth.onAuthStateChange(async (_event: any, newSession: any) => {
+          if (newSession?.access_token) {
+            // user sync code starts
+            if (!newSession?.user?.user_metadata?.onboarding_completed) {
+              const userSyncResult = await userSync(newSession?.user?.user_metadata);
+              if (userSyncResult) {
+                await supabase.auth.updateUser({ data: { onboarding_completed: true } });
+              } else {
+                console.log('user sync failed');
+              }
+            }
+            // user sync code ends
+            const token = newSession.access_token ?? null;
+            const email = newSession.user?.email ?? null;
+            setAuthenticatedUser({ token, email });
+          } else {
+            removeAuthenticatedUser();
+          }
+        });
+        subscription = resp?.data?.subscription;
+      } catch (err) {
+        // ignore
+      } finally {
+        setIsAuthLoading(false);
+      }
+    };
 
-    return () => subscription.unsubscribe()
+    init();
 
-    } finally {
-      setIsAuthLoading(false);
-    }
+    return () => {
+      try {
+        subscription?.unsubscribe();
+      } catch (e) {
+        // ignore
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const userSync = async (user: any) => {
+    return await api.post(ApiURL.auth.userSync, { email: user.email, name: user.name });
+  }
 
   useEffect(() => {
     UXConfigLogics(location.pathname);
@@ -162,7 +189,8 @@ export default function App() {
               )}
             </div>
           ) : (
-            <Navigate to="/onboarding" replace />
+            // <Navigate to="/onboarding" replace />
+            <Navigate to="/login" replace />
           )
         }
       />

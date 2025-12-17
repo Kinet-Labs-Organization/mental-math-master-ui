@@ -1,6 +1,6 @@
-import { create } from 'zustand';
-import ApiURL from '../utils/apiurl';
-import api from '../utils/api';
+import { create } from "zustand";
+import ApiURL from "../utils/apiurl";
+import api from "../utils/api";
 
 export interface IReport {
   sessions: number;
@@ -16,7 +16,7 @@ export interface IUseReportStore {
   fetchReport: () => void;
 }
 
-export const useReportStore = create<IUseReportStore>(set => ({
+export const useReportStore = create<IUseReportStore>((set) => ({
   report: null,
   error: null,
   loading: false,
@@ -26,7 +26,7 @@ export const useReportStore = create<IUseReportStore>(set => ({
       const result = await api.get(ApiURL.report.fetchProgressReport);
       return set({ report: result.data, loading: false });
     } catch {
-      return set({ error: 'Failed to fetch report', loading: false });
+      return set({ error: "Failed to fetch report", loading: false });
     }
   },
 }));

@@ -1,13 +1,13 @@
-import { create } from 'zustand';
-import ApiURL from '../utils/apiurl';
-import api from '../utils/api';
+import { create } from "zustand";
+import ApiURL from "../utils/apiurl";
+import api from "../utils/api";
 
 export interface ITournamentGame {
   id: string;
   name: string;
   planet: string;
   digitCount: number;
-  operations: ('add' | 'subtract' | 'multiply' | 'divide')[];
+  operations: ("add" | "subtract" | "multiply" | "divide")[];
   numberCount: number;
   delay: number;
   color: string;
@@ -24,7 +24,7 @@ export interface IUseGameStore {
   setSelectedTournamentGame: (tournament: ITournamentGame) => void;
 }
 
-export const useGameStore = create<IUseGameStore>(set => ({
+export const useGameStore = create<IUseGameStore>((set) => ({
   tournametGames: null,
   selectedTournamentGame: null,
   error: null,
@@ -35,7 +35,7 @@ export const useGameStore = create<IUseGameStore>(set => ({
       const reult = await api.get(ApiURL.game.fetchTournamentGame);
       set({ tournametGames: reult.data, loading: false });
     } catch {
-      set({ error: 'Failed to fetch report', loading: false });
+      set({ error: "Failed to fetch report", loading: false });
     }
     return;
   },

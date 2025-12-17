@@ -1,6 +1,6 @@
-import { create } from 'zustand';
+import { create } from "zustand";
 
-export const useConfigStore = create<any>(set => ({
+export const useConfigStore = create<any>((set) => ({
   FooterNavigation: true,
   TopEmptySpace: true,
   BottomEmptySpace: true,
