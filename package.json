@@ -4,11 +4,19 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:dev": "tsc -b && vite build --mode development",
+    "build:qa": "tsc -b && vite build --mode qa",
+    "build:prod": "tsc -b && vite build --mode production",
+    "preview:dev": "vite preview --mode development",
+    "preview:qa": "vite preview --mode qa",
+    "preview:prod": "vite preview --mode production",
+    "dev": "vite",
+    "test": "echo \"No tests specified\" && exit 0",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "preview": "vite preview",
     "format": "prettier --write \"src/**/*.ts\""
   },
   "dependencies": {
@@ -50,7 +58,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
-      "git add"
+      "prettier --write"
     ]
   }
 }
