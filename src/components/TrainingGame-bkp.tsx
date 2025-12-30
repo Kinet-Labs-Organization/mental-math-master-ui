@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 // Tournament type import removed (not used in this file)
 import { motion } from 'motion/react';
 import { ArrowLeft, Plus, Minus, Check, X } from 'lucide-react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/useGameStore';
 import type { ITournamentGame, IUseGameStore } from '../store/useGameStore';
 
@@ -21,12 +21,11 @@ export function TrainingGame() {
   const [userAnswer, setUserAnswer] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [currentNumber, setCurrentNumber] = useState<any>();
 
   const { selectedTournamentGame: tournament, game, fetchGame, gameLoading, setGame }: IUseGameStore = useGameStore();
 
   const generateNumbers = async () => {
-    const newNumbers: any[] = [];
+    const newNumbers: NumberItem[] = [];
     const nums = game;
     nums[0].operation = 'add';
     setNumbers(nums);
@@ -41,7 +40,6 @@ export function TrainingGame() {
     });
     setCorrectAnswer(total);
     setCurrentIndex(0);
-    setCurrentNumber(numbers[currentIndex]);
     setUserAnswer('');
     setGameState('playing');
   };
@@ -74,7 +72,6 @@ export function TrainingGame() {
       const timer = setTimeout(
         () => {
           setCurrentIndex(currentIndex + 1);
-          setCurrentNumber(numbers[currentIndex]);
         },
         (tournament as ITournamentGame).delay
       );
@@ -87,7 +84,7 @@ export function TrainingGame() {
     }
   }, [gameState, currentIndex, numbers.length, tournament]);
 
-  // const currentNumber = numbers[currentIndex];
+  const currentNumber = numbers[currentIndex];
   const progress = (currentIndex / numbers.length) * 100;
 
   const onBack = () => {
@@ -99,10 +96,9 @@ export function TrainingGame() {
     <>
       {tournament ? (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-black">
-          
           {/* Header */}
           <div
-            className="bg-white/5 backdrop-blur-xl border-b border-white/10 px-4 pb-4 pt-14 sticky top-0 z-50 w-full"
+            className="bg-white/5 backdrop-blur-xl border-b border-white/10 px-4 py-4 sticky top-0 z-50 w-full"
             style={{ position: 'fixed' }}
           >
             <div className="max-w-2xl mx-auto flex items-center justify-between">
@@ -117,7 +113,7 @@ export function TrainingGame() {
                 <div
                   className={`w-10 h-10 bg-gradient-to-br rounded-xl flex items-center justify-center text-xl`}
                 >
-                  {(tournament as ITournamentGame).icon} XX
+                  {(tournament as ITournamentGame).icon}
                 </div>
                 <div>
                   <h2 className="text-lg text-white">{(tournament as ITournamentGame).name}</h2>
@@ -133,10 +129,8 @@ export function TrainingGame() {
 
           {/* Main Content */}
           <div className="flex-1 flex items-center justify-center p-4">
-            
             <div className="w-full max-w-2xl">
               {/* <AnimatePresence mode="wait"> */}
-              
               {/* Ready State */}
               {gameState === 'ready' && (
                 <motion.div
@@ -149,7 +143,7 @@ export function TrainingGame() {
                   <div
                     className={`w-32 h-32 bg-gradient-to-br rounded-full flex items-center justify-center text-6xl mx-auto mb-8 shadow-2xl`}
                   >
-                    {(tournament as ITournamentGame).icon} XX
+                    {(tournament as ITournamentGame).icon}
                   </div>
                   <h2 className="text-3xl mb-4 text-white">Ready to Train?</h2>
                   <p className="text-gray-400 mb-8 max-w-md mx-auto">
@@ -162,7 +156,7 @@ export function TrainingGame() {
                     onClick={startGame}
                     className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base px-12 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all"
                   >
-                    {gameLoading ? 'Loading...' : 'Start Training'}
+                    { gameLoading ? 'Loading...' : 'Start Training' }
                   </motion.button>
                 </motion.div>
               )}
@@ -327,15 +321,12 @@ export function TrainingGame() {
                   </div>
                 </motion.div>
               )}
-
               {/* </AnimatePresence> */}
             </div>
-
           </div>
-
         </div>
       ) : (
-        <Navigate to="/" replace />
+        <div>Navigating...</div>
       )}
     </>
   );

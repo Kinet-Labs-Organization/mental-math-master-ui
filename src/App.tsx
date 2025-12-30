@@ -10,18 +10,7 @@ import { OnboardingFlow } from './components/OnboardingFlow';
 import { supabase } from './libs/supabaseClient';
 import api from './utils/api';
 import ApiURL from './utils/apiurl';
-
-export interface Tournament {
-  id: string;
-  name: string;
-  planet: string;
-  digitCount: number;
-  operations: ('add' | 'subtract' | 'multiply' | 'divide')[];
-  numberCount: number;
-  delay: number;
-  color: string;
-  icon: string;
-}
+import { Purchases } from "@revenuecat/purchases-js";
 
 export default function App() {
   const navigate = useNavigate();
@@ -48,6 +37,8 @@ export default function App() {
 
   useEffect(() => {
     let subscription: any;
+    const appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
+    const purchases = Purchases.configure({apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks",appUserId: appUserId,});
 
     const init = async () => {
       try {

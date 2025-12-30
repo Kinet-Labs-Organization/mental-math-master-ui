@@ -42,12 +42,12 @@ export function Dashboard() {
     const customTournament: ITournamentGame = {
       id: 'custom',
       name: 'Custom Practice',
-      planet: 'Custom Practice',
+      // planet: 'Custom Practice',
       digitCount: settings.digitCount,
       operations: settings.operations,
       numberCount: settings.numberCount,
       delay: settings.delay,
-      color: 'from-purple-500 to-pink-600',
+      // color: 'from-purple-500 to-pink-600',
       icon: '⚙️',
     };
     setSelectedTournamentGame(customTournament);

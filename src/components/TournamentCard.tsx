@@ -1,9 +1,9 @@
-import type { Tournament } from '../App';
 import { motion } from 'motion/react';
 import { Plus, Minus } from 'lucide-react';
+import type { ITournamentGame } from '../store/useGameStore';
 
 interface TournamentCardProps {
-  tournament: Tournament;
+  tournament: ITournamentGame;
   onSelect: () => void;
 }
 
@@ -17,7 +17,7 @@ export function TournamentCard({ tournament, onSelect }: TournamentCardProps) {
     >
       {/* Gradient Background */}
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${tournament.color} opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
+        className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-20 transition-opacity duration-300`}
       ></div>
 
       {/* Content */}
@@ -34,7 +34,7 @@ export function TournamentCard({ tournament, onSelect }: TournamentCardProps) {
         <img src='https://mxfmj8wrrjv5and6.public.blob.vercel-storage.com/31dbed13-9148-4635-9b09-f6b27a02c84f.png' className={`w-16 h-16 flex items-center justify-center text-3xl shadow-lg mb-4`} />
 
         {/* Tournament Name */}
-        <h3 className="text-2xl mb-2 text-white">{tournament.planet}</h3>
+        <h3 className="text-2xl mb-2 text-white">{tournament.name}</h3>
 
         {/* Rules */}
         <div className="space-y-2 mb-4">

@@ -1,0 +1,64 @@
+# Configure RevenueCat
+------------------------------------------------------------------------------------------------
+
+import { Purchases } from "@revenuecat/purchases-js";
+
+const appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
+const purchases = Purchases.configure({
+    apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks",
+    appUserId: appUserId,
+});
+
+################################################################################################
+
+# Check Entitlement
+------------------------------------------------------------------------------------------------
+
+import { Purchases } from "@revenuecat/purchases-js";
+
+const purchases = Purchases.getSharedInstance();
+
+try {
+  const customerInfo = await purchases.getCustomerInfo();
+  if ("Mental Math Master Pro" in customerInfo.entitlements.active) {
+    // Grant user access to entitlement
+  }
+} catch(error) {
+  console.error(error);
+}
+
+################################################################################################
+
+# Present a Paywall
+------------------------------------------------------------------------------------------------
+
+import type { PurchaseResult } from "@revenuecat/purchases-js";
+import { Purchases } from "@revenuecat/purchases-js";
+
+const purchases = Purchases.getSharedInstance();
+
+try {
+    const offerings = await purchases.getOfferings();
+    const currentOffering = offerings.current;
+    if (!currentOffering) return;
+    const purchaseResult = await purchases.presentPaywall({ offering: currentOffering });
+    const { customerInfo, redemptionInfo } = purchaseResult;
+    // Handle purchase result
+} catch (error) {
+  console.error(error);
+}
+
+################################################################################################
+
+try {
+        const offerings = await Purchases.getSharedInstance().getOfferings();
+        if (
+            offerings.current !== null &&
+            offerings.current.availablePackages.length !== 0
+        ) {
+            // Display packages for sale
+            displayPackages(offerings.current.availablePackages);
+        }
+    } catch (e) {
+        // Handle errors
+    }
