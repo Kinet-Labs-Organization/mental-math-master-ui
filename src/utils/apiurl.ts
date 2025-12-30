@@ -6,7 +6,7 @@ const ApiURL = {
   },
   game: {
     fetchPracticeGame: `user/practiceGames`,
-    fetchTournamentGame: `user/tournamentGames`,
+    fetchGameLevels: `user/gameLevels`,
     fetchGame: `user/fetchGame`,
   },
   report: {

@@ -11,20 +11,36 @@ import SkeletonLoader from './shared/skeleton-loader';
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const { tournametGames, loading, fetchTournamentGames, setSelectedTournamentGame } =
-    useGameStore();
+  const {
+    flashGameLevels,
+    flashGameLevelsLoading,
+    fetchFlashGameLevels,
+
+    regularGameLevels,
+    regularGameLevelsLoading,
+    fetchRegularGameLevels,
+
+    setSelectedTournamentGame
+  } = useGameStore();
   const { report, loading: reportLoading, fetchReport } = useReportStore();
   // use store values directly
 
-  const [_flashGameLevel, setFlashGameLevel] = useState('a1');
-  const [_regularGameLevel, setRegularGameLevel] = useState('a1');
+  const [flashGameLevel, setFlashGameLevel] = useState('ADD_SUB_L1');
+  const [regularGameLevel, setRegularGameLevel] = useState('ADD_SUB_L1');
 
   const onMCQPractice = () => navigate('/mcq');
 
   useEffect(() => {
-    fetchTournamentGames();
     fetchReport();
   }, []);
+
+  useEffect(() => {
+    fetchFlashGameLevels(flashGameLevel);
+  }, [flashGameLevel]);
+
+  useEffect(() => {
+    fetchRegularGameLevels(regularGameLevel);
+  }, [regularGameLevel]);
 
   // no local copy of store state needed
 
@@ -128,10 +144,10 @@ export function Dashboard() {
         <div className="mb-8">
           <div className="relative -mx-4 px-4">
             <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-4 pb-4">
-              {loading ? (
+              {flashGameLevelsLoading ? (
                 <TournamentCaraouselSkeleton />
               ) : (
-                tournametGames?.map(tournament => (
+                flashGameLevels?.map((tournament:any) => (
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
                     <TournamentCard
                       tournament={tournament}
@@ -154,10 +170,10 @@ export function Dashboard() {
         <div className="mb-8">
           <div className="relative -mx-4 px-4">
             <div className="overflow-x-auto scrollbar-hide snap-x snap-mandatory flex gap-4 pb-4">
-              {loading ? (
+              {regularGameLevelsLoading ? (
                 <TournamentCaraouselSkeleton />
               ) : (
-                tournametGames?.map(tournament => (
+                regularGameLevels?.map((tournament:any) => (
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
                     <TournamentCard
                       tournament={tournament}
@@ -272,10 +288,10 @@ const LevelSelect = ({ onSelectChanged }: { onSelectChanged: (value: string) => 
             <Select.Label className="px-[25px] text-xs leading-[25px] text-green-300">
               Add & Substract
             </Select.Label>
-            <SelectItem value="a1">Beginner</SelectItem>
-            <SelectItem value="a2">Intermediate</SelectItem>
-            <SelectItem value="a3">Advanced</SelectItem>
-            <SelectItem value="a4">Pro</SelectItem>
+            <SelectItem value="ADD_SUB_L1">Beginner</SelectItem>
+            <SelectItem value="ADD_SUB_L2">Intermediate</SelectItem>
+            <SelectItem value="ADD_SUB_L3">Advanced</SelectItem>
+            <SelectItem value="ADD_SUB_L4">Pro</SelectItem>
           </Select.Group>
 
           <hr />
@@ -284,10 +300,10 @@ const LevelSelect = ({ onSelectChanged }: { onSelectChanged: (value: string) => 
             <Select.Label className="px-[25px] text-xs leading-[25px] text-orange-300">
               Multiply
             </Select.Label>
-            <SelectItem value="b1">Beginner</SelectItem>
-            <SelectItem value="b2">Intermediate</SelectItem>
-            <SelectItem value="b3">Advanced</SelectItem>
-            <SelectItem value="b4">Pro</SelectItem>
+            <SelectItem value="MUL_L1">Beginner</SelectItem>
+            <SelectItem value="MUL_L2">Intermediate</SelectItem>
+            <SelectItem value="MUL_L3">Advanced</SelectItem>
+            <SelectItem value="MUL_L4">Pro</SelectItem>
           </Select.Group>
 
           <hr />
@@ -296,10 +312,10 @@ const LevelSelect = ({ onSelectChanged }: { onSelectChanged: (value: string) => 
             <Select.Label className="px-[25px] text-xs leading-[25px] text-red-400">
               Divide
             </Select.Label>
-            <SelectItem value="c1">Beginner</SelectItem>
-            <SelectItem value="c2">Intermediate</SelectItem>
-            <SelectItem value="c3">Advanced</SelectItem>
-            <SelectItem value="c4">Pro</SelectItem>
+            <SelectItem value="DIV_L1">Beginner</SelectItem>
+            <SelectItem value="DIV_L2">Intermediate</SelectItem>
+            <SelectItem value="DIV_L3">Advanced</SelectItem>
+            <SelectItem value="DIV_L4">Pro</SelectItem>
           </Select.Group>
 
         </Select.Viewport>
