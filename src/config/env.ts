@@ -3,16 +3,25 @@
 interface Config {
   appEnv: "development" | "production" | "qa";
   appName: string;
+  apiBaseURL: string;
+  port: number;
 }
 
 const config: Config = {
   appEnv: import.meta.env.VITE_APP_ENV,
   appName: import.meta.env.VITE_APP_NAME,
+  apiBaseURL: import.meta.env.VITE_API_BASE_URL,
+  port: Number(import.meta.env.VITE_PORT),
 };
 
 // Validate required env vars
 const validateConfig = () => {
-  const required = ["VITE_APP_ENV", "VITE_APP_NAME"];
+  const required = [
+    "VITE_APP_ENV",
+    "VITE_APP_NAME",
+    "VITE_API_BASE_URL",
+    "VITE_PORT",
+  ];
 
   const missing = required.filter((key) => !import.meta.env[key]);
 

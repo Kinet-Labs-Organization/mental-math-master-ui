@@ -5,6 +5,7 @@ import axios, {
 } from "axios";
 import CONSTANTS from "./constants";
 import { useUserStore } from "../store/useUserStore";
+import config from "../config/env";
 
 // ============================================
 // Safe helper to get auth token
@@ -41,7 +42,7 @@ const getAuthToken = (): string | null => {
 // Create axios instance
 // ============================================
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: config.apiBaseURL,
   headers: {
     "Content-Type": "application/json",
   },

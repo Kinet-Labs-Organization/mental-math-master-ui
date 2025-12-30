@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
 export const useConfigStore = create<any>((set) => ({
-
   FooterNavigation: true,
   TopEmptySpace: true,
   BottomEmptySpace: true,
@@ -25,5 +24,4 @@ export const useConfigStore = create<any>((set) => ({
   hideBottomEmptySpace: () => {
     return set({ BottomEmptySpace: false });
   },
-  
 }));

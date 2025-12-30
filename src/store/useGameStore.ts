@@ -14,17 +14,21 @@ export interface IGame {
 }
 
 export const useGameStore = create<any>((set, get) => ({
-
   flashGameLevels: null,
   flashGameLevelsLoading: false,
   flashGameLevelsError: null,
-  fetchFlashGameLevels: async (gameLevel:string) => {
+  fetchFlashGameLevels: async (gameLevel: string) => {
     set({ flashGameLevelsLoading: true, flashGameLevelsError: null });
     try {
-      const reult = await api.get(`${ApiURL.game.fetchGameLevels}/${gameLevel}`);
+      const reult = await api.get(
+        `${ApiURL.game.fetchGameLevels}/${gameLevel}`,
+      );
       set({ flashGameLevels: reult.data, flashGameLevelsLoading: false });
     } catch {
-      set({ flashGameLevelsLoading: false, flashGameLevelsError: 'failed to fetch game levels' });
+      set({
+        flashGameLevelsLoading: false,
+        flashGameLevelsError: "failed to fetch game levels",
+      });
     }
     return;
   },
@@ -32,13 +36,18 @@ export const useGameStore = create<any>((set, get) => ({
   regularGameLevels: null,
   regularGameLevelsLoading: false,
   regularGameLevelsError: null,
-  fetchRegularGameLevels: async (gameLevel:string) => {
+  fetchRegularGameLevels: async (gameLevel: string) => {
     set({ regularGameLevelsLoading: true, regularGameLevelsError: null });
     try {
-      const reult = await api.get(`${ApiURL.game.fetchGameLevels}/${gameLevel}`);
+      const reult = await api.get(
+        `${ApiURL.game.fetchGameLevels}/${gameLevel}`,
+      );
       set({ regularGameLevels: reult.data, regularGameLevelsLoading: false });
     } catch {
-      set({ regularGameLevelsLoading: false, regularGameLevelsError: 'failed to fetch game levels' });
+      set({
+        regularGameLevelsLoading: false,
+        regularGameLevelsError: "failed to fetch game levels",
+      });
     }
     return;
   },
@@ -47,11 +56,11 @@ export const useGameStore = create<any>((set, get) => ({
   setSelectedGame: (game: any) => {
     set({ selectedGame: game });
   },
-  
+
   game: null,
   gameLoading: false,
   gameError: null,
-  setGame: (gameData:any) => set({game: gameData}),
+  setGame: (gameData: any) => set({ game: gameData }),
   fetchGame: async () => {
     set({ gameLoading: true, gameError: null });
     const { selectedGame } = get();
@@ -60,11 +69,12 @@ export const useGameStore = create<any>((set, get) => ({
       return;
     }
     try {
-      const result = await api.get(`${ApiURL.game.fetchGame}/${selectedGame.id}`);
+      const result = await api.get(
+        `${ApiURL.game.fetchGame}/${selectedGame.id}`,
+      );
       set({ game: result.data, gameLoading: false });
     } catch {
       set({ gameError: "Failed to fetch game", gameLoading: false });
     }
   },
-
 }));
