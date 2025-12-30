@@ -4,7 +4,7 @@ import { TrendingUp, Calendar, Target, Zap, Award } from 'lucide-react';
 import { useReportStore } from '../store/useReportStore';
 import { useEffect } from 'react';
 
-export function ProgressPage() {
+export function Progress() {
   const { report, loading, fetchReport } = useReportStore();
 
   const recentActivity = [

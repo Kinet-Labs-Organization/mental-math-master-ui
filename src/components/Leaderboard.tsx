@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Trophy, Medal, Award, Crown } from 'lucide-react';
 
-export function LeaderboardPage() {
+export function Leaderboard() {
   const leaderboard = [
     {
       rank: 1,

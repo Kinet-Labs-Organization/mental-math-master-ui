@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Mail, Calendar, Award, Target, Zap } from 'lucide-react';
 
-export function ProfilePage() {
+export function Profile() {
   const achievements = [
     {
       icon: '🏆',

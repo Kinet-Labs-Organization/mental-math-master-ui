@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Plus, Minus, Check, X } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/useGameStore';
-import type { ITournamentGame, IUseGameStore } from '../store/useGameStore';
+import type { IGame } from '../store/useGameStore';
 
 type GameState = 'ready' | 'playing' | 'input' | 'result';
 
@@ -12,7 +12,7 @@ interface NumberItem {
   operation: 'add' | 'subtract' | 'multiply' | 'divide';
 }
 
-export function TrainingGame() {
+export function FlashGame() {
   const navigate = useNavigate();
   const [gameState, setGameState] = useState<GameState>('ready');
   const [numbers, setNumbers] = useState<NumberItem[]>([]);
@@ -22,7 +22,7 @@ export function TrainingGame() {
   const [isCorrect, setIsCorrect] = useState(false);
 
 
-  const { selectedTournamentGame: tournament, game, fetchGame, gameLoading, setGame }: IUseGameStore = useGameStore();
+  const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
 
   const generateNumbers = async () => {
     const nums = JSON.parse(JSON.stringify(game));
@@ -33,7 +33,7 @@ export function TrainingGame() {
     setNumbers(nums);
     // Calculate correct answer
     let total = 0;
-    nums.forEach((item:any) => {
+    nums.forEach((item: any) => {
       if (item.operation === 'add') {
         total += item.value;
       } else {
@@ -71,7 +71,7 @@ export function TrainingGame() {
         () => {
           setCurrentIndex(currentIndex + 1);
         },
-        (tournament as ITournamentGame).delay
+        (selectedGame as IGame).delay
       );
 
       return () => clearTimeout(timer);
@@ -80,7 +80,7 @@ export function TrainingGame() {
         setGameState('input');
       }, 500);
     }
-  }, [gameState, currentIndex, numbers.length, tournament]);
+  }, [gameState, currentIndex, numbers.length, selectedGame]);
 
   const currentNumber = numbers[currentIndex];
   const progress = (currentIndex / numbers.length) * 100;
@@ -92,9 +92,9 @@ export function TrainingGame() {
 
   return (
     <>
-      {tournament ? (
+      {selectedGame ? (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-black">
-          
+
           {/* Header */}
           <div
             className="bg-white/5 backdrop-blur-xl border-b border-white/10 px-4 pb-4 pt-14 sticky top-0 z-50 w-full"
@@ -112,13 +112,13 @@ export function TrainingGame() {
                 <div
                   className={`w-10 h-10 bg-gradient-to-br rounded-xl flex items-center justify-center text-xl`}
                 >
-                  <img src={(tournament as ITournamentGame).icon} />
+                  <img src={(selectedGame as IGame).icon} />
                 </div>
                 <div>
-                  <h2 className="text-lg text-white">{(tournament as ITournamentGame).name}</h2>
+                  <h2 className="text-lg text-white">{(selectedGame as IGame).name}</h2>
                   <p className="text-xs text-gray-400">
-                    {(tournament as ITournamentGame).digitCount} digits •{' '}
-                    {(tournament as ITournamentGame).numberCount} numbers
+                    {(selectedGame as IGame).digitCount} digits •{' '}
+                    {(selectedGame as IGame).numberCount} numbers
                   </p>
                 </div>
               </div>
@@ -128,10 +128,10 @@ export function TrainingGame() {
 
           {/* Main Content */}
           <div className="flex-1 flex items-center justify-center p-4">
-            
+
             <div className="w-full max-w-2xl">
               {/* <AnimatePresence mode="wait"> */}
-              
+
               {/* Ready State */}
               {gameState === 'ready' && (
                 <motion.div
@@ -144,11 +144,11 @@ export function TrainingGame() {
                   <div
                     className={`w-32 h-32 bg-gradient-to-br rounded-full flex items-center justify-center text-6xl mx-auto mb-8 shadow-2xl`}
                   >
-                     <img src={(tournament as ITournamentGame).icon} />
+                    <img src={(selectedGame as IGame).icon} />
                   </div>
                   <h2 className="text-3xl mb-4 text-white">Ready to Train?</h2>
                   <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                    {(tournament as ITournamentGame).numberCount} numbers will appear one by one.
+                    {(selectedGame as IGame).numberCount} numbers will appear one by one.
                     Calculate the result in your mind!
                   </p>
                   <motion.button

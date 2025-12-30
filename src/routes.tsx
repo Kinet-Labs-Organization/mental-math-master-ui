@@ -1,23 +1,23 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { Dashboard } from './components/Dashboard';
-import { ProgressPage } from './components/ProgressPage';
-import { LeaderboardPage } from './components/LeaderboardPage';
-import { ProfilePage } from './components/ProfilePage';
-import { SettingsPage } from './components/SettingsPage';
-import { TrainingGame } from './components/TrainingGame';
-import { MCQPractice } from './components/MCQPractice';
+import { Progress } from './components/Progress';
+import { Leaderboard } from './components/Leaderboard';
+import { Profile } from './components/Profile';
+import { Setting } from './components/Setting';
+import { FlashGame } from './components/FlashGame';
+import { RegularGame } from './components/RegularGame';
 import { Paywall } from './components/Paywall';
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />} />
-      <Route path="/progress" element={<ProgressPage />} />
-      <Route path="/leaderboard" element={<LeaderboardPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/settings" element={<SettingsPage />} />
-      <Route path="/game" element={<TrainingGame />} />
-      <Route path="/mcq" element={<MCQPractice />} />
+      <Route path="/progress" element={<Progress />} />
+      <Route path="/leaderboard" element={<Leaderboard />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/settings" element={<Setting />} />
+      <Route path="/game" element={<FlashGame />} />
+      <Route path="/regulargame" element={<RegularGame />} />
       <Route path="/paywall" element={<Paywall />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

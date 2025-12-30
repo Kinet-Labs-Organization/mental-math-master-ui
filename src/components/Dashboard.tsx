@@ -1,9 +1,9 @@
 'use client';
-import { TournamentCard } from './TournamentCard';
+import { GameCard } from './GameCard';
 import { CustomPractice } from './CustomPractice';
 import { Trophy, Sparkles, FileText } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
-import type { ITournamentGame } from '../store/useGameStore';
+import type { IGame } from '../store/useGameStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useReportStore } from '../store/useReportStore';
@@ -20,15 +20,15 @@ export function Dashboard() {
     regularGameLevelsLoading,
     fetchRegularGameLevels,
 
-    setSelectedTournamentGame
+    setSelectedGame
   } = useGameStore();
-  const { report, loading: reportLoading, fetchReport } = useReportStore();
+  const { report, reportLoading, fetchReport } = useReportStore();
   // use store values directly
 
   const [flashGameLevel, setFlashGameLevel] = useState('ADD_SUB_L1');
   const [regularGameLevel, setRegularGameLevel] = useState('ADD_SUB_L1');
 
-  const onMCQPractice = () => navigate('/mcq');
+  const onRegularGame = () => navigate('/regulargame');
 
   useEffect(() => {
     fetchReport();
@@ -44,8 +44,8 @@ export function Dashboard() {
 
   // no local copy of store state needed
 
-  const onSelectTournament = (tournament: ITournamentGame) => {
-    setSelectedTournamentGame(tournament);
+  const onSelectTournament = (tournament: IGame) => {
+    setSelectedGame(tournament);
     navigate('/game');
   };
 
@@ -55,7 +55,7 @@ export function Dashboard() {
     numberCount: number;
     delay: number;
   }) => {
-    const customTournament: ITournamentGame = {
+    const customTournament: IGame = {
       id: 'custom',
       name: 'Custom Practice',
       // planet: 'Custom Practice',
@@ -66,7 +66,7 @@ export function Dashboard() {
       // color: 'from-purple-500 to-pink-600',
       icon: '⚙️',
     };
-    setSelectedTournamentGame(customTournament);
+    setSelectedGame(customTournament);
     navigate('/game');
   };
 
@@ -147,9 +147,9 @@ export function Dashboard() {
               {flashGameLevelsLoading ? (
                 <TournamentCaraouselSkeleton />
               ) : (
-                flashGameLevels?.map((tournament:any) => (
+                flashGameLevels?.map((tournament: any) => (
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
-                    <TournamentCard
+                    <GameCard
                       tournament={tournament}
                       onSelect={() => onSelectTournament(tournament)}
                     />
@@ -173,9 +173,9 @@ export function Dashboard() {
               {regularGameLevelsLoading ? (
                 <TournamentCaraouselSkeleton />
               ) : (
-                regularGameLevels?.map((tournament:any) => (
+                regularGameLevels?.map((tournament: any) => (
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
-                    <TournamentCard
+                    <GameCard
                       tournament={tournament}
                       onSelect={() => onSelectTournament(tournament)}
                     />
@@ -189,11 +189,11 @@ export function Dashboard() {
         {/* Custom Practice Section */}
         <CustomPractice onStart={onCustomPractice} />
 
-        {/* MCQ Practice Button */}
-        {onMCQPractice && (
+        {/* Regular Game Button */}
+        {onRegularGame && (
           <div className="mb-8">
             <button
-              onClick={onMCQPractice}
+              onClick={onRegularGame}
               className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-3xl p-6 shadow-lg transition-all border border-blue-400/20 group"
             >
               <div className="flex items-center justify-between">
@@ -202,7 +202,7 @@ export function Dashboard() {
                     <FileText className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-white text-xl mb-1">MCQ Practice</h3>
+                    <h3 className="text-white text-xl mb-1">Regular Game</h3>
                     <p className="text-blue-100 text-sm">
                       5 questions · No time limit · Step-by-step navigation
                     </p>

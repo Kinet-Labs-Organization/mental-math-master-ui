@@ -2,10 +2,9 @@ import { create } from "zustand";
 import ApiURL from "../utils/apiurl";
 import api from "../utils/api";
 
-export interface ITournamentGame {
+export interface IGame {
   id: string;
   name: string;
-  // planet: string;
   digitCount: number;
   operations: ("add" | "subtract" | "multiply" | "divide")[];
   numberCount: number;
@@ -14,29 +13,11 @@ export interface ITournamentGame {
   icon: string;
 }
 
-export interface IUseGameStore {
-  
-  flashGameLevels: ITournamentGame[] | null;
-  flashGameLevelsError: string | null;
-  flashGameLevelsLoading: boolean;
-  fetchFlashGameLevels: (regularGameLevel:string) => void;
-  
-selectedTournamentGame: ITournamentGame | null;
-  
-  // eslint-disable-next-line no-unused-vars
-  setSelectedTournamentGame: (tournament: ITournamentGame) => void;
-  game: any;
-  setGame: (game:any) => void;
-  fetchGame: () => void;
-  gameLoading: boolean;
-  gameError: string | null;
-}
-
 export const useGameStore = create<any>((set, get) => ({
 
   flashGameLevels: null,
-  flashGameLevelsError: null,
   flashGameLevelsLoading: false,
+  flashGameLevelsError: null,
   fetchFlashGameLevels: async (gameLevel:string) => {
     set({ flashGameLevelsLoading: true, flashGameLevelsError: null });
     try {
@@ -49,8 +30,8 @@ export const useGameStore = create<any>((set, get) => ({
   },
 
   regularGameLevels: null,
-  regularGameLevelsError: null,
   regularGameLevelsLoading: false,
+  regularGameLevelsError: null,
   fetchRegularGameLevels: async (gameLevel:string) => {
     set({ regularGameLevelsLoading: true, regularGameLevelsError: null });
     try {
@@ -62,33 +43,28 @@ export const useGameStore = create<any>((set, get) => ({
     return;
   },
 
-
-
-
-
-  selectedTournamentGame: null,
-
-  setSelectedTournamentGame: (tournament: ITournamentGame) => {
-    set({ selectedTournamentGame: tournament });
+  selectedGame: null,
+  setSelectedGame: (game: any) => {
+    set({ selectedGame: game });
   },
+  
   game: null,
   gameLoading: false,
   gameError: null,
   setGame: (gameData:any) => set({game: gameData}),
   fetchGame: async () => {
     set({ gameLoading: true, gameError: null });
-    const { selectedTournamentGame } = get();
-    if (!selectedTournamentGame) {
-      set({ gameError: "No tournament selected", gameLoading: false });
+    const { selectedGame } = get();
+    if (!selectedGame) {
+      set({ gameError: "No game selected", gameLoading: false });
       return;
     }
     try {
-      console.log(selectedTournamentGame);
-      // Placeholder for actual game fetching logic
-      const result = await api.get(`${ApiURL.game.fetchGame}/${selectedTournamentGame.id}`);
+      const result = await api.get(`${ApiURL.game.fetchGame}/${selectedGame.id}`);
       set({ game: result.data, gameLoading: false });
     } catch {
       set({ gameError: "Failed to fetch game", gameLoading: false });
     }
   },
+
 }));

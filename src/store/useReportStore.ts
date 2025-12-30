@@ -11,22 +11,22 @@ export interface IReport {
 
 export interface IUseReportStore {
   report: IReport | null;
-  error: string | null;
-  loading: boolean;
+  reportLoading: boolean;
+  reportError: string | null;
   fetchReport: () => void;
 }
 
 export const useReportStore = create<IUseReportStore>((set) => ({
   report: null,
-  error: null,
-  loading: false,
+  reportLoading: false,
+  reportError: null,
   fetchReport: async () => {
-    set({ loading: true, error: null });
+    set({ reportLoading: true, reportError: null });
     try {
       const result = await api.get(ApiURL.report.fetchProgressReport);
-      return set({ report: result.data, loading: false });
+      return set({ report: result.data, reportLoading: false });
     } catch {
-      return set({ error: "Failed to fetch report", loading: false });
+      return set({ reportLoading: false, reportError: "Failed to fetch report" });
     }
   },
 }));

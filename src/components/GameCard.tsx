@@ -7,7 +7,7 @@ interface TournamentCardProps {
   onSelect: () => void;
 }
 
-export function TournamentCard({ tournament, onSelect }: TournamentCardProps) {
+export function GameCard({ tournament, onSelect }: TournamentCardProps) {
   return (
     <motion.button
       whileHover={{ scale: 1.02, y: -4 }}

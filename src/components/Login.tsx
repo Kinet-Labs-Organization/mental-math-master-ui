@@ -4,7 +4,7 @@ import { motion } from 'motion/react';
 import { useUserStore } from '../store/useUserStore';
 import { supabase } from '../libs/supabaseClient';
 
-export function LoginScreen() {
+export function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
 

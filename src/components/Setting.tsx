@@ -3,7 +3,7 @@ import { Settings, Volume2, Bell, Moon, Globe, Info, LogOut } from 'lucide-react
 import { useUserStore } from '../store/useUserStore';
 import { supabase } from '../libs/supabaseClient';
 
-export function SettingsPage() {
+export function Setting() {
   const settingsSections = [
     {
       title: 'Preferences',

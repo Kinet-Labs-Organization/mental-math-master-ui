@@ -5,7 +5,7 @@ import { AppRoutes } from './routes';
 import { Navigation, type NavSection } from './components/Navigation';
 import { useUserStore } from './store/useUserStore';
 import { useConfigStore } from './store/useConfigStore';
-import { LoginScreen } from './components/LoginScreen';
+import { Login } from './components/Login';
 import { OnboardingFlow } from './components/OnboardingFlow';
 import { supabase } from './libs/supabaseClient';
 import api from './utils/api';
@@ -104,7 +104,6 @@ export default function App() {
     }
   }, [location.pathname]);
 
-  // Removed unused onboardingUser helper (was never called)
   const {
     FooterNavigation,
     TopEmptySpace,
@@ -119,7 +118,7 @@ export default function App() {
 
   const UXConfigLogics = useCallback(
     (pathname?: string) => {
-      if (pathname === '/mcq' || pathname === '/game' || pathname === '/paywall') {
+      if (pathname === '/regulargame' || pathname === '/game' || pathname === '/paywall') {
         hideTopEmptySpace();
         hideBottomEmptySpace();
         hideFooterNavigation();
@@ -156,7 +155,7 @@ export default function App() {
           authenticatedUser && authenticatedUser.token ? (
             <Navigate to="/" replace />
           ) : (
-            <LoginScreen />
+            <Login />
           )
         }
       />

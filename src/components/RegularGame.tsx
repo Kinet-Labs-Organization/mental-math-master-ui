@@ -36,7 +36,7 @@ const generateQuestions = (count: number): Question[] => {
   return questions;
 };
 
-export function MCQPractice() {
+export function RegularGame() {
   const [questions] = useState<Question[]>(generateQuestions(5));
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<number, string>>({});
