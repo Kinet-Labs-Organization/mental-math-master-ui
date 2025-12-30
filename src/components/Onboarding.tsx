@@ -5,24 +5,30 @@ import {
   CheckCircle,
   XCircle,
   ArrowRight,
-  Mail,
   Trophy,
   Target,
   Zap,
-  
+
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
+import { supabase } from '../libs/supabaseClient';
 
-export function OnboardingFlow() {
+export function Onboarding() {
   const [step, setStep] = useState(1);
   const [answer, setAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const navigate = useNavigate();
   const { setOnboardingFlag } = useUserStore.getState();
-  // const { authenticatedUser, setAuthenticatedUser } = useUserStore.getState();
 
   const correctAnswer = 25; // 10 + 15
+
+  const handleGoogleSignIn = async () => {
+    setOnboardingFlag();
+    await supabase.auth.signInWithOAuth({
+      provider: 'google'
+    });
+  }
 
   const handleSubmitAnswer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,15 +37,8 @@ export function OnboardingFlow() {
     setStep(2);
   };
 
-  const handleSocialLogin = (_provider: 'google' | 'facebook' | 'email') => {
-    // mark parameter as used for lint
-    void _provider;
-    setOnboardingFlag();
-    navigate('/login');
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center px-4 py-8 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center px-4 pb-8 pt-16 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
@@ -156,17 +155,15 @@ export function OnboardingFlow() {
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                  className={`inline-flex items-center justify-center w-32 h-32 rounded-full mb-6 shadow-2xl relative ${
-                    isCorrect
+                  className={`inline-flex items-center justify-center w-32 h-32 rounded-full mb-6 shadow-2xl relative ${isCorrect
                       ? 'bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 shadow-green-500/40'
                       : 'bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-orange-500/40'
-                  }`}
+                    }`}
                 >
                   {/* Pulsing ring effect */}
                   <motion.div
-                    className={`absolute inset-0 rounded-full ${
-                      isCorrect ? 'bg-green-400' : 'bg-orange-400'
-                    }`}
+                    className={`absolute inset-0 rounded-full ${isCorrect ? 'bg-green-400' : 'bg-orange-400'
+                      }`}
                     animate={{
                       scale: [1, 1.3, 1],
                       opacity: [0.5, 0, 0.5],
@@ -187,11 +184,10 @@ export function OnboardingFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className={`text-4xl sm:text-5xl mb-3 bg-clip-text text-transparent ${
-                    isCorrect
+                  className={`text-4xl sm:text-5xl mb-3 bg-clip-text text-transparent ${isCorrect
                       ? 'bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400'
                       : 'bg-gradient-to-r from-amber-400 via-orange-400 to-red-400'
-                  }`}
+                    }`}
                 >
                   {isCorrect ? 'Amazing!' : 'All Good!'}
                 </motion.h1>
@@ -209,22 +205,19 @@ export function OnboardingFlow() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className={`backdrop-blur-xl rounded-3xl p-12 shadow-2xl border relative overflow-hidden ${
-                  isCorrect
+                className={`backdrop-blur-xl rounded-3xl p-12 shadow-2xl border relative overflow-hidden ${isCorrect
                     ? 'bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent border-green-500/20'
                     : 'bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-transparent border-orange-500/20'
-                }`}
+                  }`}
               >
                 {/* Decorative gradient orbs */}
                 <div
-                  className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 ${
-                    isCorrect ? 'bg-green-400' : 'bg-orange-400'
-                  }`}
+                  className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 ${isCorrect ? 'bg-green-400' : 'bg-orange-400'
+                    }`}
                 />
                 <div
-                  className={`absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl opacity-20 ${
-                    isCorrect ? 'bg-teal-400' : 'bg-red-400'
-                  }`}
+                  className={`absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl opacity-20 ${isCorrect ? 'bg-teal-400' : 'bg-red-400'
+                    }`}
                 />
 
                 <div className="space-y-6 relative z-10">
@@ -263,11 +256,10 @@ export function OnboardingFlow() {
 
                 <button
                   onClick={() => setStep(3)}
-                  className={`mt-8 w-full max-w-xs mx-auto text-white rounded-2xl py-4 shadow-lg transition-all group flex items-center justify-center gap-2 ${
-                    isCorrect
+                  className={`mt-8 w-full max-w-xs mx-auto text-white rounded-2xl py-4 shadow-lg transition-all group flex items-center justify-center gap-2 ${isCorrect
                       ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:via-emerald-600 hover:to-teal-700 shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40'
                       : 'bg-gradient-to-r from-orange-500 via-amber-500 to-red-500 hover:from-orange-600 hover:via-amber-600 hover:to-red-600 shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40'
-                  }`}
+                    }`}
                 >
                   <span>Continue</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -385,7 +377,7 @@ export function OnboardingFlow() {
 
                   <div className="space-y-3">
                     <button
-                      onClick={() => handleSocialLogin('google')}
+                      onClick={() => handleGoogleSignIn()}
                       className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-100 text-gray-900 rounded-2xl py-4 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -409,7 +401,7 @@ export function OnboardingFlow() {
                       <span>Continue with Google</span>
                     </button>
 
-                    <button
+                    {/* <button
                       onClick={() => handleSocialLogin('facebook')}
                       className="w-full flex items-center justify-center gap-3 bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-2xl py-4 transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
                     >
@@ -425,7 +417,8 @@ export function OnboardingFlow() {
                     >
                       <Mail className="w-5 h-5" />
                       <span>Continue with Email</span>
-                    </button>
+                    </button> */}
+
                   </div>
                 </div>
               </motion.div>
@@ -448,13 +441,12 @@ export function OnboardingFlow() {
           {[1, 2, 3].map(s => (
             <div
               key={s}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                s === step
+              className={`h-1.5 rounded-full transition-all duration-300 ${s === step
                   ? 'w-8 bg-gradient-to-r from-blue-500 to-purple-600'
                   : s < step
                     ? 'w-4 bg-green-500'
                     : 'w-4 bg-white/20'
-              }`}
+                }`}
             />
           ))}
         </div>

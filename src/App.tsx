@@ -6,7 +6,7 @@ import { Navigation, type NavSection } from './components/Navigation';
 import { useUserStore } from './store/useUserStore';
 import { useConfigStore } from './store/useConfigStore';
 import { Login } from './components/Login';
-import { OnboardingFlow } from './components/OnboardingFlow';
+import { Onboarding } from './components/Onboarding';
 import { supabase } from './libs/supabaseClient';
 import api from './utils/api';
 import ApiURL from './utils/apiurl';
@@ -143,7 +143,7 @@ export default function App() {
           authenticatedUser && authenticatedUser.token ? (
             <Navigate to="/" replace />
           ) : getOnboardingFlag() ? (
-            <OnboardingFlow />
+            <Onboarding />
           ) : (
             <Navigate to="/login" replace />
           )

@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
-import SkeletonLoader from './components/shared/skeleton-loader';
 
 const Dashboard = lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
 const Progress = lazy(() => import('./components/Progress').then(m => ({ default: m.Progress })));

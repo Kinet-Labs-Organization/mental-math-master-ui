@@ -197,7 +197,7 @@ export function Login() {
           >
             {isSignUp ? 'Create Account with' : 'Signin with'}
           </motion.p>}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3">
             <button
               onClick={handleGoogleSignIn}
               type="button"
@@ -223,13 +223,13 @@ export function Login() {
               </svg>
               <span className="text-sm">Google</span>
             </button>
-            <button
+            {/* <button
               type="button"
               className="flex items-center justify-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl py-3 text-white transition-all"
             >
               <Apple className="w-5 h-5" />
               <span className="text-sm">Apple</span>
-            </button>
+            </button> */}
           </div>
 
           {/* Sign Up Link */}

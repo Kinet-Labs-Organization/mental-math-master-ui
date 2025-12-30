@@ -23,7 +23,7 @@ const validateConfig = () => {
     "VITE_APP_NAME",
     "VITE_API_BASE_URL",
     "VITE_PORT",
-    "VITE_EMAIL_LOGIN"
+    "VITE_EMAIL_LOGIN",
   ];
 
   const missing = required.filter((key) => !import.meta.env[key]);
