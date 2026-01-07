@@ -6,6 +6,7 @@ import ApiURL from "../utils/apiurl";
 export interface IAuthenticatedUser {
   token: string | null;
   email: string | null;
+  name: string | null;
 }
 
 export interface IUseUserStore {
@@ -27,6 +28,7 @@ export const useUserStore = create<IUseUserStore>((set) => ({
   authenticatedUser: {
     token: null,
     email: null,
+    name: null,
   },
   setAuthenticatedUser: (authenticatedUser: IAuthenticatedUser) => {
     try {
@@ -46,6 +48,7 @@ export const useUserStore = create<IUseUserStore>((set) => ({
         authenticatedUser: {
           token: null,
           email: null,
+          name: null,
         },
       });
     } catch (error) {
@@ -78,7 +81,7 @@ export const useUserStore = create<IUseUserStore>((set) => ({
         email: _email,
         password: _password,
       });
-      const authenticatedUser = { token: res.data.access_token, email: _email };
+      const authenticatedUser = { token: res.data.access_token, email: _email, name: res.data.name};
       localStorage.setItem(
         CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY,
         JSON.stringify(authenticatedUser),

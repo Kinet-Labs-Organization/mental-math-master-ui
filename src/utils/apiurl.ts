@@ -5,9 +5,9 @@ const ApiURL = {
     userSync: `user/userSync`,
   },
   game: {
-    fetchPracticeGame: `user/practiceGames`,
-    fetchGameLevels: `user/gameLevels`,
-    fetchGame: `user/fetchGame`,
+    fetchGameLevels: `game/gameLevels`,
+    fetchGame: `game/fetchGame`,
+    fetchCustomGame: `game/fetchCustomGame`,
   },
   report: {
     fetchProgressReport: `user/progressReports`,

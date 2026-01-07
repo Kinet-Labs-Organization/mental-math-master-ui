@@ -24,7 +24,7 @@ export function AppRoutes() {
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/settings" element={<Setting />} />
-        <Route path="/game" element={<FlashGame />} />
+        <Route path="/flashgame" element={<FlashGame />} />
         <Route path="/regulargame" element={<RegularGame />} />
         <Route path="/paywall" element={<Paywall />} />
         <Route path="*" element={<Navigate to="/" replace />} />

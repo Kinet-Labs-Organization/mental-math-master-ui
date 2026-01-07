@@ -50,7 +50,10 @@ export default function App() {
         if (session) {
           const token = session.access_token ?? null;
           const email = session.user?.email ?? null;
-          setAuthenticatedUser({ token, email });
+          const name = session.user?.user_metadata?.name ?? null;
+          setAuthenticatedUser({ token, email, name });
+        } else {
+          removeAuthenticatedUser();
         }
 
         // Listen for auth changes and mirror them to the app store
@@ -68,7 +71,8 @@ export default function App() {
             // user sync code ends
             const token = newSession.access_token ?? null;
             const email = newSession.user?.email ?? null;
-            setAuthenticatedUser({ token, email });
+            const name = newSession.user?.user_metadata?.name ?? null;
+            setAuthenticatedUser({ token, email, name });
           } else {
             removeAuthenticatedUser();
           }
@@ -118,7 +122,7 @@ export default function App() {
 
   const UXConfigLogics = useCallback(
     (pathname?: string) => {
-      if (pathname === '/regulargame' || pathname === '/game' || pathname === '/paywall') {
+      if (pathname === '/regulargame' || pathname === '/flashgame' || pathname === '/paywall') {
         hideTopEmptySpace();
         hideBottomEmptySpace();
         hideFooterNavigation();

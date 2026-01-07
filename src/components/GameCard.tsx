@@ -1,9 +1,8 @@
 import { motion } from 'motion/react';
-import { Plus, Minus } from 'lucide-react';
-import type { ITournamentGame } from '../store/useGameStore';
+import { Plus, Minus, Divide, X } from 'lucide-react';
 
 interface TournamentCardProps {
-  tournament: ITournamentGame;
+  tournament: any;
   onSelect: () => void;
 }
 
@@ -64,6 +63,18 @@ export function GameCard({ tournament, onSelect }: TournamentCardProps) {
             <div className="flex items-center gap-1 bg-red-500/20 text-red-400 px-3 py-1.5 rounded-full text-xs border border-red-500/30">
               <Minus className="w-3 h-3" />
               <span>Sub</span>
+            </div>
+          )}
+          {tournament.operations.includes('multiply') && (
+            <div className="flex items-center gap-1 bg-blue-500/20 text-blue-400 px-3 py-1.5 rounded-full text-xs border border-blue-500/30">
+              <X className="w-3 h-3" />
+              <span>Multiply</span>
+            </div>
+          )}
+          {tournament.operations.includes('divide') && (
+            <div className="flex items-center gap-1 bg-yellow-500/20 text-yellow-400 px-3 py-1.5 rounded-full text-xs border border-yellow-500/30">
+              <Divide className="w-3 h-3" />
+              <span>Divide</span>
             </div>
           )}
         </div>

@@ -1,7 +1,7 @@
 'use client';
 import { GameCard } from './GameCard';
 import { CustomPractice } from './CustomPractice';
-import { Trophy, Sparkles, FileText } from 'lucide-react';
+import { Trophy, Sparkles, FileText, Plus, Minus, X, Divide } from 'lucide-react';
 import { useGameStore } from '../store/useGameStore';
 import type { IGame } from '../store/useGameStore';
 import { useEffect, useState } from 'react';
@@ -22,11 +22,20 @@ export function Dashboard() {
 
     setSelectedGame
   } = useGameStore();
+  const {authenticatedUser} = useUserStore();
   const { report, reportLoading, fetchReport } = useReportStore();
   // use store values directly
 
-  const [flashGameLevel, setFlashGameLevel] = useState('ADD_SUB_L1');
-  const [regularGameLevel, setRegularGameLevel] = useState('ADD_SUB_L1');
+  const [flashGameLevel, setFlashGameLevel] = useState(() => {
+    return CONSTANTS.FLASH_GAME_LEVEL_STORAGE_KEY in localStorage
+      ? localStorage.getItem(CONSTANTS.FLASH_GAME_LEVEL_STORAGE_KEY) as string
+      : 'ADD_SUB_L1';
+  });
+  const [regularGameLevel, setRegularGameLevel] = useState(() =>
+    CONSTANTS.REGULAR_GAME_LEVEL_STORAGE_KEY in localStorage
+      ? localStorage.getItem(CONSTANTS.REGULAR_GAME_LEVEL_STORAGE_KEY) as string
+      : 'ADD_SUB_L1'
+  );
 
   const onRegularGame = () => navigate('/regulargame');
 
@@ -35,39 +44,43 @@ export function Dashboard() {
   }, []);
 
   useEffect(() => {
+    localStorage.setItem(CONSTANTS.FLASH_GAME_LEVEL_STORAGE_KEY, flashGameLevel);
     fetchFlashGameLevels(flashGameLevel);
   }, [flashGameLevel]);
 
   useEffect(() => {
+    localStorage.setItem(CONSTANTS.REGULAR_GAME_LEVEL_STORAGE_KEY, regularGameLevel);
     fetchRegularGameLevels(regularGameLevel);
   }, [regularGameLevel]);
 
   // no local copy of store state needed
 
-  const onSelectTournament = (tournament: IGame) => {
+  const onGameSelect = (tournament: IGame) => {
     setSelectedGame(tournament);
-    navigate('/game');
+    navigate('/flashgame');
   };
 
   const onCustomPractice = (settings: {
     digitCount: number;
-    operations: ('add' | 'subtract')[];
+    operations: string;
     numberCount: number;
-    delay: number;
+    gameType: string;
+    delay?: number;
+    numberOfQuestions?: number;
   }) => {
-    const customTournament: IGame = {
+    const customTournament = {
       id: 'custom',
       name: 'Custom Practice',
-      // planet: 'Custom Practice',
       digitCount: settings.digitCount,
       operations: settings.operations,
       numberCount: settings.numberCount,
-      delay: settings.delay,
-      // color: 'from-purple-500 to-pink-600',
+      gameType: settings.gameType,
+      delay: settings.delay || null,
+      numberOfQuestions: settings.numberOfQuestions || null,
       icon: '⚙️',
     };
     setSelectedGame(customTournament);
-    navigate('/game');
+    navigate(settings.gameType === 'flash' ? '/flashgame' : '/regulargame');
   };
 
   return (
@@ -79,7 +92,7 @@ export function Dashboard() {
             <Sparkles className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl sm:text-5xl mb-3 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-            Mental Math Master
+            Hi {authenticatedUser.name}
           </h1>
           <p className="text-gray-400 text-lg">Choose your planet and master mental math</p>
         </div>
@@ -137,7 +150,7 @@ export function Dashboard() {
 
         <div className='flex justify-between items-start mb-4'>
           <h2 className="text-xl text-white mb-4 px-2">Flash Calculation</h2>
-          <LevelSelect onSelectChanged={setFlashGameLevel} />
+          <LevelSelect onSelectChanged={setFlashGameLevel} value={flashGameLevel} />
         </div>
 
         {/* Tournament Carousel */}
@@ -151,7 +164,7 @@ export function Dashboard() {
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
                     <GameCard
                       tournament={tournament}
-                      onSelect={() => onSelectTournament(tournament)}
+                      onSelect={() => onGameSelect({ ...tournament, type: 'flash' })}
                     />
                   </div>
                 ))
@@ -163,7 +176,7 @@ export function Dashboard() {
 
         <div className='flex justify-between items-start mb-4'>
           <h2 className="text-xl text-white mb-4 px-2">Mental Math Calculation</h2>
-          <LevelSelect onSelectChanged={setRegularGameLevel} />
+          <LevelSelect onSelectChanged={setRegularGameLevel} value={regularGameLevel} />
         </div>
 
         {/* Tournament Carousel */}
@@ -177,7 +190,7 @@ export function Dashboard() {
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
                     <GameCard
                       tournament={tournament}
-                      onSelect={() => onSelectTournament(tournament)}
+                      onSelect={() => onGameSelect({ ...tournament, type: 'regular' })}
                     />
                   </div>
                 ))
@@ -260,12 +273,14 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@radix-ui/react-icons";
+import CONSTANTS from '../utils/constants';
+import { useUserStore } from '../store/useUserStore';
 
-const LevelSelect = ({ onSelectChanged }: { onSelectChanged: (value: string) => void }) => (
-  <Select.Root onValueChange={onSelectChanged}>
+const LevelSelect = ({ onSelectChanged, value }: { onSelectChanged: (value: string) => void, value: string }) => (
+  <Select.Root onValueChange={onSelectChanged} value={value}>
 
     <Select.Trigger
-      className={`level-dropdown w-30 inline-flex h-[35px] items-center justify-center px-[15px] text-[13px] leading-none shadow-[0_2px_10px] shadow-black/10 outline-none text-[#97a2b8]}`}
+      className={`level-dropdown w-38 inline-flex h-[35px] items-center justify-center px-[15px] text-[13px] leading-none shadow-[0_2px_10px] shadow-black/10 outline-none text-[#97a2b8]}`}
       aria-label="level"
     >
       <Select.Value placeholder="Select a level" />
@@ -284,38 +299,144 @@ const LevelSelect = ({ onSelectChanged }: { onSelectChanged: (value: string) => 
 
         <Select.Viewport className="p-[5px]">
 
-          <Select.Group>
+          <Select.Group className='pb-2'>
+
             <Select.Label className="px-[25px] text-xs leading-[25px] text-green-300">
               Add & Substract
             </Select.Label>
-            <SelectItem value="ADD_SUB_L1">Beginner</SelectItem>
-            <SelectItem value="ADD_SUB_L2">Intermediate</SelectItem>
-            <SelectItem value="ADD_SUB_L3">Advanced</SelectItem>
-            <SelectItem value="ADD_SUB_L4">Pro</SelectItem>
+
+            <SelectItem value="ADD_SUB_L1">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
+                  <Plus className="h-3" />
+                  <Minus className="h-3" />
+                </div>
+                <span>Beginner</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="ADD_SUB_L2">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
+                  <Plus className="h-3" />
+                  <Minus className="h-3" />
+                </div>
+                <span>Intermediate</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="ADD_SUB_L3">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
+                  <Plus className="h-3" />
+                  <Minus className="h-3" />
+                </div>
+                <span>Advanced</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="ADD_SUB_L4">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
+                  <Plus className="h-3" />
+                  <Minus className="h-3" />
+                </div>
+                <span>Pro</span>
+              </div>
+            </SelectItem>
+
           </Select.Group>
 
           <hr />
 
-          <Select.Group>
-            <Select.Label className="px-[25px] text-xs leading-[25px] text-orange-300">
+          <Select.Group className='pb-2'>
+
+            <Select.Label className="px-[25px] text-xs leading-[25px] text-blue-300">
               Multiply
             </Select.Label>
-            <SelectItem value="MUL_L1">Beginner</SelectItem>
-            <SelectItem value="MUL_L2">Intermediate</SelectItem>
-            <SelectItem value="MUL_L3">Advanced</SelectItem>
-            <SelectItem value="MUL_L4">Pro</SelectItem>
+
+            <SelectItem value="MUL_L1">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-blue-500/20 py-1 rounded-full border border-blue-500/30 w-12">
+                  <X className="h-3" />
+                </div>
+                <span>Beginner</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="MUL_L2">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-blue-500/20 py-1 rounded-full border border-blue-500/30 w-12">
+                  <X className="h-3" />
+                </div>
+                <span>Intermediate</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="MUL_L3">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-blue-500/20 py-1 rounded-full border border-blue-500/30 w-12">
+                  <X className="h-3" />
+                </div>
+                <span>Advanced</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="MUL_L4">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-blue-500/20 py-1 rounded-full border border-blue-500/30 w-12">
+                  <X className="h-3" />
+                </div>
+                <span>Pro</span>
+              </div>
+            </SelectItem>
+
           </Select.Group>
 
           <hr />
 
           <Select.Group>
-            <Select.Label className="px-[25px] text-xs leading-[25px] text-red-400">
+
+            <Select.Label className="px-[25px] text-xs leading-[25px] text-yellow-400">
               Divide
             </Select.Label>
-            <SelectItem value="DIV_L1">Beginner</SelectItem>
-            <SelectItem value="DIV_L2">Intermediate</SelectItem>
-            <SelectItem value="DIV_L3">Advanced</SelectItem>
-            <SelectItem value="DIV_L4">Pro</SelectItem>
+
+            <SelectItem value="DIV_L1">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-yellow-500/20 py-1 rounded-full border border-yellow-500/30 w-12">
+                  <Divide className="h-3" />
+                </div>
+                <span>Beginner</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="DIV_L2">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-yellow-500/20 py-1 rounded-full border border-yellow-500/30 w-12">
+                  <Divide className="h-3" />
+                </div>
+                <span>Intermediate</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="DIV_L3">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-yellow-500/20 py-1 rounded-full border border-yellow-500/30 w-12">
+                  <Divide className="h-3" />
+                </div>
+                <span>Advanced</span>
+              </div>
+            </SelectItem>
+
+            <SelectItem value="DIV_L4">
+              <div className='flex items-center gap-1.5'>
+                <div className="flex justify-center bg-yellow-500/20 py-1 rounded-full border border-yellow-500/30 w-12">
+                  <Divide className="h-3" />
+                </div>
+                <span>Pro</span>
+              </div>
+            </SelectItem>
+
           </Select.Group>
 
         </Select.Viewport>

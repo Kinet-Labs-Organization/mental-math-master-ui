@@ -10,6 +10,7 @@ export interface IGame {
   numberCount: number;
   delay: number;
   // color: string;
+  type: string;
   icon: string;
 }
 
@@ -69,9 +70,16 @@ export const useGameStore = create<any>((set, get) => ({
       return;
     }
     try {
-      const result = await api.get(
-        `${ApiURL.game.fetchGame}/${selectedGame.id}`,
+      let result;
+      if(selectedGame.id === 'custom'){
+        result = await api.post(
+        `${ApiURL.game.fetchCustomGame}`, selectedGame
       );
+      } else {
+        result = await api.post(
+        `${ApiURL.game.fetchGame}`, selectedGame
+      );
+      }
       set({ game: result.data, gameLoading: false });
     } catch {
       set({ gameError: "Failed to fetch game", gameLoading: false });

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { ArrowLeft, Plus, Minus, Check, X } from 'lucide-react';
+import { ArrowLeft, Plus, Minus, Check, X, Divide } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/useGameStore';
 import type { IGame } from '../store/useGameStore';
@@ -29,15 +29,22 @@ export function FlashGame() {
     if (!nums || nums.length === 0) {
       return;
     }
-    nums[0].operation = 'add';
+    // nums[0].operation = 'add'
+    // nums[0].operation = '';
     setNumbers(nums);
     // Calculate correct answer
     let total = 0;
     nums.forEach((item: any) => {
       if (item.operation === 'add') {
         total += item.value;
-      } else {
+      } else if (item.operation === 'subtract') {
         total -= item.value;
+      } else if (item.operation === 'multiply') {
+        total *= item.value;
+      } else if (item.operation === 'divide') {
+        total /= item.value;
+      } else {
+        total = item.value;
       }
     });
     setCorrectAnswer(total);
@@ -191,13 +198,24 @@ export function FlashGame() {
                     className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 shadow-2xl"
                   >
                     <div className="flex items-center justify-center gap-6 mb-6">
-                      {currentNumber.operation === 'add' ? (
+                      {currentNumber.operation === 'add' && (
                         <div className="w-16 h-16 bg-green-500/20 border border-green-500/30 rounded-2xl flex items-center justify-center">
                           <Plus className="w-8 h-8 text-green-400" />
                         </div>
-                      ) : (
+                      )}
+                      {currentNumber.operation === 'subtract' && (
                         <div className="w-16 h-16 bg-red-500/20 border border-red-500/30 rounded-2xl flex items-center justify-center">
                           <Minus className="w-8 h-8 text-red-400" />
+                        </div>
+                      )}
+                      {currentNumber.operation === 'multiply' && (
+                        <div className="w-16 h-16 bg-blue-500/20 border border-blue-500/30 rounded-2xl flex items-center justify-center">
+                          <X className="w-8 h-8 text-blue-400" />
+                        </div>
+                      )}
+                      {currentNumber.operation === 'divide' && (
+                        <div className="w-16 h-16 bg-yellow-500/20 border border-yellow-500/30 rounded-2xl flex items-center justify-center">
+                          <Divide className="w-8 h-8 text-yellow-400" />
                         </div>
                       )}
                     </div>
