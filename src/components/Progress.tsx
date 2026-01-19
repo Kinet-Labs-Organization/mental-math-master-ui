@@ -5,7 +5,7 @@ import { useReportStore } from '../store/useReportStore';
 import { useEffect } from 'react';
 
 export function Progress() {
-  const { report, loading, fetchReport } = useReportStore();
+  const { report, reportLoading, fetchReport } = useReportStore();
 
   const recentActivity = [
     { planet: 'Neptune', date: 'Today', score: '95%', correct: 11, total: 12 },
@@ -43,7 +43,7 @@ export function Progress() {
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {loading ? (
+              {reportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
                 report?.sessions
@@ -65,7 +65,7 @@ export function Progress() {
               <Target className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {loading ? (
+              {reportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
                 `${report?.accuracy}%`
@@ -87,7 +87,7 @@ export function Progress() {
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {loading ? (
+              {reportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
                 report?.streak
@@ -109,7 +109,7 @@ export function Progress() {
               <Award className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {loading ? (
+              {reportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
                 report?.achievements
