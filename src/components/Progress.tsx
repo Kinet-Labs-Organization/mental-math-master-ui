@@ -2,22 +2,47 @@
 import { motion } from 'motion/react';
 import { TrendingUp, Calendar, Target, Zap, Award, WandSparkles } from 'lucide-react';
 import { useReportStore } from '../store/useReportStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function Progress() {
   const { report, reportLoading, fetchReport } = useReportStore();
 
-  const recentActivity = [
+  const [recentActivity, setRecentActivity] = useState([
     { planet: 'Neptune', date: 'Today', score: '95%', correct: 11, total: 12 },
     { planet: 'Uranus', date: 'Today', score: '89%', correct: 8, total: 9 },
     { planet: 'Saturn', date: 'Yesterday', score: '80%', correct: 8, total: 10 },
     { planet: 'Jupiter', date: 'Yesterday', score: '88%', correct: 7, total: 8 },
     { planet: 'Mars', date: '2 days ago', score: '86%', correct: 6, total: 7 },
-  ];
+    { planet: 'Venus', date: '3 days ago', score: '92%', correct: 10, total: 12 },
+    { planet: 'Mercury', date: '4 days ago', score: '85%', correct: 9, total: 11 },
+    { planet: 'Earth', date: '5 days ago', score: '90%', correct: 8, total: 10 },
+    { planet: 'Pluto', date: '6 days ago', score: '87%', correct: 7, total: 9 },
+    { planet: 'Moon', date: '7 days ago', score: '93%', correct: 11, total: 12 },
+  ]);
+
+  const [hasMore, setHasMore] = useState(true);
+
+  const fetchMoreData = () => {
+    // Simulate API call
+    console.log('called');
+    
+    setTimeout(() => {
+      const newActivities = [
+        { planet: 'Venus', date: `${recentActivity.length + 1} days ago`, score: `${Math.floor(Math.random() * 20) + 80}%`, correct: Math.floor(Math.random() * 10) + 5, total: 12 },
+        { planet: 'Mercury', date: `${recentActivity.length + 2} days ago`, score: `${Math.floor(Math.random() * 20) + 80}%`, correct: Math.floor(Math.random() * 10) + 5, total: 12 },
+        { planet: 'Earth', date: `${recentActivity.length + 3} days ago`, score: `${Math.floor(Math.random() * 20) + 80}%`, correct: Math.floor(Math.random() * 10) + 5, total: 12 },
+      ];
+      setRecentActivity(prev => [...prev, ...newActivities]);
+      if (recentActivity.length >= 15) {
+        setHasMore(false);
+      }
+    }, 1000);
+  };
 
   // Sample data for 30 days
   const labels = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`);
@@ -185,44 +210,43 @@ export function Progress() {
         {/* Recent Activity */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
           <h2 className="text-2xl text-white mb-6">Recent Activity</h2>
-          <div className="space-y-3">
-            {recentActivity.map((activity, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:bg-white/10 transition-all"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                    <span className="text-xl">🪐</span>
-                  </div>
-                  <div>
-                    <div className="text-white">{activity.planet}</div>
-                    <div className="text-sm text-gray-400">{activity.date}</div>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xl text-white">{activity.score}</div>
-                  <div className="text-sm text-gray-400">
-                    {activity.correct}/{activity.total} correct
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Load More Button */}
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={()=>{}}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-4"
+          <InfiniteScroll
+            dataLength={recentActivity.length}
+            next={fetchMoreData}
+            hasMore={hasMore}
+            loader={<p className="text-gray-400 text-center mt-6">Loading....</p>}
+            endMessage={<p className="text-gray-400 text-center mt-6">No more activities</p>}
+            height={400}
           >
-            <span>Load more</span>
-          </motion.button>
+            <div className="space-y-3">
+              {recentActivity.map((activity, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center justify-between hover:bg-white/10 transition-all"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                      <span className="text-xl">🪐</span>
+                    </div>
+                    <div>
+                      <div className="text-white">{activity.planet}</div>
+                      <div className="text-sm text-gray-400">{activity.date}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xl text-white">{activity.score}</div>
+                    <div className="text-sm text-gray-400">
+                      {activity.correct}/{activity.total} correct
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </InfiniteScroll>
+        </div>
 
       </div>
     </div>
