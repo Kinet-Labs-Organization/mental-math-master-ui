@@ -1,8 +1,12 @@
 'use client';
 import { motion } from 'motion/react';
-import { TrendingUp, Calendar, Target, Zap, Award } from 'lucide-react';
+import { TrendingUp, Calendar, Target, Zap, Award, WandSparkles } from 'lucide-react';
 import { useReportStore } from '../store/useReportStore';
 import { useEffect } from 'react';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function Progress() {
   const { report, reportLoading, fetchReport } = useReportStore();
@@ -14,6 +18,36 @@ export function Progress() {
     { planet: 'Jupiter', date: 'Yesterday', score: '88%', correct: 7, total: 8 },
     { planet: 'Mars', date: '2 days ago', score: '86%', correct: 6, total: 7 },
   ];
+
+  // Sample data for 30 days
+  const labels = Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`);
+  const scores = Array.from({ length: 30 }, () => Math.floor(Math.random() * 31) + 70);
+  const chartData = {
+    labels,
+    datasets: [
+      {
+        label: 'Score (%)',
+        data: scores,
+        borderColor: 'rgb(75, 192, 192)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        tension: 0.1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'top' as const,
+      },
+      title: {
+        display: true,
+        text: 'Performance Trend',
+      },
+    },
+  };
 
   useEffect(() => {
     fetchReport();
@@ -128,13 +162,24 @@ export function Progress() {
             </div>
             <TrendingUp className="w-6 h-6 text-green-400" />
           </div>
-          <div className="h-64 flex items-center justify-center border-2 border-dashed border-white/10 rounded-2xl">
-            <div className="text-center">
-              <div className="text-6xl mb-4">📊</div>
-              <p className="text-gray-400">Performance chart coming soon</p>
-              {/* <TinyBarChart /> */}
-            </div>
+          <div className="h-64">
+            <Line data={chartData} options={options} />
           </div>
+        </div>
+
+        {/* Suggestion Note */}
+        <div className='w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-3xl p-6 shadow-lg transition-all border border-blue-400/20 group mb-7'>
+        <div className="flex items-center gap-4">
+                  <div className="text-left">
+                    <div className='flex mb-4'>
+                      <WandSparkles className="w-7 h-7 text-white" />
+                      <h3 className="text-white text-xl mb-1 ml-4">AI Suggestion</h3>
+                    </div>
+                    <p className="text-blue-100 text-sm">
+                      Thik kore dekho, tumar accuracy rate aro barate parbe jodi tumar daily practice session gulo aro consistent rakho. Chesta koro prottek din e ekta session complete korte!
+                    </p>
+                  </div>
+                </div>
         </div>
 
         {/* Recent Activity */}
@@ -168,6 +213,17 @@ export function Progress() {
             ))}
           </div>
         </div>
+
+        {/* Load More Button */}
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={()=>{}}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-base py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 mt-4"
+          >
+            <span>Load more</span>
+          </motion.button>
+
       </div>
     </div>
   );
