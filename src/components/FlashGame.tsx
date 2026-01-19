@@ -24,7 +24,7 @@ export function FlashGame() {
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
 
-  const generateNumbers = async () => {
+  const generateNumbers = () => {
     const nums = JSON.parse(JSON.stringify(game));
     if (!nums || nums.length === 0) {
       return;

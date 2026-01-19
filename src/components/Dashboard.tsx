@@ -57,7 +57,11 @@ export function Dashboard() {
 
   const onGameSelect = (tournament: IGame) => {
     setSelectedGame(tournament);
-    navigate('/flashgame');
+    if (tournament.type === 'regular') {
+      navigate('/regulargame');
+    } else {
+      navigate('/flashgame');
+    }
   };
 
   const onCustomPractice = (settings: {
