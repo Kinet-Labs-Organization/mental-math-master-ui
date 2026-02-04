@@ -111,11 +111,9 @@ export function Dashboard() {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <Trophy className="w-5 h-5 text-yellow-500" />
                   <span className="text-2xl text-white">
-                    {reportLoading ? (
-                      <SkeletonLoader height={30} width={30} radius={8} />
-                    ) : (
-                      report?.achievements
-                    )}
+                    {
+                      report?.achievements.length
+                    }
                   </span>
                 </div>
                 <p className="text-xs text-gray-400">Completed</p>
@@ -128,7 +126,7 @@ export function Dashboard() {
                     {reportLoading ? (
                       <SkeletonLoader height={30} width={30} radius={8} />
                     ) : (
-                      report?.accuracy
+                      report?.accuracyRate
                     )}
                   </span>
                 </div>
@@ -142,7 +140,7 @@ export function Dashboard() {
                     {reportLoading ? (
                       <SkeletonLoader height={30} width={30} radius={8} />
                     ) : (
-                      report?.streak
+                      report?.currentStreak
                     )}
                   </span>
                 </div>

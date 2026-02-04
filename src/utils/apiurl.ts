@@ -11,6 +11,7 @@ const ApiURL = {
   },
   report: {
     fetchProgressReport: `user/progressReports`,
+    fetchActivities: `user/activities`,
   },
 };
 
