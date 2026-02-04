@@ -27,6 +27,8 @@ export default function App() {
       case '/leaderboard':
         return 'leaderboard';
       case '/profile':
+      case '/blogs':
+      case '/notifications':
         return 'profile';
       case '/settings':
         return 'settings';
@@ -38,7 +40,7 @@ export default function App() {
   useEffect(() => {
     let subscription: any;
     const appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
-    const purchases = Purchases.configure({apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks",appUserId: appUserId,});
+    const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks", appUserId: appUserId, });
 
     const init = async () => {
       try {

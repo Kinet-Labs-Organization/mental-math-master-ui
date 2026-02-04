@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 import { Home, TrendingUp, Trophy, Settings, User } from 'lucide-react';
 
-export type NavSection = 'dashboard' | 'progress' | 'leaderboard' | 'profile' | 'settings';
+export type NavSection = 'dashboard' | 'progress' | 'leaderboard' | 'profile' | 'settings' | 'blogs';
 
 interface NavigationProps {
   activeSection: NavSection;
@@ -15,10 +15,11 @@ const navItems = [
   { id: 'progress' as NavSection, label: 'Progress', icon: TrendingUp },
   { id: 'leaderboard' as NavSection, label: 'Leaderboard', icon: Trophy },
   { id: 'profile' as NavSection, label: 'Profile', icon: User },
-  { id: 'settings' as NavSection, label: 'Settings', icon: Settings },
+  { id: 'settings' as NavSection, label: 'Settings', icon: Settings }
 ];
 
 export function Navigation({ activeSection, onSectionChange }: NavigationProps) {
+  console.log('Active Section:', activeSection);
   return (
     <nav className="sticky-footer bg-white/5 backdrop-blur-xl border-t border-white/10 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

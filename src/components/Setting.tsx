@@ -2,8 +2,10 @@ import { motion } from 'motion/react';
 import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HelpCircle, Trash } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { supabase } from '../libs/supabaseClient';
+import { useNavigate } from 'react-router-dom';
 
 export function Setting() {
+  const navigate = useNavigate();
   const settingsSections = [
     {
       title: 'Preferences',
@@ -15,12 +17,6 @@ export function Setting() {
           label: 'News Letter',
           value: 'On',
           color: 'from-indigo-500 to-purple-600',
-        },
-        {
-          icon: Rss,
-          label: 'Blogs',
-          value: '',
-          color: 'from-green-500 to-emerald-600',
         },
       ],
     },
@@ -37,7 +33,6 @@ export function Setting() {
   const { removeAuthenticatedUser } = useUserStore();
 
   const handleSignOut = async () => {
-    // navigate('/paywall');?
     await supabaseSignOut();
     removeAuthenticatedUser();
   };
@@ -73,6 +68,7 @@ export function Setting() {
                 const Icon = item.icon;
                 return (
                   <button
+                    onClick={()=>{navigate('/blogs')}}
                     key={item.label}
                     className={`w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all ${index !== section.items.length - 1 ? 'border-b border-white/10' : ''
                       }`}

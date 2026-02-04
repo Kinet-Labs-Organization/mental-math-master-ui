@@ -1,7 +1,9 @@
 import { motion } from 'motion/react';
-import { Mail, Calendar, Award, Target, Zap } from 'lucide-react';
+import { Mail, Calendar, Award, Target, Zap, Bell, BookOpen, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function Profile() {
+  const navigate = useNavigate();
   const achievements = [
     {
       icon: '🏆',
@@ -97,6 +99,80 @@ export function Profile() {
           </motion.div>
         </div>
 
+        {/* Notifications */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl text-white flex items-center gap-3">
+              <Bell className="w-6 h-6 text-blue-400" />
+              Notifications
+            </h2>
+            <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors" onClick={() => { navigate('/notifications') }}>
+              View All <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="space-y-3">
+            {[
+              { title: 'New Tournament Available', desc: 'The Neptune Championship has started!', time: '2h ago', icon: '🏆', color: 'bg-yellow-500/20 text-yellow-400' },
+              { title: 'Daily Goal Reached', desc: 'You completed your daily practice goal.', time: '5h ago', icon: '🎯', color: 'bg-green-500/20 text-green-400' }
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + i * 0.1 }}
+                className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
+              >
+                <div className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center text-lg`}>
+                  {item.icon}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-medium text-sm">{item.title}</h3>
+                  <p className="text-gray-400 text-xs">{item.desc}</p>
+                </div>
+                <span className="text-gray-500 text-xs">{item.time}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Latest Blogs */}
+        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl text-white flex items-center gap-3">
+              <BookOpen className="w-6 h-6 text-purple-400" />
+              Latest Blogs
+            </h2>
+            <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors" onClick={() => { navigate('/blogs') }}>
+              Read More <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              { title: 'The Art of Mental Calculation', desc: 'Discover techniques to perform complex math...', read: '5 min', image: '🧠' },
+              { title: 'Vedic Math Secrets', desc: 'Ancient Indian mathematical methods that...', read: '8 min', image: '📜' }
+            ].map((blog, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + i * 0.1 }}
+                className="group p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-600/20 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                    {blog.image}
+                  </div>
+                  <div>
+                    <h3 className="text-white font-medium mb-1 group-hover:text-purple-400 transition-colors line-clamp-1">{blog.title}</h3>
+                    <p className="text-gray-400 text-xs mb-2 line-clamp-2">{blog.desc}</p>
+                    <span className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-md">{blog.read} read</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
         {/* Achievements */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
           <h2 className="text-2xl text-white mb-6">Achievements</h2>
@@ -107,19 +183,17 @@ export function Profile() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
-                className={`rounded-2xl p-4 border transition-all ${
-                  achievement.unlocked
+                className={`rounded-2xl p-4 border transition-all ${achievement.unlocked
                     ? 'bg-gradient-to-br from-purple-500/10 to-pink-600/10 border-purple-500/30'
                     : 'bg-white/5 border-white/10 opacity-50'
-                }`}
+                  }`}
               >
                 <div className="flex items-start gap-4">
                   <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${
-                      achievement.unlocked
+                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${achievement.unlocked
                         ? 'bg-gradient-to-br from-purple-500 to-pink-600'
                         : 'bg-white/10'
-                    }`}
+                      }`}
                   >
                     {achievement.icon}
                   </div>

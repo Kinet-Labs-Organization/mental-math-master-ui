@@ -9,6 +9,8 @@ const Setting = lazy(() => import('./components/Setting').then(m => ({ default: 
 const FlashGame = lazy(() => import('./components/FlashGame').then(m => ({ default: m.FlashGame })));
 const RegularGame = lazy(() => import('./components/RegularGame').then(m => ({ default: m.RegularGame })));
 const Paywall = lazy(() => import('./components/Paywall').then(m => ({ default: m.Paywall })));
+const Blogs = lazy(() => import('./components/Blogs').then(m => ({ default: m.Blogs })));
+const Notifications = lazy(() => import('./components/Notifications').then(m => ({ default: m.Notifications })));
 
 
 export function AppRoutes() {
@@ -27,6 +29,8 @@ export function AppRoutes() {
         <Route path="/flashgame" element={<FlashGame />} />
         <Route path="/regulargame" element={<RegularGame />} />
         <Route path="/paywall" element={<Paywall />} />
+        <Route path="/blogs" element={<Blogs />} />
+        <Route path="/notifications" element={<Notifications />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Suspense>

@@ -8,6 +8,7 @@ const ApiURL = {
     fetchGameLevels: `game/gameLevels`,
     fetchGame: `game/fetchGame`,
     fetchCustomGame: `game/fetchCustomGame`,
+    fetchBlogs: `game/blogs`,
   },
   report: {
     fetchProgressReport: `user/progressReports`,
