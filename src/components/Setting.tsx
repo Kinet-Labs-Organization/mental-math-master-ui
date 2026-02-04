@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Settings, Volume2, Bell, Moon, Globe, Info, LogOut } from 'lucide-react';
+import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HelpCircle, Trash } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { supabase } from '../libs/supabaseClient';
 
@@ -11,15 +11,15 @@ export function Setting() {
         { icon: Volume2, label: 'Sound Effects', value: 'On', color: 'from-blue-500 to-cyan-600' },
         { icon: Bell, label: 'Notifications', value: 'On', color: 'from-purple-500 to-pink-600' },
         {
-          icon: Moon,
-          label: 'Dark Mode',
-          value: 'Always On',
+          icon: Mail,
+          label: 'News Letter',
+          value: 'On',
           color: 'from-indigo-500 to-purple-600',
         },
         {
-          icon: Globe,
-          label: 'Language',
-          value: 'English',
+          icon: Rss,
+          label: 'Blogs',
+          value: '',
           color: 'from-green-500 to-emerald-600',
         },
       ],
@@ -28,6 +28,8 @@ export function Setting() {
       title: 'About',
       items: [
         { icon: Info, label: 'App Version', value: '1.0.0', color: 'from-gray-500 to-gray-600' },
+        { icon: CircleQuestionMark, label: 'FAQ', value: '1.0.0', color: 'from-gray-500 to-gray-600' },
+        { icon: HelpCircle, label: 'Support', value: '1.0.0', color: 'from-gray-500 to-gray-600' },
       ],
     },
   ];
@@ -101,16 +103,8 @@ export function Setting() {
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
             <button className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all border-b border-white/10">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl flex items-center justify-center">
-                  <span className="text-xl">🔄</span>
-                </div>
-                <span className="text-base text-white">Sync Data</span>
-              </div>
-            </button>
-            <button className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all border-b border-white/10">
-              <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
-                  <span className="text-xl">🗑️</span>
+                  <Trash className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-base text-white">Clear Data</span>
               </div>
