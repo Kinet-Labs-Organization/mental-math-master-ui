@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HandHelping, Trash, X, ChevronDown, CheckCircle } from 'lucide-react';
+import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HandHelping, Trash, X, ChevronDown } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { supabase } from '../libs/supabaseClient';
 import { useGenericStore } from '../store/useGenericStore';
+import { useToastStore } from '../store/useToastStore';
 
 export function Setting() {
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -14,8 +15,8 @@ export function Setting() {
   const [showFaqPopup, setShowFaqPopup] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [showClearDataPopup, setShowClearDataPopup] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
+  const { showToast } = useToastStore();
   const { faqs, fetchFaqs, faqsLoading } = useGenericStore();
 
   useEffect(() => {
@@ -83,8 +84,7 @@ export function Setting() {
 
   const handleClearData = () => {
     setShowClearDataPopup(false);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 3000);
+    showToast('Successfully deleted data', 'success');
   };
 
   return (
@@ -302,18 +302,6 @@ export function Setting() {
               </div>
             </motion.div>
           </div>
-        )}
-
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 50 }}
-            className="fixed bottom-24 left-4 right-4 bg-[#1f2635] border border-white/10 text-white px-6 py-4 rounded-2xl shadow-xl z-[100] flex items-center justify-center gap-3"
-          >
-            <CheckCircle className="w-5 h-5 text-green-500" />
-            <span>Successfully deleted data</span>
-          </motion.div>
         )}
       </div>
     </div>

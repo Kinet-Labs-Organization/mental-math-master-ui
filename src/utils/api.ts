@@ -82,8 +82,10 @@ api.interceptors.response.use(
   },
   (error) => {
     const {showToast} = useToastStore.getState();
-    showToast('Network Error. Please check your connection.', 'error');
     // Handle different error scenarios
+    if(error.response?.userMessage) {
+      showToast(error.response.userMessage, 'error');
+    }
     if (error.response) {
       // Server responded with error status
       const status = error.response.status;
@@ -92,6 +94,7 @@ api.interceptors.response.use(
         case 401: {
           // Unauthorized - clear user data and redirect to login
           console.warn("Unauthorized access - logging out");
+          showToast('Unauthorized access', 'error');
           const { removeAuthenticatedUser } = useUserStore.getState();
           removeAuthenticatedUser();
 
@@ -108,11 +111,13 @@ api.interceptors.response.use(
         case 403:
           // Forbidden
           console.error("Access forbidden");
+          showToast('Access forbidden', 'error');
           break;
 
         case 404:
           // Not found
           console.error("Resource not found");
+          showToast('Something went wrong. Try again later', 'error');
           break;
 
         case 500:
@@ -121,17 +126,21 @@ api.interceptors.response.use(
         case 504:
           // Server errors
           console.error("Server error:", error.response.data);
+          showToast('Something went wrong. Try again later', 'error');
           break;
 
         default:
           console.error("API error:", error.response.data);
+          showToast('Something went wrong. Try again later', 'error');
       }
     } else if (error.request) {
       // Request was made but no response received (network error)
       console.error("Network error - no response received:", error.message);
+      showToast('Something went wrong. Try again later', 'error');
     } else {
       // Something else happened
       console.error("Request setup error:", error.message);
+      showToast('Something went wrong. Try again later', 'error');
     }
 
     return Promise.reject(error);
