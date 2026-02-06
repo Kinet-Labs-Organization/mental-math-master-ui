@@ -2,7 +2,6 @@ const ApiURL = {
   auth: {
     signin: `auth/signin`,
     signup: `auth/signup`,
-    userSync: `user/userSync`,
   },
   game: {
     fetchGameLevels: `game/gameLevels`,
@@ -11,6 +10,7 @@ const ApiURL = {
     fetchBlogs: `game/blogs`,
   },
   user: {
+    userSync: `user/userSync`,
     fetchProgressReport: `user/progressReports`,
     fetchActivities: `user/activities`,
     settingsData: `user/settingsData`,

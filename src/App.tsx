@@ -101,7 +101,7 @@ export default function App() {
   }, []);
 
   const userSync = async (user: any) => {
-    return await api.post(ApiURL.auth.userSync, { email: user.email, name: user.name });
+    return await api.post(ApiURL.user.userSync, { email: user.email, name: user.name });
   }
 
   useEffect(() => {
