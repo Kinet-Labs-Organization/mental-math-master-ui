@@ -11,7 +11,11 @@ import SkeletonLoader from './shared/skeleton-loader';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function Progress() {
-  const { report, reportLoading, fetchReport, activities, activitiesLoading, fetchActivities } = useReportStore();
+  const {
+    basicReport, basicReportLoading, basicReportError, fetchBasicReport,
+    progressReport, progressReportLoading, progressReportError, fetchProgressReport,
+    activities, activitiesLoading, activitiesError, fetchActivities
+  } = useReportStore();
 
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
 
@@ -36,7 +40,7 @@ export function Progress() {
   };
 
   useEffect(() => {
-    const fetchedActivities = activities.map(activity => {
+    const fetchedActivities = activities.map((activity: any) => {
       return {
         gameName: activity.gameName,
         gamePlayedAt: formatDate(new Date(activity.gamePlayedAt)) === 0 ? 'Today' : `${formatDate(new Date(activity.gamePlayedAt))} days ago`,
@@ -55,7 +59,7 @@ export function Progress() {
     const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
     return `${date.getDate()}/${date.getMonth() + 1}`;
   });
-  const scores = report?.performanceTrend || [];
+  const scores = progressReport?.performanceTrend || [];
 
   const chartData = {
     labels,
@@ -85,7 +89,8 @@ export function Progress() {
   };
 
   useEffect(() => {
-    fetchReport();
+    fetchBasicReport();
+    fetchProgressReport();
     fetchActivities(0);
   }, []);
 
@@ -101,7 +106,7 @@ export function Progress() {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
 
-          {reportLoading ? (
+          {basicReportLoading ? (
             <StatProgressionSkeleton />
           ) : (<motion.div
             key="Total Sessions"
@@ -117,13 +122,13 @@ export function Progress() {
             </div>
             <div className="text-3xl text-white mb-1">
               {
-                report?.totalSessions
+                basicReport?.totalSessions
               }
             </div>
             <div className="text-sm text-gray-400">Total Sessions</div>
           </motion.div>)}
 
-          {reportLoading ? (
+          {basicReportLoading ? (
             <StatProgressionSkeleton />
           ) : (<motion.div
             key="Accuracy Rate"
@@ -138,16 +143,16 @@ export function Progress() {
               <Target className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {reportLoading ? (
+              {basicReportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
-                report?.accuracyRate && `${report?.accuracyRate}%`
+                basicReport?.accuracyRate && `${basicReport?.accuracyRate}%`
               )}
             </div>
             <div className="text-sm text-gray-400">Accuracy Rate</div>
           </motion.div>)}
 
-          {reportLoading ? (
+          {basicReportLoading ? (
             <StatProgressionSkeleton />
           ) : (<motion.div
             key="Current Streak"
@@ -162,16 +167,16 @@ export function Progress() {
               <Zap className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {reportLoading ? (
+              {progressReportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
-                report?.currentStreak
+                basicReport?.currentStreak
               )}
             </div>
             <div className="text-sm text-gray-400">Current Streak</div>
           </motion.div>)}
 
-          {reportLoading ? (
+          {basicReportLoading ? (
             <StatProgressionSkeleton />
           ) : (<motion.div
             key="Achievements"
@@ -186,10 +191,10 @@ export function Progress() {
               <Award className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {reportLoading ? (
+              {basicReportLoading ? (
                 <div className="loader" style={{ width: 38, padding: 5 }}></div>
               ) : (
-                report?.achievements?.length
+                basicReport?.achievements?.length
               )}
             </div>
             <div className="text-sm text-gray-400">Achievements</div>
@@ -206,7 +211,7 @@ export function Progress() {
             </div>
             <TrendingUp className="w-6 h-6 text-green-400" />
           </div>
-          {reportLoading ? (
+          {progressReportLoading ? (
             <StatProgressionSkeleton />
           ) : (<div className="h-64">
             <Line data={chartData} options={options} />
@@ -214,7 +219,7 @@ export function Progress() {
         </div>
 
         {/* Suggestion Note */}
-        {reportLoading ? (
+        {progressReportLoading ? (
           <div className='mb-7'><StatProgressionSkeleton /></div>
         ) : (<div className='w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 rounded-3xl p-6 shadow-lg transition-all border border-blue-400/20 group mb-7'>
           <div className="flex items-center gap-4">
@@ -223,7 +228,7 @@ export function Progress() {
                 <WandSparkles className="w-7 h-7 text-white" />
                 <h3 className="text-white text-xl mb-1 ml-4">AI Suggestion</h3>
               </div>
-              {report?.aiSuggestions.map((ele: any, index: any) => (
+              {progressReport?.aiSuggestions.map((ele: any, index: any) => (
                 <p key={index} className="text-blue-100 text-sm mb-4">
                   {ele}
                 </p>

@@ -15,4 +15,16 @@ export const useGenericStore = create<any>((set, get) => ({
             return set({ faqsLoading: false, faqsError: "failed to fetch faqs" });
         }
     },
+    leaderboardData: null,
+    leaderboardLoading: false,
+    leaderboardError: null,
+    fetchLeaderboard: async () => {
+        set({ leaderboardLoading: true, leaderboardError: null });
+        try {
+            const result = await api.get(ApiURL.generic.fetchLeaderboard);
+            set({ leaderboardData: result.data, leaderboardLoading: false });
+        } catch (error) {
+            set({ leaderboardLoading: false, leaderboardError: "failed to fetch leaderboard" });
+        }
+    },
 }));

@@ -11,13 +11,15 @@ const ApiURL = {
   },
   user: {
     userSync: `user/userSync`,
-    fetchProgressReport: `user/progressReports`,
+    fetchBasicReport: `user/basicReport`,
+    fetchProgressReport: `user/progressReport`,
     fetchActivities: `user/activities`,
     settingsData: `user/settingsData`,
     updateSettings: `user/updateSettings`,
   },
   generic: {
     fetchFaqs: `generic/faqs`,
+    fetchLeaderboard: `generic/leaderboard`,
   },
 };
 

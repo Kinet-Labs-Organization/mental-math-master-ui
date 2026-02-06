@@ -14,22 +14,40 @@ export interface IUseReportStore {
   fetchActivities: (position: number) => void;
 }
 
-export const useReportStore = create<IUseReportStore>((set, get) => ({
-  report: null,
-  reportLoading: false,
-  reportError: null,
-  fetchReport: async () => {
-    set({ reportLoading: true, reportError: null });
+export const useReportStore = create<any>((set, get) => ({
+
+  basicReport: null,
+  basicReportLoading: false,
+  basicReportError: null,
+  fetchBasicReport: async () => {
+    set({ basicReportLoading: true, basicReportError: null });
     try {
-      const result = await api.get(ApiURL.user.fetchProgressReport);
-      return set({ report: result.data, reportLoading: false });
-    } catch {
+      const result = await api.get(ApiURL.user.fetchBasicReport);
+      return set({ basicReport: result.data, basicReportLoading: false });
+    } catch (error) {
       return set({
-        reportLoading: false,
-        reportError: "Failed to fetch report",
+        basicReportLoading: false,
+        basicReportError: "Failed to fetch basic report",
       });
     }
   },
+
+  progressReport: null,
+  progressReportLoading: false,
+  progressReportError: null,
+  fetchProgressReport: async () => {
+    set({ progressReportLoading: true, progressReportError: null });
+    try {
+      const result = await api.get(ApiURL.user.fetchProgressReport);
+      return set({ progressReport: result.data, progressReportLoading: false });
+    } catch (error) {
+      return set({
+        progressReportLoading: false,
+        progressReportError: "Failed to fetch progress report",
+      });
+    }
+  },
+
   activities: [],
   activitiesLoading: false,
   activitiesError: null,

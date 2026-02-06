@@ -2,12 +2,12 @@
 import { GameCard } from './GameCard';
 import { CustomPractice } from './CustomPractice';
 import { Trophy, Sparkles, FileText, Plus, Minus, X, Divide } from 'lucide-react';
-import { useGameStore } from '../store/useGameStore';
 import type { IGame } from '../store/useGameStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useReportStore } from '../store/useReportStore';
 import SkeletonLoader from './shared/skeleton-loader';
+import { useReportStore } from '../store/useReportStore';
+import { useGameStore } from '../store/useGameStore';
 
 export function Dashboard() {
   const navigate = useNavigate();
@@ -22,8 +22,8 @@ export function Dashboard() {
 
     setSelectedGame
   } = useGameStore();
-  const {authenticatedUser} = useUserStore();
-  const { report, reportLoading, fetchReport } = useReportStore();
+  const { authenticatedUser } = useUserStore();
+  const { fetchBasicReport, basicReport, basicReportLoading } = useReportStore();
   // use store values directly
 
   const [flashGameLevel, setFlashGameLevel] = useState(() => {
@@ -40,7 +40,7 @@ export function Dashboard() {
   const onRegularGame = () => navigate('/regulargame');
 
   useEffect(() => {
-    fetchReport();
+    fetchBasicReport();
   }, []);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export function Dashboard() {
         </div>
 
         {/* Stats Bar */}
-        {reportLoading ? (
+        {basicReportLoading ? (
           <SkillProgressionSkeleton />
         ) : (
           <div className="bg-white/5 backdrop-blur-xl rounded-3xl p-6 mb-8 shadow-sm border border-white/10">
@@ -112,7 +112,7 @@ export function Dashboard() {
                   <Trophy className="w-5 h-5 text-yellow-500" />
                   <span className="text-2xl text-white">
                     {
-                      report?.achievements.length
+                      basicReport?.achievements.length
                     }
                   </span>
                 </div>
@@ -123,10 +123,10 @@ export function Dashboard() {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <span className="text-2xl">🎯</span>
                   <span className="text-2xl text-white">
-                    {reportLoading ? (
+                    {basicReportLoading ? (
                       <SkeletonLoader height={30} width={30} radius={8} />
                     ) : (
-                      report?.accuracyRate
+                      basicReport?.accuracyRate
                     )}
                   </span>
                 </div>
@@ -137,10 +137,10 @@ export function Dashboard() {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <span className="text-2xl">⚡</span>
                   <span className="text-2xl text-white">
-                    {reportLoading ? (
+                    {basicReportLoading ? (
                       <SkeletonLoader height={30} width={30} radius={8} />
                     ) : (
-                      report?.currentStreak
+                      basicReport?.currentStreak
                     )}
                   </span>
                 </div>
