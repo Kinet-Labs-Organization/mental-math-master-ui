@@ -106,7 +106,15 @@ export const useUserStore = create<any>((set) => ({
       set({ settingsData: res.data, settingsDataLoading: false });
     } catch (error) {
       set({ settingsDataError: error, settingsDataLoading: false });
-      console.log(error);
+    }
+  },
+  updateSettingsData: async (settings: {name: string, value: string}) => {
+    try {
+      set({ settingsDataLoading: true });
+      const res: any = await api.post(ApiURL.user.updateSettings, settings);
+      set({ settingsData: res.data, settingsDataLoading: false });
+    } catch (error) {
+      set({ settingsDataError: error, settingsDataLoading: false });
     }
   }
 }));

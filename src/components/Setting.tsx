@@ -6,9 +6,10 @@ import { supabase } from '../libs/supabaseClient';
 import { useGenericStore } from '../store/useGenericStore';
 
 export function Setting() {
-  const [soundEnabled, setSoundEnabled] = useState(true);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [newsletterEnabled, setNewsletterEnabled] = useState(false);
+  const { removeAuthenticatedUser, settingsData, updateSettingsData: updateSettings, fetchSettingsData } = useUserStore();
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [showFaqPopup, setShowFaqPopup] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -18,21 +19,45 @@ export function Setting() {
   const { faqs, fetchFaqs, faqsLoading } = useGenericStore();
 
   useEffect(() => {
+    fetchSettingsData();
     fetchFaqs();
   }, []);
+
+  useEffect(() => {
+    if (settingsData) {
+      setSoundEnabled(settingsData.soundEffect ?? false);
+      setNotificationsEnabled(settingsData.notification ?? false);
+      setNewsletterEnabled(settingsData.newsLetter ?? false);
+    }
+  }, [settingsData]);
+
+  const handleSoundChange = (val: boolean) => {
+    setSoundEnabled(val);
+    updateSettings?.({ sound: val });
+  };
+
+  const handleNotificationChange = (val: boolean) => {
+    setNotificationsEnabled(val);
+    updateSettings?.({ notifications: val });
+  };
+
+  const handleNewsletterChange = (val: boolean) => {
+    setNewsletterEnabled(val);
+    updateSettings?.({ newsletter: val });
+  };
 
   const settingsSections = [
     {
       title: 'Preferences',
       items: [
-        { icon: Volume2, label: 'Sound Effects', type: 'toggle', value: soundEnabled, onChange: setSoundEnabled, color: 'from-blue-500 to-cyan-600' },
-        { icon: Bell, label: 'Notifications', type: 'toggle', value: notificationsEnabled, onChange: setNotificationsEnabled, color: 'from-purple-500 to-pink-600' },
+        { icon: Volume2, label: 'Sound Effects', type: 'toggle', value: soundEnabled, onChange: handleSoundChange, color: 'from-blue-500 to-cyan-600' },
+        { icon: Bell, label: 'Notifications', type: 'toggle', value: notificationsEnabled, onChange: handleNotificationChange, color: 'from-purple-500 to-pink-600' },
         {
           icon: Mail,
           label: 'News Letter',
           type: 'toggle',
           value: newsletterEnabled,
-          onChange: setNewsletterEnabled,
+          onChange: handleNewsletterChange,
           color: 'from-indigo-500 to-purple-600',
         },
       ],
@@ -46,8 +71,6 @@ export function Setting() {
       ],
     },
   ];
-
-  const { removeAuthenticatedUser } = useUserStore();
 
   const handleSignOut = async () => {
     await supabaseSignOut();

@@ -14,6 +14,7 @@ const ApiURL = {
     fetchProgressReport: `user/progressReports`,
     fetchActivities: `user/activities`,
     settingsData: `user/settingsData`,
+    updateSettings: `user/updateSettings`,
   },
   generic: {
     fetchFaqs: `generic/faqs`,
