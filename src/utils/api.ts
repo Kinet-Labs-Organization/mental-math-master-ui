@@ -6,6 +6,7 @@ import axios, {
 import CONSTANTS from "./constants";
 import { useUserStore } from "../store/useUserStore";
 import config from "../config/env";
+import { useToastStore } from '../store/useToastStore';
 
 // ============================================
 // Safe helper to get auth token
@@ -80,6 +81,8 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    const {showToast} = useToastStore.getState();
+    showToast('Network Error. Please check your connection.', 'error');
     // Handle different error scenarios
     if (error.response) {
       // Server responded with error status

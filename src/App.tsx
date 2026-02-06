@@ -11,6 +11,7 @@ import { supabase } from './libs/supabaseClient';
 import api from './utils/api';
 import ApiURL from './utils/apiurl';
 import { Purchases } from "@revenuecat/purchases-js";
+import { GlobalToast } from './components/GlobalToast';
 
 export default function App() {
   const navigate = useNavigate();
@@ -142,6 +143,8 @@ export default function App() {
   }
 
   return (
+    <>
+    <GlobalToast />
     <Routes>
       <Route
         path="/onboarding"
@@ -191,5 +194,6 @@ export default function App() {
         }
       />
     </Routes>
+    </>
   );
 }
