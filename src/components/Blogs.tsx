@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useBlogsStore } from '../store/useBlogsStore';
 import { ListView } from './ListView';
+import { useGenericStore } from '../store/useGenericStore';
 
 export function Blogs() {
-    const { blogs, blogsLoading, blogsError, fetchBlogs } = useBlogsStore();
+    const { blogs, blogsLoading, blogsError, fetchBlogs } = useGenericStore();
 
     const [blogList, setBlogList] = useState<any[]>([]);
 

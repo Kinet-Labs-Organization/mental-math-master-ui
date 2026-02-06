@@ -27,4 +27,17 @@ export const useGenericStore = create<any>((set, get) => ({
             set({ leaderboardLoading: false, leaderboardError: "failed to fetch leaderboard" });
         }
     },
+
+    blogs: [],
+    blogsLoading: false,
+    blogsError: null,
+    fetchBlogs: async () => {
+        set({ blogsLoading: true, blogsError: null });
+        try {
+            const result = await api.get(`${ApiURL.generic.fetchBlogs}`);
+            return set({ blogs: result.data, blogsLoading: false });
+        } catch (error) {
+            return set({ blogsLoading: false, blogsError: "failed to fetch blogs" });
+        }
+    },
 }));

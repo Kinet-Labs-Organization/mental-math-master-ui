@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useBlogsStore } from '../store/useBlogsStore';
+import { useUserStore } from '../store/useUserStore';
 import { ListView } from './ListView';
 
 export function Notifications() {
-    const { blogs, blogsLoading, blogsError, fetchBlogs } = useBlogsStore();
+    const { notifications, notificationsLoading, fetchNotifications } = useUserStore();
 
-    const [blogList, setBlogList] = useState<any[]>([]);
+    const [allNotifications, setAllNotifications] = useState<any[]>([]);
 
     useEffect(() => {
-        fetchBlogs();
+        fetchNotifications();
     }, []);
 
     useEffect(() => {
-        setBlogList(blogs);
-    }, [blogs]);
+        setAllNotifications(notifications);
+    }, [notifications]);
 
     return (
-        <ListView title="Notifications" data={blogList} loading={blogsLoading} error={blogsError} />
+        <ListView title="Notifications" data={allNotifications} loading={notificationsLoading} error={null} />
     );
 }

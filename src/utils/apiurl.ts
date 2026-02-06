@@ -7,7 +7,6 @@ const ApiURL = {
     fetchGameLevels: `game/gameLevels`,
     fetchGame: `game/fetchGame`,
     fetchCustomGame: `game/fetchCustomGame`,
-    fetchBlogs: `game/blogs`,
   },
   user: {
     userSync: `user/userSync`,
@@ -16,10 +15,12 @@ const ApiURL = {
     fetchActivities: `user/activities`,
     settingsData: `user/settingsData`,
     updateSettings: `user/updateSettings`,
+    fetchNotifications: `user/notifications`,
   },
   generic: {
     fetchFaqs: `generic/faqs`,
     fetchLeaderboard: `generic/leaderboard`,
+    fetchBlogs: `generic/blogs`,
   },
 };
 

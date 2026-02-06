@@ -9,21 +9,6 @@ export interface IAuthenticatedUser {
   name: string | null;
 }
 
-// export interface IUseUserStore {
-//   authenticatedUser: IAuthenticatedUser;
-//   // eslint-disable-next-line no-unused-vars
-//   setAuthenticatedUser: (authenticatedUser: IAuthenticatedUser) => void;
-//   removeAuthenticatedUser: () => void;
-
-//   getOnboardingFlag: () => boolean;
-//   setOnboardingFlag: () => void;
-
-//   // eslint-disable-next-line no-unused-vars
-//   login: (_email: string, _password: string) => void;
-//   loginLoading: boolean;
-//   loginError: string | null;
-// }
-
 export const useUserStore = create<any>((set) => ({
   authenticatedUser: {
     token: null,
@@ -116,5 +101,22 @@ export const useUserStore = create<any>((set) => ({
     } catch (error) {
       set({ settingsDataError: error, settingsDataLoading: false });
     }
-  }
+  },
+
+  notifications: [],
+  notificationsLoading: false,
+  notificationsError: null,
+  fetchNotifications: async (recentMax: number) => {
+    set({ notificationsLoading: true, notificationsError: null });
+    try {
+      const result = await api.get(ApiURL.user.fetchNotifications, { params: { recentMax } });
+      return set({ notifications: result.data, notificationsLoading: false });
+    } catch (error) {
+      return set({
+        notificationsLoading: false,
+        notificationsError: "Failed to fetch notifications",
+      });
+    }
+  },
+
 }));

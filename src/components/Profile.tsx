@@ -1,9 +1,27 @@
 import { motion } from 'motion/react';
-import { Mail, Calendar, Award, Target, Zap, Bell, BookOpen, ChevronRight } from 'lucide-react';
+import { Mail, Calendar, Bell, BookOpen, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useUserStore } from '../store/useUserStore';
+import SkeletonLoader from './shared/skeleton-loader';
+import { useGenericStore } from '../store/useGenericStore';
 
 export function Profile() {
+  const colors = ['bg-blue-500/20 text-blue-400', 'bg-green-500/20 text-green-400', 'bg-purple-500/20 text-purple-400', 'bg-pink-500/20 text-pink-400', 'bg-yellow-500/20 text-yellow-400'];
   const navigate = useNavigate();
+  const {
+    fetchNotifications, notifications, notificationsLoading,
+  } = useUserStore();
+
+  const {
+    fetchBlogs, blogs, blogsLoading
+  } = useGenericStore();
+
+  useEffect(() => {
+    fetchNotifications(2);
+    fetchBlogs(4);
+  }, []);
+
   const achievements = [
     {
       icon: '🏆',
@@ -65,40 +83,6 @@ export function Profile() {
           </div>
         </motion.div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-center"
-          >
-            <Target className="w-8 h-8 text-green-400 mx-auto mb-2" />
-            <div className="text-3xl text-white mb-1">87%</div>
-            <div className="text-sm text-gray-400">Avg Accuracy</div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-center"
-          >
-            <Zap className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-            <div className="text-3xl text-white mb-1">5</div>
-            <div className="text-sm text-gray-400">Day Streak</div>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 text-center"
-          >
-            <Award className="w-8 h-8 text-purple-400 mx-auto mb-2" />
-            <div className="text-3xl text-white mb-1">12</div>
-            <div className="text-sm text-gray-400">Achievements</div>
-          </motion.div>
-        </div>
-
         {/* Notifications */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
@@ -111,27 +95,31 @@ export function Profile() {
             </button>
           </div>
           <div className="space-y-3">
-            {[
-              { title: 'New Tournament Available', desc: 'The Neptune Championship has started!', time: '2h ago', icon: '🏆', color: 'bg-yellow-500/20 text-yellow-400' },
-              { title: 'Daily Goal Reached', desc: 'You completed your daily practice goal.', time: '5h ago', icon: '🎯', color: 'bg-green-500/20 text-green-400' }
-            ].map((item, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + i * 0.1 }}
-                className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
-              >
-                <div className={`w-10 h-10 ${item.color} rounded-full flex items-center justify-center text-lg`}>
-                  {item.icon}
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-white font-medium text-sm">{item.title}</h3>
-                  <p className="text-gray-400 text-xs">{item.desc}</p>
-                </div>
-                <span className="text-gray-500 text-xs">{item.time}</span>
-              </motion.div>
-            ))}
+            {notificationsLoading ? (
+              <div className="space-y-3">
+                <SkeletonLoader height={72} width="100%" radius={16} />
+                <SkeletonLoader height={72} width="100%" radius={16} />
+              </div>
+            ) : notifications?.length > 0 ? (
+              notifications.map((item: any, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
+                  className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
+                >
+                  <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
+                    {item.icon || '🔔'}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium text-sm">{item.title}</h3>
+                  </div>
+                  <span className="text-gray-500 text-xs">{item.time || 'Now'}</span>
+                </motion.div>
+              ))) : (
+              <div className="text-gray-400 text-center py-4">No notifications</div>
+            )}
           </div>
         </div>
 
@@ -147,29 +135,32 @@ export function Profile() {
             </button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {[
-              { title: 'The Art of Mental Calculation', desc: 'Discover techniques to perform complex math...', read: '5 min', image: '🧠' },
-              { title: 'Vedic Math Secrets', desc: 'Ancient Indian mathematical methods that...', read: '8 min', image: '📜' }
-            ].map((blog, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + i * 0.1 }}
-                className="group p-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-pink-600/20 rounded-xl flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
-                    {blog.image}
+            {blogsLoading ? (
+              <>
+                <SkeletonLoader height={82} width="100%" radius={16} />
+                <SkeletonLoader height={82} width="100%" radius={16} />
+              </>
+            ) : (blogs?.length > 0 ? (
+              blogs.map((blog: any, i: number) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4 + i * 0.1 }}
+                  className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
+                >
+                  <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
+                    {blog.icon || '📜'}
                   </div>
                   <div>
-                    <h3 className="text-white font-medium mb-1 group-hover:text-purple-400 transition-colors line-clamp-1">{blog.title}</h3>
-                    <p className="text-gray-400 text-xs mb-2 line-clamp-2">{blog.desc}</p>
-                    <span className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-md">{blog.read} read</span>
+                    <h3 className="text-white font-medium mb-1 group-hover:text-purple-400 transition-colors line-clamp-2">{blog.title}</h3>
+                    <span className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-md">{blog.read || '5 min'} read</span>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))) : (
+              <div className="text-gray-400 text-center py-4">No blogs available</div>
+            )
+            )}
           </div>
         </div>
 
@@ -184,15 +175,15 @@ export function Profile() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
                 className={`rounded-2xl p-4 border transition-all ${achievement.unlocked
-                    ? 'bg-gradient-to-br from-purple-500/10 to-pink-600/10 border-purple-500/30'
-                    : 'bg-white/5 border-white/10 opacity-50'
+                  ? 'bg-gradient-to-br from-purple-500/10 to-pink-600/10 border-purple-500/30'
+                  : 'bg-white/5 border-white/10 opacity-50'
                   }`}
               >
                 <div className="flex items-start gap-4">
                   <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${achievement.unlocked
-                        ? 'bg-gradient-to-br from-purple-500 to-pink-600'
-                        : 'bg-white/10'
+                      ? 'bg-gradient-to-br from-purple-500 to-pink-600'
+                      : 'bg-white/10'
                       }`}
                   >
                     {achievement.icon}
