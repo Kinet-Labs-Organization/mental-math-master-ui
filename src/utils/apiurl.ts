@@ -10,9 +10,13 @@ const ApiURL = {
     fetchCustomGame: `game/fetchCustomGame`,
     fetchBlogs: `game/blogs`,
   },
-  report: {
+  user: {
     fetchProgressReport: `user/progressReports`,
     fetchActivities: `user/activities`,
+    settingsData: `user/settingsData`,
+  },
+  generic: {
+    fetchFaqs: `generic/faqs`,
   },
 };
 

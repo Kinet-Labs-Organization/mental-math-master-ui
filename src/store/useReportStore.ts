@@ -21,7 +21,7 @@ export const useReportStore = create<IUseReportStore>((set, get) => ({
   fetchReport: async () => {
     set({ reportLoading: true, reportError: null });
     try {
-      const result = await api.get(ApiURL.report.fetchProgressReport);
+      const result = await api.get(ApiURL.user.fetchProgressReport);
       return set({ report: result.data, reportLoading: false });
     } catch {
       return set({
@@ -36,7 +36,7 @@ export const useReportStore = create<IUseReportStore>((set, get) => ({
   fetchActivities: async (position: number) => {
     set({ activitiesLoading: true, activitiesError: null });
     try {
-      const result = await api.get(`${ApiURL.report.fetchActivities}?position=${position}`);
+      const result = await api.get(`${ApiURL.user.fetchActivities}?position=${position}`);
       return set({ activities: [...get().activities, ...result.data], activitiesLoading: false });
     } catch {
       return set({

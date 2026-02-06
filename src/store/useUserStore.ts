@@ -9,27 +9,28 @@ export interface IAuthenticatedUser {
   name: string | null;
 }
 
-export interface IUseUserStore {
-  authenticatedUser: IAuthenticatedUser;
-  // eslint-disable-next-line no-unused-vars
-  setAuthenticatedUser: (authenticatedUser: IAuthenticatedUser) => void;
-  removeAuthenticatedUser: () => void;
+// export interface IUseUserStore {
+//   authenticatedUser: IAuthenticatedUser;
+//   // eslint-disable-next-line no-unused-vars
+//   setAuthenticatedUser: (authenticatedUser: IAuthenticatedUser) => void;
+//   removeAuthenticatedUser: () => void;
 
-  getOnboardingFlag: () => boolean;
-  setOnboardingFlag: () => void;
+//   getOnboardingFlag: () => boolean;
+//   setOnboardingFlag: () => void;
 
-  // eslint-disable-next-line no-unused-vars
-  login: (_email: string, _password: string) => void;
-  loginLoading: boolean;
-  loginError: string | null;
-}
+//   // eslint-disable-next-line no-unused-vars
+//   login: (_email: string, _password: string) => void;
+//   loginLoading: boolean;
+//   loginError: string | null;
+// }
 
-export const useUserStore = create<IUseUserStore>((set) => ({
+export const useUserStore = create<any>((set) => ({
   authenticatedUser: {
     token: null,
     email: null,
     name: null,
   },
+
   setAuthenticatedUser: (authenticatedUser: IAuthenticatedUser) => {
     try {
       localStorage.setItem(
@@ -41,6 +42,7 @@ export const useUserStore = create<IUseUserStore>((set) => ({
       console.error("Error setting authenticated user in localStorage", error);
     }
   },
+
   removeAuthenticatedUser: () => {
     try {
       localStorage.removeItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
@@ -68,12 +70,14 @@ export const useUserStore = create<IUseUserStore>((set) => ({
       return true;
     }
   },
+
   setOnboardingFlag: () => {
     localStorage.setItem(CONSTANTS.ONBOARDING_FLAG_STORAGE_KEY, "present");
   },
 
   loginLoading: false,
   loginError: null,
+
   login: async (_email: string, _password: string) => {
     set({ loginError: null, loginLoading: true });
     try {
@@ -91,4 +95,18 @@ export const useUserStore = create<IUseUserStore>((set) => ({
       set({ loginError: "Invalid Credential", loginLoading: false });
     }
   },
+
+  settingsData: null,
+  settingsDataLoading: false,
+  settingsDataError: null,
+  fetchSettingsData: async () => {
+    try {
+      set({ settingsDataLoading: true });
+      const res: any = await api.get(ApiURL.user.settingsData);
+      set({ settingsData: res.data, settingsDataLoading: false });
+    } catch (error) {
+      set({ settingsDataError: error, settingsDataLoading: false });
+      console.log(error);
+    }
+  }
 }));
