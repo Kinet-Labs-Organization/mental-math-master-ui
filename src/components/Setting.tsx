@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HelpCircle, Trash } from 'lucide-react';
+import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HandHelping, Trash, X, ChevronDown, CheckCircle } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { supabase } from '../libs/supabaseClient';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +10,54 @@ export function Setting() {
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [newsletterEnabled, setNewsletterEnabled] = useState(true);
+  const [showSupportPopup, setShowSupportPopup] = useState(false);
+  const [showFaqPopup, setShowFaqPopup] = useState(false);
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [showClearDataPopup, setShowClearDataPopup] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  const faqs = [
+    {
+      "question": "What is Mental Math Master?",
+      "answer": "Mental Math Master is a brain training app that helps users improve their mental calculation skills using abacus-style number visualization, timed exercises, and progressive difficulty levels."
+    },
+    {
+      "question": "Who can use Mental Math Master?",
+      "answer": "The app is designed for children, students, and adults. Beginners can start with simple calculations, while advanced users can practice faster and more complex mental math."
+    },
+    {
+      "question": "Do I need to know abacus to use this app?",
+      "answer": "You do not need any prior abacus knowledge. But to perform the higher level games, one needs to calculate faster, and for that knowledge of abacus is important. The app trains your brain step by step to visualize numbers and calculate mentally."
+    },
+    {
+      "question": "How does a training session work?",
+      "answer": "Numbers appear on the screen one by one at a fixed interval. You add or subtract them mentally, and at the end of the session, you enter the final answer to check your accuracy."
+    },
+    {
+      "question": "What types of calculations are included?",
+      "answer": "The app includes addition, subtraction, mixed operations, different digit lengths, and speed-based challenges that increase in difficulty as you progress."
+    },
+    {
+      "question": "How is my progress tracked?",
+      "answer": "Your progress is tracked through accuracy rate, total sessions, current streak, achievements, performance graphs, and personal bests."
+    },
+    {
+      "question": "What happens if I answer incorrectly?",
+      "answer": "You will see the correct answer along with feedback. This helps you understand mistakes and improve in future sessions."
+    },
+    {
+      "question": "Is Mental Math Master suitable for daily practice?",
+      "answer": "Yes. Short daily sessions are encouraged, and the app includes streaks and reminders to help you build a consistent mental math habit."
+    },
+    {
+      "question": "Does the app work offline?",
+      "answer": "No. Training sessions can not be used offline. Also, progress syncing, achievements, and backups require an internet connection."
+    },
+    {
+      "question": "How does this app help in real life?",
+      "answer": "Mental Math Master improves concentration, memory, speed, and confidence in calculations, which helps in academics, exams, and everyday number-related tasks."
+    }
+  ];
 
   const settingsSections = [
     {
@@ -31,8 +79,8 @@ export function Setting() {
       title: 'About',
       items: [
         { icon: Info, label: 'App Version', value: '1.0.0', color: 'from-gray-500 to-gray-600' },
-        { icon: CircleQuestionMark, label: 'FAQ', value: '1.0.0', color: 'from-gray-500 to-gray-600' },
-        { icon: HelpCircle, label: 'Support', value: '1.0.0', color: 'from-gray-500 to-gray-600' },
+        { icon: CircleQuestionMark, label: 'FAQ', value: '', color: 'from-gray-500 to-gray-600', onClick: () => setShowFaqPopup(true) },
+        { icon: HandHelping, label: 'Support', value: '', color: 'from-gray-500 to-gray-600', onClick: () => setShowSupportPopup(true) },
       ],
     },
   ];
@@ -47,6 +95,12 @@ export function Setting() {
   const supabaseSignOut = async () => {
     await supabase.auth.signOut()
   }
+
+  const handleClearData = () => {
+    setShowClearDataPopup(false);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
+  };
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -76,8 +130,9 @@ export function Setting() {
                 return (
                   <div
                     key={item.label}
+                    onClick={item.onClick}
                     className={`w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all ${index !== section.items.length - 1 ? 'border-b border-white/10' : ''
-                      }`}
+                      } ${item.onClick ? 'cursor-pointer' : ''}`}
                   >
                     <div className="flex items-center gap-4">
                       <div
@@ -117,7 +172,10 @@ export function Setting() {
         >
           <h2 className="text-xl text-white mb-4 px-2">Account</h2>
           <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden">
-            <button className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all border-b border-white/10">
+            <button
+              onClick={() => setShowClearDataPopup(true)}
+              className="w-full flex items-center justify-between p-4 hover:bg-white/5 transition-all border-b border-white/10"
+            >
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-pink-600 rounded-xl flex items-center justify-center">
                   <Trash className="w-5 h-5 text-white" />
@@ -143,6 +201,135 @@ export function Setting() {
         <div className="text-center mt-12 text-gray-500 text-sm">
           <p>Made with ❤️ for mental math enthusiasts</p>
         </div>
+
+        {showSupportPopup && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-100 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-[#1f2635] border border-white/10 rounded-3xl p-6 max-w-sm w-full relative"
+            >
+              <button
+                onClick={() => setShowSupportPopup(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5 fixed ml-[-15px]" />
+              </button>
+
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Mail className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl text-white font-semibold mb-2">Contact Support</h3>
+                <p className="text-gray-400 mb-6">
+                  Mail us at mastermentalmath@gmail.com with your query, we will get back to you as soon as possible
+                </p>
+
+                <a
+                  href="mailto:mastermentalmath@gmail.com"
+                  className="block w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-opacity"
+                >
+                  Email Us
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showFaqPopup && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-100 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-[#1f2635] border border-white/10 rounded-3xl p-6 max-w-lg w-full relative max-h-[80vh] overflow-y-auto"
+            >
+              <button
+                onClick={() => setShowFaqPopup(false)}
+                className="absolute top-4 right-4 text-gray-400 hover:text-white z-10"
+              >
+                <X className="w-5 h-5 fixed ml-[-15px]" />
+              </button>
+
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <CircleQuestionMark className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl text-white font-semibold">Frequently Asked Questions</h3>
+              </div>
+
+              <div className="space-y-3">
+                {faqs.map((faq, index) => (
+                  <div key={index} className="bg-white/5 rounded-xl overflow-hidden border border-white/5">
+                    <button
+                      onClick={() => setOpenFaqIndex(openFaqIndex === index ? null : index)}
+                      className="w-full flex items-center justify-between p-4 text-left hover:bg-white/5 transition-colors"
+                    >
+                      <span className="text-white font-medium text-sm pr-4">{faq.question}</span>
+                      <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-300 flex-shrink-0 ${openFaqIndex === index ? 'rotate-180' : ''}`} />
+                    </button>
+                    <motion.div
+                      initial={false}
+                      animate={{ height: openFaqIndex === index ? 'auto' : 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 pt-0 text-gray-400 text-sm leading-relaxed border-t border-white/5">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showClearDataPopup && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-[#1f2635] border border-white/10 rounded-3xl p-6 max-w-sm w-full relative"
+            >
+              <div className="text-center">
+                <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Trash className="w-8 h-8 text-red-500" />
+                </div>
+                <h3 className="text-xl text-white font-semibold mb-2">Clear Data?</h3>
+                <p className="text-gray-400 mb-6">
+                  Are you sure you want to clear all your data? This action cannot be undone.
+                </p>
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setShowClearDataPopup(false)}
+                    className="flex-1 bg-white/5 hover:bg-white/10 text-white font-semibold py-3 rounded-xl transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleClearData}
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl transition-colors"
+                  >
+                    Yes, Clear
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 50 }}
+            className="fixed bottom-24 left-4 right-4 bg-[#1f2635] border border-white/10 text-white px-6 py-4 rounded-2xl shadow-xl z-[100] flex items-center justify-center gap-3"
+          >
+            <CheckCircle className="w-5 h-5 text-green-500" />
+            <span>Successfully deleted data</span>
+          </motion.div>
+        )}
       </div>
     </div>
   );
