@@ -123,7 +123,7 @@ export function Profile() {
           </div>
         </div>
 
-        {/* Latest Blogs */}
+        {/* Blogs */}
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl text-white flex items-center gap-3">
@@ -134,32 +134,31 @@ export function Profile() {
               Read More <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-3">
             {blogsLoading ? (
-              <>
-                <SkeletonLoader height={82} width="100%" radius={16} />
-                <SkeletonLoader height={82} width="100%" radius={16} />
-              </>
-            ) : (blogs?.length > 0 ? (
-              blogs.map((blog: any, i: number) => (
+              <div className="space-y-3">
+                <SkeletonLoader height={72} width="100%" radius={16} />
+                <SkeletonLoader height={72} width="100%" radius={16} />
+              </div>
+            ) : blogs?.length > 0 ? (
+              blogs.map((item: any, i: number) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 + i * 0.1 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 + i * 0.1 }}
                   className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
                 >
                   <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
-                    {blog.icon || '📜'}
+                    {item.icon || '📜'}
                   </div>
-                  <div>
-                    <h3 className="text-white font-medium mb-1 group-hover:text-purple-400 transition-colors line-clamp-2">{blog.title}</h3>
-                    <span className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-md">{blog.read || '5 min'} read</span>
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium text-sm mb-2">{item.title}</h3>
+                    <span className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-md">{item.read || '5 min'} read</span>
                   </div>
                 </motion.div>
               ))) : (
               <div className="text-gray-400 text-center py-4">No blogs available</div>
-            )
             )}
           </div>
         </div>
