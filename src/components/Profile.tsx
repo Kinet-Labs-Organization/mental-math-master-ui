@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Mail, Calendar, Bell, BookOpen, ChevronRight, X, Crown, Zap } from 'lucide-react';
+import { Mail, Calendar, Bell, BookOpen, ChevronRight, X, Crown, Zap, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useUserStore } from '../store/useUserStore';
@@ -12,7 +12,8 @@ export function Profile() {
   const navigate = useNavigate();
   const {
     fetchNotifications, notifications, notificationsLoading,
-    authenticatedUser
+    authenticatedUser,
+    achievements, achievementsLoading, fetchAchievements
   } = useUserStore();
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
   const [imgError, setImgError] = useState(false);
@@ -27,35 +28,12 @@ export function Profile() {
     fetchNotifications(2);
     fetchBlogs(4);
     fetchProfile();
+    fetchAchievements();
   }, []);
 
   useEffect(() => {
     setImgError(false);
   }, [authenticatedUser?.avatar]);
-
-  const achievements = [
-    {
-      icon: '🏆',
-      title: 'First Win',
-      description: 'Complete your first tournament',
-      unlocked: true,
-    },
-    { icon: '🔥', title: 'Hot Streak', description: '5 day practice streak', unlocked: true },
-    {
-      icon: '🎯',
-      title: 'Perfectionist',
-      description: '100% accuracy in a session',
-      unlocked: true,
-    },
-    { icon: '⚡', title: 'Speed Demon', description: 'Complete Neptune level', unlocked: false },
-    {
-      icon: '🌟',
-      title: 'Rising Star',
-      description: 'Reach top 10 on leaderboard',
-      unlocked: false,
-    },
-    { icon: '💎', title: 'Master', description: 'Complete all tournaments', unlocked: false },
-  ];
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -96,7 +74,7 @@ export function Profile() {
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <>👤</>
+                  <User className="w-12 h-12 text-white" />
                 )}
               </div>
               <div className="flex-1 text-center sm:text-left">
@@ -232,9 +210,13 @@ export function Profile() {
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6">
           <h2 className="text-2xl text-white mb-6">Achievements</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {achievements.map((achievement, index) => (
+            {achievementsLoading ? (
+              [1, 2, 3, 4].map((i) => (
+                <SkeletonLoader key={i} height={88} width="100%" radius={16} />
+              ))
+            ) : (achievements?.map((achievement: any, index: number) => (
               <motion.div
-                key={achievement.title}
+                key={achievement.title || index}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.4 + index * 0.05 }}
@@ -265,7 +247,7 @@ export function Profile() {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            )))}
           </div>
         </div>
       </div>

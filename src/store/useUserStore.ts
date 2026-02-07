@@ -137,4 +137,20 @@ export const useUserStore = create<any>((set) => ({
     }
   },
 
+  achievements: null,
+  achievementsLoading: false,
+  achievementsError: null,
+  fetchAchievements: async () => {
+    set({ achievementsLoading: true, achievementsError: null });
+    try {
+      const result = await api.get(ApiURL.user.fetchAchievements);
+      return set({ achievements: result.data, achievementsLoading: false });
+    } catch (error) {
+      return set({
+        achievementsLoading: false,
+        achievementsError: "Failed to fetch achievements",
+      });
+    }
+  },
+
 }));

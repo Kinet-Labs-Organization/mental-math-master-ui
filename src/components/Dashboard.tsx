@@ -1,7 +1,7 @@
 'use client';
 import { GameCard } from './GameCard';
 import { CustomPractice } from './CustomPractice';
-import { Trophy, Sparkles, FileText, Plus, Minus, X, Divide } from 'lucide-react';
+import { Trophy, Sparkles, FileText, Plus, Minus, X, Divide, Zap, Target } from 'lucide-react';
 import type { IGame } from '../store/useGameStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -121,7 +121,8 @@ export function Dashboard() {
               <div className="w-px h-12 bg-white/10"></div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-2xl">🎯</span>
+                  {/* <span className="text-2xl">🎯</span> */}
+                  <Target className="w-6 h-6 text-green-500" />
                   <span className="text-2xl text-white">
                     {basicReportLoading ? (
                       <SkeletonLoader height={30} width={30} radius={8} />
@@ -135,7 +136,8 @@ export function Dashboard() {
               <div className="w-px h-12 bg-white/10"></div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-1">
-                  <span className="text-2xl">⚡</span>
+                  {/* <span className="text-2xl">⚡</span> */}
+                  <Zap className="w-6 h-6 text-purple-500" />
                   <span className="text-2xl text-white">
                     {basicReportLoading ? (
                       <SkeletonLoader height={30} width={30} radius={8} />

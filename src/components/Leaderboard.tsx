@@ -1,6 +1,6 @@
 'use client';
 import { motion } from 'motion/react';
-import { Trophy, Medal, Award, Crown } from 'lucide-react';
+import { Trophy, Medal, Award, Crown, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useGenericStore } from '../store/useGenericStore';
 import SkeletonLoader from './shared/skeleton-loader';
@@ -63,7 +63,7 @@ export function Leaderboard() {
             >
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl">👤</span>
+                  <User className="w-8 h-8 text-white" />
                 </div>
                 <Medal className="w-6 h-6 text-gray-400 mx-auto mb-2" />
                 <div className="text-white mb-1">{topThree[1].name}</div>
@@ -82,7 +82,7 @@ export function Leaderboard() {
             >
               <div className="bg-gradient-to-br from-yellow-500/20 to-orange-600/20 border-2 border-yellow-400/50 backdrop-blur-xl rounded-3xl p-4 text-center">
                 <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
-                  <span className="text-3xl">👤</span>
+                  <User className="w-8 h-8 text-white" />
                 </div>
                 <Crown className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
                 <div className="text-white mb-1">{topThree[0].name}</div>
@@ -101,7 +101,7 @@ export function Leaderboard() {
             >
               <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 text-center">
                 <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-2xl">👤</span>
+                  <User className="w-8 h-8 text-white" />
                 </div>
                 <Medal className="w-6 h-6 text-orange-400 mx-auto mb-2" />
                 <div className="text-white mb-1">{topThree[2].name}</div>
@@ -132,7 +132,7 @@ export function Leaderboard() {
                         <span className="text-lg text-white">{player.rank}</span>
                       </div>
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                        <span className="text-xl">👤</span>
+                        <User className="w-6 h-6 text-gray-300" />
                       </div>
                       <div>
                         <div className="text-white">{player.name}</div>
@@ -164,7 +164,7 @@ export function Leaderboard() {
                   <span className="text-lg text-white">{me.rank}</span>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                  <span className="text-xl">👤</span>
+                  <User className="w-6 h-6 text-gray-300" />
                 </div>
                 <div>
                   <div className="text-white">You</div>
