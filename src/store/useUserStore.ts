@@ -70,7 +70,7 @@ export const useUserStore = create<any>((set) => ({
         email: _email,
         password: _password,
       });
-      const authenticatedUser = { token: res.data.access_token, email: _email, name: res.data.name};
+      const authenticatedUser = { token: res.data.access_token, email: _email, name: res.data.name };
       localStorage.setItem(
         CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY,
         JSON.stringify(authenticatedUser),
@@ -93,7 +93,7 @@ export const useUserStore = create<any>((set) => ({
       set({ settingsDataError: error, settingsDataLoading: false });
     }
   },
-  updateSettingsData: async (settings: {name: string, value: string}) => {
+  updateSettingsData: async (settings: { name: string, value: string }) => {
     try {
       set({ settingsDataLoading: true });
       const res: any = await api.post(ApiURL.user.updateSettings, settings);
@@ -115,6 +115,22 @@ export const useUserStore = create<any>((set) => ({
       return set({
         notificationsLoading: false,
         notificationsError: "Failed to fetch notifications",
+      });
+    }
+  },
+
+  profile: null,
+  profileLoading: false,
+  profileError: null,
+  fetchProfile: async () => {
+    set({ profileLoading: true, profileError: null });
+    try {
+      const result = await api.get(ApiURL.user.fetchProfile);
+      return set({ profile: result.data, profileLoading: false });
+    } catch (error) {
+      return set({
+        profileLoading: false,
+        profileError: "Failed to fetch profile",
       });
     }
   },

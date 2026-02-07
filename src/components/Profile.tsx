@@ -6,6 +6,7 @@ import { useUserStore } from '../store/useUserStore';
 import SkeletonLoader from './shared/skeleton-loader';
 import { useGenericStore } from '../store/useGenericStore';
 
+
 export function Profile() {
   const colors = ['bg-blue-500/20 text-blue-400', 'bg-green-500/20 text-green-400', 'bg-purple-500/20 text-purple-400', 'bg-pink-500/20 text-pink-400', 'bg-yellow-500/20 text-yellow-400'];
   const navigate = useNavigate();
@@ -18,9 +19,12 @@ export function Profile() {
     fetchBlogs, blogs, blogsLoading
   } = useGenericStore();
 
+  const { profile, profileLoading, fetchProfile } = useUserStore();
+
   useEffect(() => {
     fetchNotifications(2);
     fetchBlogs(4);
+    fetchProfile();
   }, []);
 
   const achievements = [
@@ -50,28 +54,32 @@ export function Profile() {
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
+        
         {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 border-2 border-purple-500/30 backdrop-blur-xl rounded-3xl p-8 mb-8"
         >
-          <div className="flex flex-col sm:flex-row items-center gap-6">
+          {profileLoading ? <SkeletonLoader width={150} height={24} /> : (
+            <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-5xl shadow-xl">
               👤
             </div>
             <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-3xl text-white mb-2">John Doe</h1>
+              <h1 className="text-3xl text-white mb-2">{profile?.name}</h1>
               <p className="text-gray-400 mb-4">Mental Math Enthusiast</p>
               <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
                 <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
                   <Calendar className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">Joined Nov 2025</span>
+                  <span className="text-sm text-gray-400">Joined {new Date(profile?.subscribedOn).toDateString()}</span>
                 </div>
+
                 <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
                   <Mail className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">john.doe@email.com</span>
+                  <span className="text-sm text-gray-400">{profile?.email}</span>
                 </div>
+
               </div>
             </div>
             <motion.button
@@ -82,6 +90,7 @@ export function Profile() {
               Edit Profile
             </motion.button>
           </div>
+          )}
         </motion.div>
 
         {/* Notifications */}
@@ -93,8 +102,8 @@ export function Profile() {
               </div>
               Notifications
               {notifications?.unread > 0 && (
-                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-[14px] text-white">{notifications.unread}</div>
-                )}
+                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-[14px] text-white">{notifications.unread}</div>
+              )}
             </h2>
             <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors" onClick={() => { navigate('/notifications') }}>
               View All <ChevronRight className="w-4 h-4" />

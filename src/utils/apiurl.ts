@@ -16,6 +16,7 @@ const ApiURL = {
     settingsData: `user/settingsData`,
     updateSettings: `user/updateSettings`,
     fetchNotifications: `user/notifications`,
+    fetchProfile: `user/profile`,
   },
   generic: {
     fetchFaqs: `generic/faqs`,
