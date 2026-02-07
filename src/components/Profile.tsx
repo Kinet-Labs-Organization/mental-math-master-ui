@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Mail, Calendar, Bell, BookOpen, ChevronRight, X } from 'lucide-react';
+import { Mail, Calendar, Bell, BookOpen, ChevronRight, X, Crown, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useUserStore } from '../store/useUserStore';
@@ -12,8 +12,10 @@ export function Profile() {
   const navigate = useNavigate();
   const {
     fetchNotifications, notifications, notificationsLoading,
+    authenticatedUser
   } = useUserStore();
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
+  const [imgError, setImgError] = useState(false);
 
   const {
     fetchBlogs, blogs, blogsLoading
@@ -26,6 +28,10 @@ export function Profile() {
     fetchBlogs(4);
     fetchProfile();
   }, []);
+
+  useEffect(() => {
+    setImgError(false);
+  }, [authenticatedUser?.avatar]);
 
   const achievements = [
     {
@@ -54,42 +60,81 @@ export function Profile() {
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        
+
         {/* Profile Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="bg-gradient-to-br from-purple-500/20 to-pink-600/20 border-2 border-purple-500/30 backdrop-blur-xl rounded-3xl p-8 mb-8"
         >
-          {profileLoading ? <SkeletonLoader width={150} height={24} /> : (
+          {profileLoading ? (
             <div className="flex flex-col sm:flex-row items-center gap-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-5xl shadow-xl">
-              👤
-            </div>
-            <div className="flex-1 text-center sm:text-left">
-              <h1 className="text-3xl text-white mb-2">{profile?.name}</h1>
-              <p className="text-gray-400 mb-4">Mental Math Enthusiast</p>
-              <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
-                  <Calendar className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">Joined {new Date(profile?.subscribedOn).toDateString()}</span>
+              <SkeletonLoader width={96} height={96} radius={999} />
+              <div className="flex-1 flex flex-col items-center sm:items-start w-full">
+                <div className="mb-2">
+                  <SkeletonLoader width={200} height={36} />
                 </div>
-
-                <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-400">{profile?.email}</span>
+                <div className="mb-4">
+                  <SkeletonLoader width={150} height={24} />
                 </div>
-
+                <div className="flex flex-wrap gap-3 justify-center sm:justify-start w-full">
+                  <SkeletonLoader width={140} height={32} radius={12} />
+                  <SkeletonLoader width={180} height={32} radius={12} />
+                </div>
               </div>
+              <SkeletonLoader width={120} height={48} radius={16} />
             </div>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-white/5 hover:bg-white/10 text-white text-base px-6 py-3 rounded-2xl transition-all border border-white/10 hover:border-white/20"
-            >
-              Edit Profile
-            </motion.button>
-          </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-5xl shadow-xl overflow-hidden">
+                {authenticatedUser?.avatar && !imgError ? (
+                  <img 
+                    src={authenticatedUser.avatar} 
+                    alt="Avatar" 
+                    className="w-full h-full object-cover" 
+                    onError={() => setImgError(true)}
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <>👤</>
+                )}
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h1 className="text-3xl text-white mb-2">{profile?.name}</h1>
+                <p className="text-gray-400 mb-4">Mental Math Enthusiast</p>
+                <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
+                    <Calendar className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-400">Joined {new Date(profile?.subscribedOn).toDateString()}</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
+                    <Mail className="w-4 h-4 text-gray-400" />
+                    <span className="text-sm text-gray-400">{profile?.email}</span>
+                  </div>
+
+                </div>
+              </div>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  if (['FREE TRIAL', 'TRIAL EXPIRED'].includes(profile?.plan)) {
+                    navigate('/paywall');
+                  }
+                }}
+                className={`bg-white/5 hover:bg-white/10 text-white text-base px-6 py-3 rounded-2xl transition-all border border-white/10 hover:border-white/20 flex items-center gap-2 ${['FREE TRIAL', 'NO PLAN'].includes(profile?.plan) ? 'cursor-pointer hover:border-purple-500/50' : ''}`}
+              >
+                {profile?.plan === 'PRO' && <Crown className="w-5 h-5 text-yellow-400" />}
+                <span className={profile?.plan === 'PRO' ? "font-bold text-yellow-400 tracking-wider" : ""}>{profile?.plan}</span>
+                {['FREE TRIAL', 'TRIAL EXPIRED'].includes(profile?.plan) && (
+                  <div className="flex items-center gap-1 bg-purple-500/20 border border-purple-500/50 rounded-lg px-2 py-1 ml-2">
+                    <Zap className="w-3 h-3 text-purple-400" />
+                    <span className="text-xs font-bold text-purple-400">UPGRADE</span>
+                  </div>
+                )}
+              </motion.button>
+            </div>
           )}
         </motion.div>
 

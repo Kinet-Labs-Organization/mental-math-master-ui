@@ -54,7 +54,8 @@ export default function App() {
           const token = session.access_token ?? null;
           const email = session.user?.email ?? null;
           const name = session.user?.user_metadata?.name ?? null;
-          setAuthenticatedUser({ token, email, name });
+          const avatar = session.user?.user_metadata?.avatar_url ?? null;
+          setAuthenticatedUser({ token, email, name, avatar });
         } else {
           removeAuthenticatedUser();
         }
@@ -75,7 +76,8 @@ export default function App() {
             const token = newSession.access_token ?? null;
             const email = newSession.user?.email ?? null;
             const name = newSession.user?.user_metadata?.name ?? null;
-            setAuthenticatedUser({ token, email, name });
+            const avatar = newSession.user?.user_metadata?.avatar_url ?? null;
+            setAuthenticatedUser({ token, email, name, avatar });
           } else {
             removeAuthenticatedUser();
           }

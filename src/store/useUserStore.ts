@@ -7,6 +7,7 @@ export interface IAuthenticatedUser {
   token: string | null;
   email: string | null;
   name: string | null;
+  avatar: string | null;
 }
 
 export const useUserStore = create<any>((set) => ({
@@ -14,6 +15,7 @@ export const useUserStore = create<any>((set) => ({
     token: null,
     email: null,
     name: null,
+    avatar: null,
   },
 
   setAuthenticatedUser: (authenticatedUser: IAuthenticatedUser) => {
