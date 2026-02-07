@@ -84,7 +84,7 @@ export function Onboarding() {
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+                  transition={{ delay: 0.1, type: 'spring', stiffness: 500 }}
                 >
                   {/* <Logo size="xl" variant="full" animated /> */}
                   {/* <Sparkles className="w-10 h-10 text-white" /> */}
@@ -154,7 +154,7 @@ export function Onboarding() {
                 <motion.div
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 200, damping: 15 }}
+                  transition={{ type: 'spring', stiffness: 500, damping: 15 }}
                   className={`inline-flex items-center justify-center w-32 h-32 rounded-full mb-6 shadow-2xl relative ${isCorrect
                       ? 'bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 shadow-green-500/40'
                       : 'bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 shadow-orange-500/40'
@@ -281,7 +281,7 @@ export function Onboarding() {
                 {/* <motion.div
                                     initial={{ scale: 0, rotate: 180 }}
                                     animate={{ scale: 1, rotate: 0 }}
-                                    transition={{ type: "spring", stiffness: 200 }}
+                                    transition={{ type: "spring", stiffness: 500 }}
                                     className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-[2rem] mb-6 shadow-2xl shadow-purple-500/40"
                                 >
                                     <Brain className="w-12 h-12 text-white" />
