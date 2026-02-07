@@ -103,7 +103,7 @@ export const useUserStore = create<any>((set) => ({
     }
   },
 
-  notifications: [],
+  notifications: null,
   notificationsLoading: false,
   notificationsError: null,
   fetchNotifications: async (recentMax: number) => {

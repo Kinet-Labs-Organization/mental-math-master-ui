@@ -53,9 +53,7 @@ export function Blogs() {
                                 <h3 className="text-xl text-white font-semibold mb-2 group-hover:text-purple-400 transition-colors">
                                     {data.title}
                                 </h3>
-                                <p className="text-gray-400 text-sm line-clamp-2">
-                                    {data.brief}
-                                </p>
+                                <span className="text-xs bg-white/10 text-gray-300 px-2 py-1 rounded-md">{data.read || '5 min'} read</span>
                             </div>
                             <ArrowRight className="w-5 h-5 text-gray-500 group-hover:text-white group-hover:translate-x-1 transition-all flex-shrink-0" />
                         </motion.div>

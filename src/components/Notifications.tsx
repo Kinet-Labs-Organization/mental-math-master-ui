@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useUserStore } from '../store/useUserStore';
 import { Bell, ChevronLeft } from 'lucide-react';
 import SkeletonLoader from './shared/skeleton-loader';
@@ -25,7 +25,12 @@ export function Notifications() {
                         <ChevronLeft className="w-6 h-6" />
                     </button>
                     Notifications
-                    <Bell className="w-6 h-6 text-blue-400" />
+                    <div className="relative">
+                        <Bell className="w-6 h-6 text-blue-400" />
+                        {notifications?.unread > 0 && (
+                            <div className="absolute -top-3 -right-3 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-[14px] text-white">{notifications.unread}</div>
+                        )}
+                    </div>
                 </h2>
             </div>
             <div className="space-y-3">
@@ -35,8 +40,8 @@ export function Notifications() {
                             <SkeletonLoader key={i} height={72} width="100%" radius={16} />
                         ))}
                     </div>
-                ) : notifications?.length > 0 ? (
-                    notifications.map((item: any, i: number) => (
+                ) : notifications?.notifications?.length > 0 ? (
+                    notifications.notifications.map((item: any, i: number) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, x: -20 }}
@@ -48,7 +53,10 @@ export function Notifications() {
                                 {item.icon || '🔔'}
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-white font-medium text-sm">{item.title}</h3>
+                                <div className="flex items-center gap-2">
+                                    <h3 className="text-white font-medium text-sm">{item.title}</h3>
+                                    {!item.read && <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
+                                </div>
                             </div>
                             <span className="text-gray-500 text-xs">{item.time || 'Now'}</span>
                         </motion.div>

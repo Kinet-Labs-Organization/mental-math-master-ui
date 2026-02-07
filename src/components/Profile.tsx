@@ -87,8 +87,13 @@ export function Profile() {
         <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl text-white flex items-center gap-3">
-              <Bell className="w-6 h-6 text-blue-400" />
+              <div className="relative">
+                <Bell className="w-6 h-6 text-blue-400" />
+              </div>
               Notifications
+              {notifications?.unread > 0 && (
+                  <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-[14px] text-white">{notifications.unread}</div>
+                )}
             </h2>
             <button className="text-sm text-gray-400 hover:text-white flex items-center gap-1 transition-colors" onClick={() => { navigate('/notifications') }}>
               View All <ChevronRight className="w-4 h-4" />
@@ -100,8 +105,8 @@ export function Profile() {
                 <SkeletonLoader height={72} width="100%" radius={16} />
                 <SkeletonLoader height={72} width="100%" radius={16} />
               </div>
-            ) : notifications?.length > 0 ? (
-              notifications.map((item: any, i: number) => (
+            ) : notifications?.notifications?.length > 0 ? (
+              notifications.notifications.map((item: any, i: number) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
@@ -113,7 +118,10 @@ export function Profile() {
                     {item.icon || '🔔'}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-white font-medium text-sm">{item.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-white font-medium text-sm">{item.title}</h3>
+                      {!item.read && <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
+                    </div>
                   </div>
                   <span className="text-gray-500 text-xs">{item.time || 'Now'}</span>
                 </motion.div>
