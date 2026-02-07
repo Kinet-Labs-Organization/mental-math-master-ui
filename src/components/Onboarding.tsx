@@ -74,17 +74,17 @@ export function Onboarding() {
           {step === 1 && (
             <motion.div
               key="step1"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
             >
               {/* Logo */}
               <div className="text-center mb-12">
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                  transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
                 >
                   {/* <Logo size="xl" variant="full" animated /> */}
                   {/* <Sparkles className="w-10 h-10 text-white" /> */}
@@ -97,7 +97,7 @@ export function Onboarding() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
+                  transition={{ delay: 0.2 }}
                   className="text-gray-400 text-lg mt-3"
                 >
                   Let's start with a quick surprise test
@@ -108,7 +108,7 @@ export function Onboarding() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+                transition={{ delay: 0.3 }}
                 className="bg-white/5 backdrop-blur-xl rounded-3xl p-12 shadow-2xl border border-white/10 text-center"
               >
                 <div className="mb-8">
@@ -145,10 +145,10 @@ export function Onboarding() {
           {step === 2 && (
             <motion.div
               key="step2"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
             >
               <div className="text-center mb-12">
                 <motion.div
@@ -183,7 +183,7 @@ export function Onboarding() {
                 <motion.h1
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.1 }}
                   className={`text-4xl sm:text-5xl mb-3 bg-clip-text text-transparent ${isCorrect
                       ? 'bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400'
                       : 'bg-gradient-to-r from-amber-400 via-orange-400 to-red-400'
@@ -194,7 +194,7 @@ export function Onboarding() {
                 <motion.p
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
+                  transition={{ delay: 0.2 }}
                   className={`text-xl ${isCorrect ? 'text-green-300' : 'text-orange-300'}`}
                 >
                   {isCorrect ? '🎉 Spot on!' : '✨ No worries at all'}
@@ -204,7 +204,7 @@ export function Onboarding() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+                transition={{ delay: 0.3 }}
                 className={`backdrop-blur-xl rounded-3xl p-12 shadow-2xl border relative overflow-hidden ${isCorrect
                     ? 'bg-gradient-to-br from-green-500/10 via-emerald-500/5 to-transparent border-green-500/20'
                     : 'bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-transparent border-orange-500/20'
@@ -272,10 +272,10 @@ export function Onboarding() {
           {step === 3 && (
             <motion.div
               key="step3"
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.5 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
             >
               <div className="text-center mb-8 mt-10">
                 {/* <motion.div
@@ -289,7 +289,7 @@ export function Onboarding() {
                 <motion.h1
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
+                  transition={{ delay: 0.1 }}
                   className="text-4xl sm:text-5xl mb-3 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent"
                 >
                   Your Path to Mastery
@@ -299,7 +299,7 @@ export function Onboarding() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.2 }}
                 className="bg-white/5 backdrop-blur-xl rounded-3xl p-8 sm:p-12 shadow-2xl border border-white/10 space-y-8 relative overflow-hidden"
               >
                 {/* Decorative gradient orbs */}
@@ -311,7 +311,7 @@ export function Onboarding() {
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.3 }}
                     className="flex gap-4 items-start bg-gradient-to-br from-blue-500/10 to-cyan-500/5 rounded-2xl p-5 border border-blue-500/20 hover:border-blue-400/40 transition-all"
                   >
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-400 via-cyan-500 to-teal-400 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
@@ -330,7 +330,7 @@ export function Onboarding() {
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.5 }}
+                    transition={{ delay: 0.4 }}
                     className="flex gap-4 items-start bg-gradient-to-br from-purple-500/10 to-pink-500/5 rounded-2xl p-5 border border-purple-500/20 hover:border-purple-400/40 transition-all"
                   >
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-400 via-fuchsia-500 to-pink-400 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
@@ -348,7 +348,7 @@ export function Onboarding() {
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.6 }}
+                    transition={{ delay: 0.5 }}
                     className="flex gap-4 items-start bg-gradient-to-br from-amber-500/10 to-orange-500/5 rounded-2xl p-5 border border-amber-500/20 hover:border-amber-400/40 transition-all"
                   >
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-amber-400 via-orange-500 to-red-400 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30">
@@ -427,7 +427,7 @@ export function Onboarding() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
+                transition={{ delay: 0.6 }}
                 className="mt-6 text-center text-xs text-gray-500"
               >
                 <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
