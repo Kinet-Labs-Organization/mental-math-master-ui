@@ -3,7 +3,9 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Plus, Minus, Check, X, Divide } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../store/useGameStore';
+import { useUserStore } from '../store/useUserStore';
 import type { IGame } from '../store/useGameStore';
+import tickSoundAsset from '../assets/sound.mp3';
 
 type GameState = 'ready' | 'playing' | 'input' | 'result';
 
@@ -20,9 +22,15 @@ export function FlashGame() {
   const [userAnswer, setUserAnswer] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
+  const [tickSound] = useState(() => new Audio(tickSoundAsset));
 
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
+  const { settingsData, fetchSettingsData } = useUserStore();
+
+  useEffect(() => {
+    fetchSettingsData();
+  }, []);
 
   const generateNumbers = () => {
     const nums = JSON.parse(JSON.stringify(game));
@@ -54,6 +62,12 @@ export function FlashGame() {
   };
 
   const startGame = () => {
+    // Unlock audio context on user interaction
+    tickSound.play().then(() => {
+      tickSound.pause();
+      tickSound.currentTime = 0;
+    }).catch(() => {});
+
     fetchGame();
   }
 
@@ -74,6 +88,11 @@ export function FlashGame() {
 
   useEffect(() => {
     if (gameState === 'playing' && currentIndex < numbers.length) {
+      if (settingsData?.soundEffect !== false) {
+        tickSound.currentTime = 0;
+        tickSound.play().catch(e => console.error("Error playing sound:", e));
+      }
+
       const timer = setTimeout(
         () => {
           setCurrentIndex(currentIndex + 1);
@@ -87,7 +106,7 @@ export function FlashGame() {
         setGameState('input');
       }, 500);
     }
-  }, [gameState, currentIndex, numbers.length, selectedGame]);
+  }, [gameState, currentIndex, numbers.length, selectedGame, settingsData, tickSound]);
 
   const currentNumber = numbers[currentIndex];
   const progress = ((currentIndex + 1) / numbers.length) * 100;
