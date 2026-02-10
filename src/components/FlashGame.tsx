@@ -90,7 +90,7 @@ export function FlashGame() {
   }, [gameState, currentIndex, numbers.length, selectedGame]);
 
   const currentNumber = numbers[currentIndex];
-  const progress = (currentIndex / numbers.length) * 100;
+  const progress = ((currentIndex + 1) / numbers.length) * 100;
 
   const onBack = () => {
     setGame(null);
@@ -183,7 +183,7 @@ export function FlashGame() {
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
-                      className={`h-full bg-gradient-to-r`}
+                      className={`h-full bg-gradient-to-r from-purple-500 to-pink-600`}
                       transition={{ duration: 0.3 }}
                     ></motion.div>
                   </div>
@@ -197,7 +197,7 @@ export function FlashGame() {
                     transition={{ type: 'spring', damping: 20 }}
                     className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 shadow-2xl"
                   >
-                    <div className="flex items-center justify-center gap-6 mb-6">
+                    <div className="flex items-center justify-center gap-6 mb-6 min-h-16">
                       {currentNumber.operation === 'add' && (
                         <div className="w-16 h-16 bg-green-500/20 border border-green-500/30 rounded-2xl flex items-center justify-center">
                           <Plus className="w-8 h-8 text-green-400" />

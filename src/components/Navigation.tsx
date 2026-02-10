@@ -19,7 +19,6 @@ const navItems = [
 ];
 
 export function Navigation({ activeSection, onSectionChange }: NavigationProps) {
-  console.log('Active Section:', activeSection);
   return (
     <nav className="sticky-footer bg-white/5 backdrop-blur-xl border-t border-white/10 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
