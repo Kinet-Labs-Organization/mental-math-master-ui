@@ -8,7 +8,7 @@ import { useConfigStore } from './store/useConfigStore';
 import { Login } from './components/Login';
 import { Onboarding } from './components/Onboarding';
 import { supabase } from './libs/supabaseClient';
-import api from './utils/api';
+import api, { setNavigate } from './utils/api';
 import ApiURL from './utils/apiurl';
 import { Purchases } from "@revenuecat/purchases-js";
 import { GlobalToast } from './components/GlobalToast';
@@ -20,6 +20,10 @@ export default function App() {
     useUserStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
+
+  useEffect(() => {
+    setNavigate(navigate);
+  }, [navigate]);
 
   const pathToSection = (pathname: string): NavSection => {
     switch (pathname) {

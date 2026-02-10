@@ -8,6 +8,12 @@ import { useUserStore } from "../store/useUserStore";
 import config from "../config/env";
 import { useToastStore } from '../store/useToastStore';
 
+let navigate: ((path: string) => void) | null = null;
+
+export const setNavigate = (fn: (path: string) => void) => {
+  navigate = fn;
+};
+
 // ============================================
 // Safe helper to get auth token
 // ============================================
@@ -81,68 +87,8 @@ api.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    const {showToast} = useToastStore.getState();
-    // Handle different error scenarios
-    if(error.response?.userMessage) {
-      showToast(error.response.userMessage, 'error');
-    }
-    if (error.response) {
-      // Server responded with error status
-      const status = error.response.status;
-
-      switch (status) {
-        case 401: {
-          // Unauthorized - clear user data and redirect to login
-          console.warn("Unauthorized access - logging out");
-          showToast('Unauthorized access', 'error');
-          const { removeAuthenticatedUser } = useUserStore.getState();
-          removeAuthenticatedUser();
-
-          // Optional: redirect to login page
-          if (
-            typeof window !== "undefined" &&
-            window.location.pathname !== "/login"
-          ) {
-            window.location.href = "/login";
-          }
-          break;
-        }
-
-        case 403:
-          // Forbidden
-          console.error("Access forbidden");
-          showToast('Access forbidden', 'error');
-          break;
-
-        case 404:
-          // Not found
-          console.error("Resource not found");
-          showToast('Something went wrong. Try again later', 'error');
-          break;
-
-        case 500:
-        case 502:
-        case 503:
-        case 504:
-          // Server errors
-          console.error("Server error:", error.response.data);
-          showToast('Something went wrong. Try again later', 'error');
-          break;
-
-        default:
-          console.error("API error:", error.response.data);
-          showToast('Something went wrong. Try again later', 'error');
-      }
-    } else if (error.request) {
-      // Request was made but no response received (network error)
-      console.error("Network error - no response received:", error.message);
-      showToast('Something went wrong. Try again later', 'error');
-    } else {
-      // Something else happened
-      console.error("Request setup error:", error.message);
-      showToast('Something went wrong. Try again later', 'error');
-    }
-
+    // Handle error response to show proper message or take action
+    appActionOnErrorResponse(error);
     return Promise.reject(error);
   },
 );
@@ -218,5 +164,84 @@ export const apiClient = {
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
     http<T>({ ...config, method: "DELETE", url }),
 };
+
+const appActionOnErrorResponse = (error: any) => {
+  const { showToast } = useToastStore.getState();
+  // Handle different error scenarios
+  if (error.response?.data?.appMessage) {
+    showToast(error.response?.data?.appMessage, 'info');
+    appActions(error.response?.data?.appAction);
+  }
+  else if (error.response) {
+    // Server responded with error status
+    const status = error.response.status;
+
+    switch (status) {
+      case 401: {
+        // Unauthorized - clear user data and redirect to login
+        // console.warn("Unauthorized access - logging out");
+        showToast('Unauthorized access', 'error');
+        const { removeAuthenticatedUser } = useUserStore.getState();
+        removeAuthenticatedUser();
+
+        // Optional: redirect to login page
+        if (
+          typeof window !== "undefined" &&
+          window.location.pathname !== "/login"
+        ) {
+          window.location.href = "/login";
+        }
+        break;
+      }
+
+      case 403:
+        // Forbidden
+        // console.error("Access forbidden");
+        showToast('Access forbidden', 'error');
+        break;
+
+      case 404:
+        // Not found
+        // console.error("Resource not found");
+        showToast('Something went wrong. Try again later', 'error');
+        break;
+
+      case 500:
+      case 502:
+      case 503:
+      case 504:
+        // Server errors
+        // console.error("Server error:", error.response.data);
+        showToast('Something went wrong. Try again later', 'error');
+        break;
+
+      default:
+        // console.error("API error:", error.response.data);
+        showToast('Something went wrong. Try again later', 'error');
+    }
+  } else if (error.request) {
+    // Request was made but no response received (network error)
+    // console.error("Network error - no response received:", error.message);
+    showToast('Something went wrong. Try again later', 'error');
+  } else {
+    // Something else happened
+    // console.error("Request setup error:", error.message);
+    showToast('Something went wrong. Try again later', 'error');
+  }
+}
+
+const appActions = (actionCode: string) => {
+  switch (actionCode) {
+    case 'UNSUBSCRIBED_USER': {
+      if (navigate) {
+        navigate('/paywall');
+      } else if (typeof window !== 'undefined' && window.location.pathname !== '/paywall') {
+        window.location.href = '/paywall';
+      }
+      break;
+    }
+    default: break;
+  }
+}
 
 export default api;
