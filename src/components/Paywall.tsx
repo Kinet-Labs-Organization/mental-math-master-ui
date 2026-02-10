@@ -2,8 +2,10 @@ import { motion } from 'motion/react';
 import { Check, Star, Zap, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Purchases } from '@revenuecat/purchases-js';
+import { useNavigate } from 'react-router-dom';
 
 export function Paywall() {
+  const navigate = useNavigate();
   const [offerings, setOfferings] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -14,7 +16,9 @@ export function Paywall() {
     'Track your global leaderboard rank',
   ];
 
-  const onClose = () => { };
+  const onClose = () => {
+    navigate(-1);
+  };
 
   const onSubscribe = async (term: string) => {
     if (!offerings?.current) return;

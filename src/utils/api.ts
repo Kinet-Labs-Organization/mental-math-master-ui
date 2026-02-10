@@ -169,7 +169,6 @@ const appActionOnErrorResponse = (error: any) => {
   const { showToast } = useToastStore.getState();
   // Handle different error scenarios
   if (error.response?.data?.appMessage) {
-    showToast(error.response?.data?.appMessage, 'info');
     appActions(error.response?.data?.appAction);
   }
   else if (error.response) {
@@ -233,6 +232,7 @@ const appActionOnErrorResponse = (error: any) => {
 const appActions = (actionCode: string) => {
   switch (actionCode) {
     case 'UNSUBSCRIBED_USER': {
+      // showToast(error.response?.data?.appMessage, 'info');
       if (navigate) {
         navigate('/paywall');
       } else if (typeof window !== 'undefined' && window.location.pathname !== '/paywall') {
