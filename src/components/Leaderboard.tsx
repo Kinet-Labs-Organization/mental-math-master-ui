@@ -18,7 +18,7 @@ export function Leaderboard() {
   } = useGenericStore();
 
   const {
-    fetchBasicReport, basicReport, basicReportLoading,
+    fetchBasicReport, basicReport,
   } = useReportStore();
 
   useEffect(() => {

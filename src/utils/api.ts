@@ -178,7 +178,7 @@ const appActionOnErrorResponse = (error: any) => {
     switch (status) {
       case 401: {
         // Unauthorized - clear user data and redirect to login
-        // console.warn("Unauthorized access - logging out");
+        console.warn("Unauthorized access - logging out");
         showToast('Unauthorized access', 'error');
         const { removeAuthenticatedUser } = useUserStore.getState();
         removeAuthenticatedUser();

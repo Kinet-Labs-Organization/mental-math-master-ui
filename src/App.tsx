@@ -59,15 +59,15 @@ export default function App() {
 
     const init = async () => {
       try {
-        try {
-          const customerInfo = await purchases.getCustomerInfo();
-          console.log(customerInfo);
-          if (customerInfo.entitlements.active['pro']) {
-            console.log('User has active subscription');
-          }
-        } catch (e) {
-          console.error('Error checking subscription:', e);
-        }
+        // try {
+        //   const customerInfo = await purchases.getCustomerInfo();
+        //   console.log(customerInfo);
+        //   if (customerInfo.entitlements.active['pro']) {
+        //     console.log('User has active subscription');
+        //   }
+        // } catch (e) {
+        //   console.error('Error checking subscription:', e);
+        // }
         UXConfigLogics(location.pathname);
 
         // Check active sessions (await to ensure we capture returned session before clearing loading)
@@ -79,12 +79,12 @@ export default function App() {
           const name = session.user?.user_metadata?.name ?? null;
           const avatar = session.user?.user_metadata?.avatar_url ?? null;
           setAuthenticatedUser({ token, email, name, avatar });
-          if (email || name) {
-            purchases.setAttributes({
-              ...(email && { [ReservedCustomerAttribute.Email]: email }),
-              ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
-            });
-          }
+          // if (email || name) {
+          //   purchases.setAttributes({
+          //     ...(email && { [ReservedCustomerAttribute.Email]: email }),
+          //     ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
+          //   });
+          // }
         } else {
           removeAuthenticatedUser();
         }
@@ -107,12 +107,12 @@ export default function App() {
             const name = newSession.user?.user_metadata?.name ?? null;
             const avatar = newSession.user?.user_metadata?.avatar_url ?? null;
             setAuthenticatedUser({ token, email, name, avatar });
-            if (email || name) {
-              purchases.setAttributes({
-                ...(email && { [ReservedCustomerAttribute.Email]: email }),
-                ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
-              });
-            }
+            // if (email || name) {
+            //   purchases.setAttributes({
+            //     ...(email && { [ReservedCustomerAttribute.Email]: email }),
+            //     ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
+            //   });
+            // }
           } else {
             removeAuthenticatedUser();
           }

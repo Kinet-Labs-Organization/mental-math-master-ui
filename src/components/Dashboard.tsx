@@ -1,7 +1,7 @@
 'use client';
 import { GameCard } from './GameCard';
 import { CustomPractice } from './CustomPractice';
-import { Trophy, Sparkles, FileText, Plus, Minus, X, Divide, Zap, Target } from 'lucide-react';
+import { Trophy, Sparkles, Plus, Minus, X, Divide, Zap, Target } from 'lucide-react';
 import type { IGame } from '../store/useGameStore';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +37,6 @@ export function Dashboard() {
       : 'ADD_SUB_L1'
   );
 
-  const onRegularGame = () => navigate('/regulargame');
 
   useEffect(() => {
     fetchBasicReport();
