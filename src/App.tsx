@@ -44,15 +44,15 @@ export default function App() {
 
   useEffect(() => {
     let subscription: any;
-    let appUserId = localStorage.getItem('rc_app_user_id');
-    if (!appUserId) {
-      appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
-      localStorage.setItem('rc_app_user_id', appUserId);
-    }
+    // let appUserId = localStorage.getItem('rc_app_user_id');
+    // if (!appUserId) {
+    //   appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
+    //   localStorage.setItem('rc_app_user_id', appUserId);
+    // }
     // console.log('Purchases.generateRevenueCatAnonymousAppUserId() - invoked : from App.tsx');
     // console.log(appUserId);
 
-    const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks", appUserId: appUserId, });
+    // const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks", appUserId: appUserId, });
     // const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks" });
     // console.log('Purchases.configure(...) - invoked : from App.tsx');
     // console.log(purchases);
@@ -87,6 +87,7 @@ export default function App() {
           // }
         } else {
           removeAuthenticatedUser();
+          await supabase.auth.signOut();
         }
 
         // Listen for auth changes and mirror them to the app store
@@ -115,6 +116,7 @@ export default function App() {
             // }
           } else {
             removeAuthenticatedUser();
+            await supabase.auth.signOut();
           }
         });
         subscription = resp?.data?.subscription;

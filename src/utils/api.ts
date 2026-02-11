@@ -7,6 +7,7 @@ import CONSTANTS from "./constants";
 import { useUserStore } from "../store/useUserStore";
 import config from "../config/env";
 import { useToastStore } from '../store/useToastStore';
+import { supabase } from "../libs/supabaseClient";
 
 let navigate: ((path: string) => void) | null = null;
 
@@ -165,7 +166,7 @@ export const apiClient = {
     http<T>({ ...config, method: "DELETE", url }),
 };
 
-const appActionOnErrorResponse = (error: any) => {
+const appActionOnErrorResponse = async (error: any) => {
   const { showToast } = useToastStore.getState();
   // Handle different error scenarios
   if (error.response?.data?.appMessage) {
@@ -182,12 +183,13 @@ const appActionOnErrorResponse = (error: any) => {
         showToast('Unauthorized access', 'error');
         const { removeAuthenticatedUser } = useUserStore.getState();
         removeAuthenticatedUser();
+        await supabase.auth.signOut();
 
-        // Optional: redirect to login page
+        // Optional: it is fail safe, never triggers, yet placed
         if (
           typeof window !== "undefined" &&
           window.location.pathname !== "/login"
-        ) {
+        ) {          
           window.location.href = "/login";
         }
         break;

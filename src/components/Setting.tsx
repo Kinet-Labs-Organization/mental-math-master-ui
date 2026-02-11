@@ -74,8 +74,8 @@ export function Setting() {
   ];
 
   const handleSignOut = async () => {
-    await supabaseSignOut();
     removeAuthenticatedUser();
+    await supabaseSignOut();
   };
 
   const supabaseSignOut = async () => {

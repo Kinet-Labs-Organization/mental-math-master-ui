@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import { useUserStore } from '../store/useUserStore';
+import { supabase } from '../libs/supabaseClient';
 
 interface Props {
   children: ReactNode;
@@ -9,8 +10,9 @@ interface Props {
 function ErrorFallback({ error, resetErrorBoundary }: any) {
   const { removeAuthenticatedUser } = useUserStore.getState();
 
-  const handleGotohome = () => {
+  const handleGotohome = async () => {
     removeAuthenticatedUser();
+    await supabase.auth.signOut();
     window.location.href = '/login';
   };
 
