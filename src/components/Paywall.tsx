@@ -3,11 +3,13 @@ import { Check, Star, Zap, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Purchases } from '@revenuecat/purchases-js';
 import { useNavigate } from 'react-router-dom';
+import { useUserStore } from '../store/useUserStore';
 
 export function Paywall() {
   const navigate = useNavigate();
   const [offerings, setOfferings] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
+  const { authenticatedUser } = useUserStore();
 
   const features = [
     'Unlock all planetary tournaments',
@@ -21,12 +23,14 @@ export function Paywall() {
   };
 
   const onSubscribe = async (term: string) => {
+    if (!authenticatedUser?.email) {
+      alert('Please log in to subscribe.');
+      return;
+    }
     if (!offerings?.current) return;
     
     setLoading(true);
     try {
-      const purchases = Purchases.getSharedInstance();
-      
       // Find the package based on the term (yearly or monthly)
       const packageToSubscribe = offerings.current.availablePackages.find(
         (pkg:any) => pkg.identifier.toLowerCase().includes(term.toLowerCase())
@@ -37,8 +41,14 @@ export function Paywall() {
         return;
       }
 
+      const purchases = Purchases.getSharedInstance();
+      console.log('Purchases.getSharedInstance() - invoked : from onSubscribe()');
+      console.log(purchases);
+      
       // Purchase the package
       const { customerInfo } = await purchases.purchase( {rcPackage: packageToSubscribe });
+      console.error('purchases.purchase( {rcPackage: packageToSubscribe }); - invoked');
+      console.log(purchases);
       console.log('Purchase successful:', customerInfo);
       
       // Check if user has active entitlement
@@ -63,8 +73,14 @@ export function Paywall() {
     const init = async () => {
       try {
         const purchases = Purchases.getSharedInstance();
+        console.log('Purchases.getSharedInstance() - invoked : from init()');
+        console.log(purchases);
+        
+        // Fetch offerings
         const fetchedOfferings = await purchases.getOfferings();
-        console.log('Offerings:', fetchedOfferings);
+        console.log('purchases.getOfferings()- invoked : from init()');
+        console.log(fetchedOfferings);
+
         setOfferings(fetchedOfferings);
 
         if (!fetchedOfferings.current) {

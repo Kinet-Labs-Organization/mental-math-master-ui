@@ -10,7 +10,7 @@ import { Onboarding } from './components/Onboarding';
 import { supabase } from './libs/supabaseClient';
 import api, { setNavigate } from './utils/api';
 import ApiURL from './utils/apiurl';
-import { Purchases } from "@revenuecat/purchases-js";
+import { Purchases, ReservedCustomerAttribute } from "@revenuecat/purchases-js";
 import { GlobalToast } from './components/GlobalToast';
 
 export default function App() {
@@ -44,11 +44,30 @@ export default function App() {
 
   useEffect(() => {
     let subscription: any;
-    const appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
+    let appUserId = localStorage.getItem('rc_app_user_id');
+    if (!appUserId) {
+      appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
+      localStorage.setItem('rc_app_user_id', appUserId);
+    }
+    // console.log('Purchases.generateRevenueCatAnonymousAppUserId() - invoked : from App.tsx');
+    // console.log(appUserId);
+
     const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks", appUserId: appUserId, });
+    // const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks" });
+    // console.log('Purchases.configure(...) - invoked : from App.tsx');
+    // console.log(purchases);
 
     const init = async () => {
       try {
+        try {
+          const customerInfo = await purchases.getCustomerInfo();
+          console.log(customerInfo);
+          if (customerInfo.entitlements.active['pro']) {
+            console.log('User has active subscription');
+          }
+        } catch (e) {
+          console.error('Error checking subscription:', e);
+        }
         UXConfigLogics(location.pathname);
 
         // Check active sessions (await to ensure we capture returned session before clearing loading)
@@ -60,6 +79,12 @@ export default function App() {
           const name = session.user?.user_metadata?.name ?? null;
           const avatar = session.user?.user_metadata?.avatar_url ?? null;
           setAuthenticatedUser({ token, email, name, avatar });
+          if (email || name) {
+            purchases.setAttributes({
+              ...(email && { [ReservedCustomerAttribute.Email]: email }),
+              ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
+            });
+          }
         } else {
           removeAuthenticatedUser();
         }
@@ -82,6 +107,12 @@ export default function App() {
             const name = newSession.user?.user_metadata?.name ?? null;
             const avatar = newSession.user?.user_metadata?.avatar_url ?? null;
             setAuthenticatedUser({ token, email, name, avatar });
+            if (email || name) {
+              purchases.setAttributes({
+                ...(email && { [ReservedCustomerAttribute.Email]: email }),
+                ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
+              });
+            }
           } else {
             removeAuthenticatedUser();
           }
