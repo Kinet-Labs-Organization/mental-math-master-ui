@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Plus, Minus, Divide, X } from 'lucide-react';
+import config from '../config/env';
 
 interface TournamentCardProps {
   tournament: any;
@@ -30,7 +31,7 @@ export function GameCard({ tournament, onSelect }: TournamentCardProps) {
           </div>
           <ChevronRight className="w-6 h-6 text-gray-400 group-hover:text-white transition-all duration-300" />
         </div> */}
-        <img src='https://mxfmj8wrrjv5and6.public.blob.vercel-storage.com/31dbed13-9148-4635-9b09-f6b27a02c84f.png' className={`w-16 h-16 flex items-center justify-center text-3xl shadow-lg mb-4`} />
+        <img src={`${config.imageBaseURL}/${tournament.icon}.png`} className={`w-16 h-16 flex items-center justify-center text-3xl shadow-lg mb-4`} />
 
         {/* Tournament Name */}
         <h3 className="text-2xl mb-2 text-white">{tournament.name}</h3>

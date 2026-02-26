@@ -6,6 +6,7 @@ import { useGameStore } from '../store/useGameStore';
 import { useUserStore } from '../store/useUserStore';
 import type { IGame } from '../store/useGameStore';
 import tickSoundAsset from '../assets/sound.mp3';
+import config from '../config/env';
 
 type GameState = 'ready' | 'playing' | 'input' | 'result';
 
@@ -138,7 +139,7 @@ export function FlashGame() {
                 <div
                   className={`w-10 h-10 bg-gradient-to-br rounded-xl flex items-center justify-center text-xl`}
                 >
-                  <img src={(selectedGame as IGame).icon} />
+                  <img src={`${config.imageBaseURL}/${(selectedGame as IGame).icon}.png`} />
                 </div>
                 <div>
                   <h2 className="text-lg text-white">{(selectedGame as IGame).name}</h2>
@@ -170,7 +171,7 @@ export function FlashGame() {
                   <div
                     className={`w-32 h-32 bg-gradient-to-br rounded-full flex items-center justify-center text-6xl mx-auto mb-8 shadow-2xl`}
                   >
-                    <img src={(selectedGame as IGame).icon} />
+                    <img src={`${config.imageBaseURL}/${(selectedGame as IGame).icon}.png`} />
                   </div>
                   <h2 className="text-3xl mb-4 text-white">Ready to Train?</h2>
                   <p className="text-gray-400 mb-8 max-w-md mx-auto">

@@ -6,6 +6,7 @@ interface Config {
   apiBaseURL: string;
   port: number;
   emailLogin: boolean;
+  imageBaseURL:string;
 }
 
 const config: Config = {
@@ -14,6 +15,7 @@ const config: Config = {
   apiBaseURL: import.meta.env.VITE_API_BASE_URL,
   port: Number(import.meta.env.VITE_PORT),
   emailLogin: import.meta.env.VITE_EMAIL_LOGIN === "true" ? true : false,
+  imageBaseURL: import.meta.env.VITE_IMAGE_BASE_URL
 };
 
 // Validate required env vars
@@ -24,6 +26,7 @@ const validateConfig = () => {
     "VITE_API_BASE_URL",
     "VITE_PORT",
     "VITE_EMAIL_LOGIN",
+    "VITE_IMAGE_BASE_URL"
   ];
 
   const missing = required.filter((key) => !import.meta.env[key]);
