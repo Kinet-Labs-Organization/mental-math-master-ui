@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Plus, Minus, Check, X, Divide } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ export function FlashGame() {
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
   const [tickSound] = useState(() => new Audio(tickSoundAsset));
+  const [timer, setTimer] = useState(5);
 
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
@@ -78,6 +79,11 @@ export function FlashGame() {
     setGameState('result');
   };
 
+  const savedValidate = useRef(handleValidate);
+  useEffect(() => {
+    savedValidate.current = handleValidate;
+  });
+
   const handlePlayAgain = () => {
     setGameState('ready');
   };
@@ -86,6 +92,26 @@ export function FlashGame() {
     if (!game) return;
     generateNumbers();
   }, [game]);
+
+  useEffect(() => {
+    if (gameState === 'input') {
+        setTimer(5);
+        const interval = setInterval(() => {
+            setTimer(t => t - 1);
+        }, 1000);
+
+        const timeout = setTimeout(() => {
+            if (savedValidate.current) {
+                savedValidate.current();
+            }
+        }, 5000);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timeout);
+        };
+    }
+  }, [gameState]);
 
   useEffect(() => {
     if (gameState === 'playing' && currentIndex < numbers.length) {
@@ -261,6 +287,37 @@ export function FlashGame() {
                   className="text-center"
                 >
                   <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-12 shadow-2xl max-w-md mx-auto">
+                    <div className="relative w-32 h-32 mx-auto mb-6">
+                      <svg className="w-full h-full" viewBox="0 0 100 100">
+                        <circle
+                          className="text-white/10"
+                          strokeWidth="7"
+                          stroke="currentColor"
+                          fill="transparent"
+                          r={40}
+                          cx="50"
+                          cy="50"
+                        />
+                        <motion.circle
+                          className="text-purple-500"
+                          strokeWidth="7"
+                          strokeDasharray={2 * Math.PI * 40}
+                          strokeLinecap="round"
+                          stroke="currentColor"
+                          fill="transparent"
+                          r={40}
+                          cx="50"
+                          cy="50"
+                          style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+                          initial={{ strokeDashoffset: 0 }}
+                          animate={{ strokeDashoffset: 2 * Math.PI * 40 }}
+                          transition={{ duration: 5, ease: 'linear' }}
+                        />
+                      </svg>
+                      <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
+                          <span className="text-4xl text-white font-bold tabular-nums">{timer}</span>
+                      </div>
+                    </div>
                     <h2 className="text-3xl mb-3 text-white">What's the answer?</h2>
                     <p className="text-gray-400 mb-8">Enter your calculated result</p>
 
