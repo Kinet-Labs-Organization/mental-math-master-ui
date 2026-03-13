@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HandHelping, Trash, X, ChevronDown } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
-import { supabase } from '../libs/supabaseClient';
 import { useGenericStore } from '../store/useGenericStore';
 import { useToastStore } from '../store/useToastStore';
+import { signOutFromFirebase } from '../libs/firebaseClient';
 
 export function Setting() {
   const [soundEnabled, setSoundEnabled] = useState(false);
@@ -75,12 +75,8 @@ export function Setting() {
 
   const handleSignOut = async () => {
     removeAuthenticatedUser();
-    await supabaseSignOut();
+    await signOutFromFirebase();
   };
-
-  const supabaseSignOut = async () => {
-    await supabase.auth.signOut()
-  }
 
   const handleClearData = () => {
     setShowClearDataPopup(false);

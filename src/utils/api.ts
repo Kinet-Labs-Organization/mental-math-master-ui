@@ -7,7 +7,7 @@ import CONSTANTS from "./constants";
 import { useUserStore } from "../store/useUserStore";
 import config from "../config/env";
 import { useToastStore } from '../store/useToastStore';
-import { supabase } from "../libs/supabaseClient";
+import { signOutFromFirebase } from "../libs/firebaseClient";
 
 let navigate: ((path: string) => void) | null = null;
 
@@ -183,7 +183,7 @@ const appActionOnErrorResponse = async (error: any) => {
         showToast('Unauthorized access', 'error');
         const { removeAuthenticatedUser } = useUserStore.getState();
         removeAuthenticatedUser();
-        await supabase.auth.signOut();
+        await signOutFromFirebase();
 
         // Optional: it is fail safe, never triggers, yet placed
         if (

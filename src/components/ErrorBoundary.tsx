@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import { useUserStore } from '../store/useUserStore';
-import { supabase } from '../libs/supabaseClient';
+import { signOutFromFirebase } from '../libs/firebaseClient';
 
 interface Props {
   children: ReactNode;
@@ -12,7 +12,7 @@ function ErrorFallback({ error, resetErrorBoundary }: any) {
 
   const handleGotohome = async () => {
     removeAuthenticatedUser();
-    await supabase.auth.signOut();
+    await signOutFromFirebase();
     window.location.href = '/login';
   };
 

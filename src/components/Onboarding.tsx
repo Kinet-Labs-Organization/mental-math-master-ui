@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
-import { supabase } from '../libs/supabaseClient';
+import { signInWithGoogle } from '../libs/firebaseClient';
 
 export function Onboarding() {
   const [step, setStep] = useState(1);
@@ -25,10 +25,8 @@ export function Onboarding() {
 
   const handleGoogleSignIn = async () => {
     setOnboardingFlag();
-    await supabase.auth.signInWithOAuth({
-      provider: 'google'
-    });
-  }
+    await signInWithGoogle();
+  };
 
   const handleSubmitAnswer = (e: React.FormEvent) => {
     e.preventDefault();

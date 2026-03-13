@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowRight, Apple } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useUserStore } from '../store/useUserStore';
-import { supabase } from '../libs/supabaseClient';
+import { signInWithGoogle } from '../libs/firebaseClient';
 import config from '../config/env';
 
 export function Login() {
@@ -15,10 +15,8 @@ export function Login() {
   const showEmailLogin = config.emailLogin;
 
   const handleGoogleSignIn = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google'
-    });
-  }
+    await signInWithGoogle();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

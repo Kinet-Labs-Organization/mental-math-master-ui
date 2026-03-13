@@ -14,6 +14,14 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     port: env.VITE_PORT ? Number(env.VITE_PORT) : 3000,
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    },
+  },
+  preview: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    },
   },
   resolve: {
     alias: {

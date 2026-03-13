@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { getRedirectResult, onAuthStateChanged } from 'firebase/auth';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { AppRoutes } from './routes';
 import { Navigation, type NavSection } from './components/Navigation';
@@ -7,7 +8,8 @@ import { useUserStore } from './store/useUserStore';
 import { useConfigStore } from './store/useConfigStore';
 import { Login } from './components/Login';
 import { Onboarding } from './components/Onboarding';
-import { supabase } from './libs/supabaseClient';
+import { firebaseAuth, signOutFromFirebase } from './libs/firebaseClient';
+import config from './config/env';
 import api, { setNavigate } from './utils/api';
 import ApiURL from './utils/apiurl';
 import { Purchases, ReservedCustomerAttribute } from "@revenuecat/purchases-js";
@@ -43,7 +45,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    let subscription: any;
+    let unsubscribe: (() => void) | undefined;
     // let appUserId = localStorage.getItem('rc_app_user_id');
     // if (!appUserId) {
     //   appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
@@ -69,61 +71,48 @@ export default function App() {
         //   console.error('Error checking subscription:', e);
         // }
         UXConfigLogics(location.pathname);
-
-        // Check active sessions (await to ensure we capture returned session before clearing loading)
-        const { data } = await supabase.auth.getSession();
-        const session = data.session;
-        if (session) {
-          const token = session.access_token ?? null;
-          const email = session.user?.email ?? null;
-          const name = session.user?.user_metadata?.name ?? null;
-          const avatar = session.user?.user_metadata?.avatar_url ?? null;
-          setAuthenticatedUser({ token, email, name, avatar });
-          // if (email || name) {
-          //   purchases.setAttributes({
-          //     ...(email && { [ReservedCustomerAttribute.Email]: email }),
-          //     ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
-          //   });
-          // }
-        } else {
-          removeAuthenticatedUser();
-          await supabase.auth.signOut();
+        console.log('Firebase runtime config:', {
+          origin: window.location.origin,
+          authDomain: config.firebaseAuthDomain,
+          projectId: config.firebaseProjectId,
+          apiKeyPreview: config.firebaseApiKey?.slice(0, 8),
+        });
+        try {
+          const redirectResult = await getRedirectResult(firebaseAuth);
+          console.log('Firebase redirect result:', redirectResult);
+        } catch (error) {
+          console.error('Firebase redirect result error:', error);
         }
 
-        // Listen for auth changes and mirror them to the app store
-        const resp: any = supabase.auth.onAuthStateChange(async (_event: any, newSession: any) => {
-          if (newSession?.access_token) {
-            // user sync code starts
-            if (!newSession?.user?.user_metadata?.onboarding_completed) {
-              const userSyncResult = await userSync(newSession?.user?.user_metadata);
-              if (userSyncResult) {
-                await supabase.auth.updateUser({ data: { onboarding_completed: true } });
-              } else {
-                console.log('user sync failed');
-              }
-            }
-            // user sync code ends
-            const token = newSession.access_token ?? null;
-            const email = newSession.user?.email ?? null;
-            const name = newSession.user?.user_metadata?.name ?? null;
-            const avatar = newSession.user?.user_metadata?.avatar_url ?? null;
-            setAuthenticatedUser({ token, email, name, avatar });
-            // if (email || name) {
-            //   purchases.setAttributes({
-            //     ...(email && { [ReservedCustomerAttribute.Email]: email }),
-            //     ...(name && { [ReservedCustomerAttribute.DisplayName]: name }),
-            //   });
-            // }
-          } else {
+        unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
+          console.log('onAuthStateChanged fired:', firebaseUser);
+          if (!firebaseUser) {
             removeAuthenticatedUser();
-            await supabase.auth.signOut();
+            setIsAuthLoading(false);
+            return;
+          }
+
+          try {
+            console.log('Firebase auth user:', firebaseUser);
+            const token = await firebaseUser.getIdToken();
+            const email = firebaseUser.email ?? null;
+            const name = firebaseUser.displayName ?? null;
+            const avatar = firebaseUser.photoURL ?? null;
+            setAuthenticatedUser({ token, email, name, avatar });
+          } catch (error) {
+            console.error('Firebase auth processing error:', error);
+            removeAuthenticatedUser();
+            await signOutFromFirebase();
+          } finally {
+            setIsAuthLoading(false);
           }
         });
-        subscription = resp?.data?.subscription;
       } catch (err) {
-        // ignore
+        console.error('Firebase auth init error:', err);
       } finally {
-        setIsAuthLoading(false);
+        if (!unsubscribe) {
+          setIsAuthLoading(false);
+        }
       }
     };
 
@@ -131,7 +120,7 @@ export default function App() {
 
     return () => {
       try {
-        subscription?.unsubscribe();
+        unsubscribe?.();
       } catch (e) {
         // ignore
       }
