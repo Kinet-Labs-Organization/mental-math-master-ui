@@ -7,7 +7,7 @@ const ApiURL = {
     fetchGameLevels: `game/gameLevels`,
     fetchGame: `game/fetchGame`,
     fetchCustomGame: `game/fetchCustomGame`,
-    saveFlashGame: `game/saveFlashGame`,
+    saveGame: `game/saveGame`,
   },
   user: {
     userSync: `user/userSync`,

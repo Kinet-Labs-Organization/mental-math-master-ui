@@ -85,7 +85,7 @@ export function FlashGame() {
 
     setIsCorrect(answerIsCorrect);
     setGameState('result');
-    void saveFlashGame(answerIsCorrect);
+    void saveGame(answerIsCorrect);
   };
 
   const savedValidate = useRef(handleValidate);
@@ -97,7 +97,7 @@ export function FlashGame() {
     setGameState('ready');
   };
 
-  const saveFlashGame = async (answerIsCorrect: boolean) => {
+  const saveGame = async (answerIsCorrect: boolean) => {
     if (!selectedGame || numbers.length === 0 || hasSavedResultRef.current) {
       return;
     }
@@ -105,7 +105,7 @@ export function FlashGame() {
     hasSavedResultRef.current = true;
 
     try {
-      await api.post(ApiURL.game.saveFlashGame, {
+      await api.post(ApiURL.game.saveGame, {
         gameId: (selectedGame as IGame).id,
         gameName: (selectedGame as IGame).name,
         gameMode: 'flash',

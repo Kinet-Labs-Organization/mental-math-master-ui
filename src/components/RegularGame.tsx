@@ -170,7 +170,7 @@ export function RegularGame() {
     setIsSavingGame(true);
 
     try {
-      await api.post(ApiURL.game.saveFlashGame, {
+      await api.post(ApiURL.game.saveGame, {
         gameId: (selectedGame as IGame).id,
         gameName: (selectedGame as IGame).name,
         gameMode: 'regular',
@@ -340,7 +340,7 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
                         <div className="text-right">
                           <p className="text-gray-400 text-sm">Your answer</p>
                           <p className={`${isCorrect(q.id) ? 'text-green-400' : 'text-red-400'}`}>
-                            {answers[q.id] || 'Not answered'}
+                            {answers[q.id] || 'No answer'}
                           </p>
                           {!isCorrect(q.id) && (
                             <p className="text-gray-400 text-sm mt-1">Correct: {q.answer}</p>
