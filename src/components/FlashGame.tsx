@@ -85,11 +85,7 @@ export function FlashGame() {
 
     setIsCorrect(answerIsCorrect);
     setGameState('result');
-    void saveFlashReport({
-      parsedAnswer,
-      answerIsCorrect,
-      normalizedAnswer,
-    });
+    void saveFlashGame(answerIsCorrect);
   };
 
   const savedValidate = useRef(handleValidate);
@@ -101,15 +97,7 @@ export function FlashGame() {
     setGameState('ready');
   };
 
-  const saveFlashReport = async ({
-    parsedAnswer,
-    answerIsCorrect,
-    normalizedAnswer,
-  }: {
-    parsedAnswer: number | null;
-    answerIsCorrect: boolean;
-    normalizedAnswer: string;
-  }) => {
+  const saveFlashGame = async (answerIsCorrect: boolean) => {
     if (!selectedGame || numbers.length === 0 || hasSavedResultRef.current) {
       return;
     }
@@ -117,33 +105,17 @@ export function FlashGame() {
     hasSavedResultRef.current = true;
 
     try {
-      await api.post(ApiURL.game.saveFlashReport, {
+      await api.post(ApiURL.game.saveFlashGame, {
         gameId: (selectedGame as IGame).id,
         gameName: (selectedGame as IGame).name,
         gameMode: 'flash',
-        selectedGame: {
-          id: (selectedGame as IGame).id,
-          name: (selectedGame as IGame).name,
-          digitCount: (selectedGame as IGame).digitCount,
-          numberCount: (selectedGame as IGame).numberCount,
-          delay: (selectedGame as IGame).delay,
-          operations: (selectedGame as IGame).operations,
-          icon: (selectedGame as IGame).icon,
-        },
-        numbers: numbers.map(item => ({
-          value: item.value,
-          operation: item.operation,
-        })),
-        correctAnswer,
-        userAnswer: normalizedAnswer,
-        parsedAnswer,
-        isCorrect: answerIsCorrect,
-        outcome: answerIsCorrect ? 'win' : 'lose',
+        correctAnswerGiven: answerIsCorrect ? 1 : 0,
+        wrongAnswerGiven: answerIsCorrect ? 0 : 1,
         answeredAt: new Date().toISOString(),
       });
     } catch (error) {
       hasSavedResultRef.current = false;
-      console.error('Failed to save flash game report:', error);
+      console.error('Failed to save flash game:', error);
     }
   };
 
