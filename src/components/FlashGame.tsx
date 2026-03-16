@@ -7,6 +7,8 @@ import { useUserStore } from '../store/useUserStore';
 import type { IGame } from '../store/useGameStore';
 import tickSoundAsset from '../assets/sound.mp3';
 import config from '../config/env';
+import api from '../utils/api';
+import ApiURL from '../utils/apiurl';
 
 type GameState = 'ready' | 'playing' | 'input' | 'result';
 
@@ -25,6 +27,7 @@ export function FlashGame() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [tickSound] = useState(() => new Audio(tickSoundAsset));
   const [timer, setTimer] = useState(5);
+  const hasSavedResultRef = useRef(false);
 
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
@@ -39,6 +42,7 @@ export function FlashGame() {
     if (!nums || nums.length === 0) {
       return;
     }
+    hasSavedResultRef.current = false;
     // nums[0].operation = 'add'
     // nums[0].operation = '';
     setNumbers(nums);
@@ -74,9 +78,18 @@ export function FlashGame() {
   }
 
   const handleValidate = () => {
-    const answer = parseInt(userAnswer);
-    setIsCorrect(answer === correctAnswer);
+    const normalizedAnswer = userAnswer.trim();
+    const parsedAnswer = normalizedAnswer === '' ? null : Number(normalizedAnswer);
+    const answerIsCorrect =
+      parsedAnswer !== null && Number.isFinite(parsedAnswer) && parsedAnswer === correctAnswer;
+
+    setIsCorrect(answerIsCorrect);
     setGameState('result');
+    void saveFlashReport({
+      parsedAnswer,
+      answerIsCorrect,
+      normalizedAnswer,
+    });
   };
 
   const savedValidate = useRef(handleValidate);
@@ -86,6 +99,52 @@ export function FlashGame() {
 
   const handlePlayAgain = () => {
     setGameState('ready');
+  };
+
+  const saveFlashReport = async ({
+    parsedAnswer,
+    answerIsCorrect,
+    normalizedAnswer,
+  }: {
+    parsedAnswer: number | null;
+    answerIsCorrect: boolean;
+    normalizedAnswer: string;
+  }) => {
+    if (!selectedGame || numbers.length === 0 || hasSavedResultRef.current) {
+      return;
+    }
+
+    hasSavedResultRef.current = true;
+
+    try {
+      await api.post(ApiURL.game.saveFlashReport, {
+        gameId: (selectedGame as IGame).id,
+        gameName: (selectedGame as IGame).name,
+        gameMode: 'flash',
+        selectedGame: {
+          id: (selectedGame as IGame).id,
+          name: (selectedGame as IGame).name,
+          digitCount: (selectedGame as IGame).digitCount,
+          numberCount: (selectedGame as IGame).numberCount,
+          delay: (selectedGame as IGame).delay,
+          operations: (selectedGame as IGame).operations,
+          icon: (selectedGame as IGame).icon,
+        },
+        numbers: numbers.map(item => ({
+          value: item.value,
+          operation: item.operation,
+        })),
+        correctAnswer,
+        userAnswer: normalizedAnswer,
+        parsedAnswer,
+        isCorrect: answerIsCorrect,
+        outcome: answerIsCorrect ? 'win' : 'lose',
+        answeredAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      hasSavedResultRef.current = false;
+      console.error('Failed to save flash game report:', error);
+    }
   };
 
   useEffect(() => {
