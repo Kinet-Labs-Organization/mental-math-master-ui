@@ -29,12 +29,12 @@ export function Dashboard() {
   const [flashGameLevel, setFlashGameLevel] = useState(() => {
     return CONSTANTS.FLASH_GAME_LEVEL_STORAGE_KEY in localStorage
       ? localStorage.getItem(CONSTANTS.FLASH_GAME_LEVEL_STORAGE_KEY) as string
-      : 'ADD_SUB_L1';
+      : 'ADDSUB_L1';
   });
   const [regularGameLevel, setRegularGameLevel] = useState(() =>
     CONSTANTS.REGULAR_GAME_LEVEL_STORAGE_KEY in localStorage
       ? localStorage.getItem(CONSTANTS.REGULAR_GAME_LEVEL_STORAGE_KEY) as string
-      : 'ADD_SUB_L1'
+      : 'ADDSUB_L1'
   );
 
 
@@ -110,9 +110,7 @@ export function Dashboard() {
                 <div className="flex items-center justify-center gap-2 mb-1">
                   <Trophy className="w-5 h-5 text-yellow-500" />
                   <span className="text-2xl text-white">
-                    {
-                      basicReport?.achievements.length
-                    }
+                    {basicReport?.totalSessions ?? 0}
                   </span>
                 </div>
                 <p className="text-xs text-gray-400">Completed</p>
@@ -127,7 +125,7 @@ export function Dashboard() {
                       <SkeletonLoader height={30} width={30} radius={8} />
                     ) : (
                       basicReport?.accuracyRate
-                    )}
+                    )}%
                   </span>
                 </div>
                 <p className="text-xs text-gray-400">Accuracy</p>
@@ -274,7 +272,7 @@ const LevelSelect = ({ onSelectChanged, value }: { onSelectChanged: (value: stri
               Add & Substract
             </Select.Label>
 
-            <SelectItem value="ADD_SUB_L1">
+            <SelectItem value="ADDSUB_L1">
               <div className='flex items-center gap-1.5'>
                 <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
                   <Plus className="h-3" />
@@ -284,7 +282,7 @@ const LevelSelect = ({ onSelectChanged, value }: { onSelectChanged: (value: stri
               </div>
             </SelectItem>
 
-            <SelectItem value="ADD_SUB_L2">
+            <SelectItem value="ADDSUB_L2">
               <div className='flex items-center gap-1.5'>
                 <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
                   <Plus className="h-3" />
@@ -294,7 +292,7 @@ const LevelSelect = ({ onSelectChanged, value }: { onSelectChanged: (value: stri
               </div>
             </SelectItem>
 
-            <SelectItem value="ADD_SUB_L3">
+            <SelectItem value="ADDSUB_L3">
               <div className='flex items-center gap-1.5'>
                 <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
                   <Plus className="h-3" />
@@ -304,7 +302,7 @@ const LevelSelect = ({ onSelectChanged, value }: { onSelectChanged: (value: stri
               </div>
             </SelectItem>
 
-            <SelectItem value="ADD_SUB_L4">
+            <SelectItem value="ADDSUB_L4">
               <div className='flex items-center gap-1.5'>
                 <div className="flex bg-green-500/20 py-1 rounded-full border border-green-500/30 w-12">
                   <Plus className="h-3" />
