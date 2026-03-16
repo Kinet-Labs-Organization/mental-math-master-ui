@@ -6,6 +6,8 @@ import { useGameStore } from '../store/useGameStore';
 import type { IGame } from '../store/useGameStore';
 import { ViewAllQuestionsDialog } from './ViewAllQuestionsDialog';
 import config from '../config/env';
+import api from '../utils/api';
+import ApiURL from '../utils/apiurl';
 
 interface Question {
   id: number;
@@ -23,6 +25,7 @@ export function RegularGame() {
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [score, setScore] = useState(0);
   const [time, setTime] = useState(0);
+  const [isSavingGame, setIsSavingGame] = useState(false);
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
 
@@ -156,6 +159,30 @@ export function RegularGame() {
     });
     setScore(correctCount);
     setGameState('submitted');
+    void saveRegularGame(correctCount);
+  };
+
+  const saveRegularGame = async (correctCount: number) => {
+    if (!selectedGame || isSavingGame) {
+      return;
+    }
+
+    setIsSavingGame(true);
+
+    try {
+      await api.post(ApiURL.game.saveFlashGame, {
+        gameId: (selectedGame as IGame).id,
+        gameName: (selectedGame as IGame).name,
+        gameMode: 'regular',
+        correctAnswerGiven: correctCount,
+        wrongAnswerGiven: questions.length - correctCount,
+        answeredAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to save regular game:', error);
+    } finally {
+      setIsSavingGame(false);
+    }
   };
 
   const isAnswered = (questionId: number) => {
