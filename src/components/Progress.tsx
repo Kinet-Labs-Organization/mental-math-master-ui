@@ -7,6 +7,7 @@ import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import SkeletonLoader from './shared/skeleton-loader';
+import config from '../config/env';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -45,10 +46,11 @@ export function Progress() {
         gameName: activity.gameName,
         gamePlayedAt: formatDate(new Date(activity.gamePlayedAt)) === 0 ? 'Today' : `${formatDate(new Date(activity.gamePlayedAt))} days ago`,
         gameType: activity.gameType,
-        totalQuestions: activity.totalQuestions || null,
-        correctAnswers: activity.correctAnswers || null,
-        correctness: activity.correctness || null,
-        score: activity.gameType === 'regular' ? calculateScore(activity.correctAnswers || 0, activity.totalQuestions || 0) : null,
+        totalQuestions: activity.correctAnswers + activity.wrongAnswers,
+        correctAnswers: activity.correctAnswers,
+        correctness: activity.correctAnswers > activity.wrongAnswers,
+        score: activity.gameType === 'regular' ? activity.score : null,
+        icon: activity.icon,
       };
     });
     const newActivities = fetchedActivities.slice(recentActivity.length);
@@ -259,7 +261,9 @@ export function Progress() {
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                      <span className="text-xl">🪐</span>
+                      <span className="text-xl">
+                        <img src={`${config.imageBaseURL}/${activity.icon}.png`} className='w-[30px]'/>
+                      </span>
                     </div>
                     <div>
                       <div className="text-white">{activity.gameName}</div>
