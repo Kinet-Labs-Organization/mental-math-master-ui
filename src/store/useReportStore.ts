@@ -49,13 +49,18 @@ export const useReportStore = create<any>((set, get) => ({
   },
 
   activities: [],
+  activitiesTotalCount: 0,
   activitiesLoading: false,
   activitiesError: null,
   fetchActivities: async (position: number) => {
     set({ activitiesLoading: true, activitiesError: null });
     try {
       const result = await api.get(`${ApiURL.user.fetchActivities}?position=${position}`);
-      return set({ activities: [...get().activities, ...result.data], activitiesLoading: false });
+      return set({
+        activities: [...get().activities, ...result.data.recentActivities],
+        activitiesTotalCount: result.data.totalCount,
+        activitiesLoading: false
+      });
     } catch {
       return set({
         activitiesLoading: false,

@@ -15,7 +15,7 @@ export function Progress() {
   const {
     basicReport, basicReportLoading, basicReportError, fetchBasicReport,
     progressReport, progressReportLoading, progressReportError, fetchProgressReport,
-    activities, activitiesLoading, activitiesError, fetchActivities
+    activities, activitiesTotalCount, activitiesLoading, activitiesError, fetchActivities
   } = useReportStore();
 
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -24,7 +24,7 @@ export function Progress() {
 
   const fetchMoreData = () => {
     fetchActivities(recentActivity.length);
-    if (activities.length >= 30) {
+    if (activities.length >= activitiesTotalCount) {
       setHasMore(false);
     }
   };
@@ -34,11 +34,6 @@ export function Progress() {
     const millisecondsInADay = 1000 * 60 * 60 * 24;
     return Math.floor((today - date.getTime()) / millisecondsInADay);
   }
-
-  const calculateScore = (correctAnswers: number, totalQuestions: number) => {
-    if (totalQuestions === 0) return 0;
-    return Math.round((correctAnswers / totalQuestions) * 100);
-  };
 
   useEffect(() => {
     const fetchedActivities = activities.map((activity: any) => {
