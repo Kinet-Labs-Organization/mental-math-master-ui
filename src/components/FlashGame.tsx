@@ -211,7 +211,7 @@ export function FlashGame() {
           </div>
 
           {/* Main Content */}
-          <div className="flex-1 flex items-center justify-center p-4">
+          <div className="flex-1 flex items-center justify-center p-4 pt-32 md:pt-28">
 
             <div className="w-full max-w-2xl">
               {/* <AnimatePresence mode="wait"> */}
