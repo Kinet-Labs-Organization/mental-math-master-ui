@@ -15,7 +15,7 @@ export function Progress() {
   const {
     basicReport, basicReportLoading, basicReportError, fetchBasicReport,
     progressReport, progressReportLoading, progressReportError, fetchProgressReport,
-    activities, activitiesTotalCount, activitiesLoading, activitiesError, fetchActivities
+    activities, activitiesTotalCount, activitiesLoading, activitiesError, fetchActivities, resetActivities
   } = useReportStore();
 
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
@@ -36,20 +36,17 @@ export function Progress() {
   }
 
   useEffect(() => {
-    const fetchedActivities = activities.map((activity: any) => {
-      return {
-        gameName: activity.gameName,
-        gamePlayedAt: formatDate(new Date(activity.gamePlayedAt)) === 0 ? 'Today' : `${formatDate(new Date(activity.gamePlayedAt))} days ago`,
-        gameType: activity.gameType,
-        totalQuestions: activity.correctAnswers + activity.wrongAnswers,
-        correctAnswers: activity.correctAnswers,
-        correctness: activity.correctAnswers > activity.wrongAnswers,
-        score: activity.gameType === 'regular' ? activity.score : null,
-        icon: activity.icon,
-      };
-    });
-    const newActivities = fetchedActivities.slice(recentActivity.length);
-    setRecentActivity(prev => [...prev, ...newActivities]);
+    const fetchedActivities = activities.map((activity: any) => ({
+      gameName: activity.gameName,
+      gamePlayedAt: formatDate(new Date(activity.gamePlayedAt)) === 0 ? 'Today' : `${formatDate(new Date(activity.gamePlayedAt))} days ago`,
+      gameType: activity.gameType,
+      totalQuestions: activity.correctAnswers + activity.wrongAnswers,
+      correctAnswers: activity.correctAnswers,
+      correctness: activity.correctAnswers > activity.wrongAnswers,
+      score: activity.gameType === 'regular' ? activity.score : null,
+      icon: activity.icon,
+    }));
+    setRecentActivity(fetchedActivities);
   }, [activities]);
 
   const labels = Array.from({ length: 30 }, (_, i) => {
@@ -86,6 +83,9 @@ export function Progress() {
   };
 
   useEffect(() => {
+    resetActivities();
+    setRecentActivity([]);
+    setHasMore(true);
     fetchBasicReport();
     fetchProgressReport();
     fetchActivities(0);

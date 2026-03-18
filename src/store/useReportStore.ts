@@ -12,6 +12,7 @@ export interface IUseReportStore {
   activitiesLoading: boolean;
   activitiesError: string | null;
   fetchActivities: (position: number) => void;
+  resetActivities: () => void;
 }
 
 export const useReportStore = create<any>((set, get) => ({
@@ -52,6 +53,12 @@ export const useReportStore = create<any>((set, get) => ({
   activitiesTotalCount: 0,
   activitiesLoading: false,
   activitiesError: null,
+  resetActivities: () => set({
+    activities: [],
+    activitiesTotalCount: 0,
+    activitiesLoading: false,
+    activitiesError: null,
+  }),
   fetchActivities: async (position: number) => {
     set({ activitiesLoading: true, activitiesError: null });
     try {
