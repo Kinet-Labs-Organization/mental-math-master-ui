@@ -3,6 +3,7 @@ const CONSTANTS = {
   ONBOARDING_FLAG_STORAGE_KEY: "onboardingUser",
   FLASH_GAME_LEVEL_STORAGE_KEY: "flashGameLevel",
   REGULAR_GAME_LEVEL_STORAGE_KEY: "regularGameLevel",
+  USER_SYNCED_FLAG_STORAGE_KEY: "userSynced",
 };
 
 export default CONSTANTS;

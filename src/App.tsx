@@ -14,6 +14,7 @@ import api, { setNavigate } from './utils/api';
 import ApiURL from './utils/apiurl';
 import { Purchases, ReservedCustomerAttribute } from "@revenuecat/purchases-js";
 import { GlobalToast } from './components/GlobalToast';
+import CONSTANTS from './utils/constants';
 
 export default function App() {
   const navigate = useNavigate();
@@ -71,21 +72,21 @@ export default function App() {
         //   console.error('Error checking subscription:', e);
         // }
         UXConfigLogics(location.pathname);
-        console.log('Firebase runtime config:', {
-          origin: window.location.origin,
-          authDomain: config.firebaseAuthDomain,
-          projectId: config.firebaseProjectId,
-          apiKeyPreview: config.firebaseApiKey?.slice(0, 8),
-        });
+        // console.log('Firebase runtime config:', {
+        //   origin: window.location.origin,
+        //   authDomain: config.firebaseAuthDomain,
+        //   projectId: config.firebaseProjectId,
+        //   apiKeyPreview: config.firebaseApiKey?.slice(0, 8),
+        // });
         try {
           const redirectResult = await getRedirectResult(firebaseAuth);
-          console.log('Firebase redirect result:', redirectResult);
+          // console.log('Firebase redirect result:', redirectResult);
         } catch (error) {
           console.error('Firebase redirect result error:', error);
         }
 
         unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
-          console.log('onAuthStateChanged fired:', firebaseUser);
+          // console.log('onAuthStateChanged fired:', firebaseUser);
           if (!firebaseUser) {
             removeAuthenticatedUser();
             setIsAuthLoading(false);
@@ -93,11 +94,12 @@ export default function App() {
           }
 
           try {
-            console.log('Firebase auth user:', firebaseUser);
+            // console.log('Firebase auth user:', firebaseUser);
             const token = await firebaseUser.getIdToken();
             const email = firebaseUser.email ?? null;
             const name = firebaseUser.displayName ?? null;
             const avatar = firebaseUser.photoURL ?? null;
+            await userSync({ email, name, avatar });
             setAuthenticatedUser({ token, email, name, avatar });
           } catch (error) {
             console.error('Firebase auth processing error:', error);
@@ -129,7 +131,14 @@ export default function App() {
   }, []);
 
   const userSync = async (user: any) => {
-    return await api.post(ApiURL.user.userSync, { email: user.email, name: user.name });
+    const userSynced = localStorage.getItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
+    try {
+      if(!userSynced) {
+      return await api.post(ApiURL.user.userSync, { email: user.email, name: user.name, avatar: user.avatar });
+    }
+    } catch (error) {
+      console.error('User sync error:', error);
+    }
   }
 
   useEffect(() => {

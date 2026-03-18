@@ -38,7 +38,7 @@ export const signInWithGoogle = async () => {
   // await setPersistence(firebaseAuth, browserLocalPersistence);
   // return signInWithRedirect(firebaseAuth, googleProvider);
   const result = await signInWithPopup(firebaseAuth, googleProvider);
-  console.log(result.user);
+  // console.log(result.user);
   return result;
 };
 export const signOutFromFirebase = () => signOut(firebaseAuth);
