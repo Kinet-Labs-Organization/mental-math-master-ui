@@ -369,7 +369,7 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
     <>
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-black">
         {/* Header */}
-        <div
+        {gameState === 'ready' && <div
           className="bg-white/5 backdrop-blur-xl border-b border-white/10 px-4 pb-4 pt-14 sticky top-0 z-50 w-full"
           style={{ position: 'fixed' }}
         >
@@ -397,10 +397,10 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
             </div>
             <div className="w-16"></div>
           </div>
-        </div>
+        </div>}
 
         {gameState === 'ready' && (
-          <div className="flex-1 flex items-center justify-center p-4">
+          <div className="flex-1 flex items-center justify-center p-4 pt-32 md:pt-28">
             <motion.div
               key="ready"
               initial={{ opacity: 0, scale: 0.9 }}
