@@ -189,7 +189,7 @@ export function Profile() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 + i * 0.1 }}
-                  onClick={() => navigate(item.link)}
+                  onClick={() => window.open(item.link, "_blank", "noopener,noreferrer")}
                   className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
                 >
                   <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>

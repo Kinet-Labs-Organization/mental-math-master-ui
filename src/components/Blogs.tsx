@@ -41,7 +41,7 @@ export function Blogs() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.3 + index * 0.1 }}
-                            onClick={() => navigate(data.link)}
+                            onClick={() => window.open(data.link, "_blank", "noopener,noreferrer")}
                             className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:bg-white/10 transition-all group"
                         >
                             <img
