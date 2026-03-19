@@ -28,15 +28,24 @@ export function Leaderboard() {
 
   useEffect(() => {
     if (leaderboardData) {
-      setTopThree(leaderboardData.slice(0, 3) || []);
-      setOthers(leaderboardData.slice(3) || []);
-      setMe(basicReport);
+      const leaderboardList = Array.isArray(leaderboardData)
+        ? leaderboardData
+        : (leaderboardData.leaderboard || []);
+      setTopThree(leaderboardList.slice(0, 3) || []);
+      setOthers(leaderboardList.slice(3) || []);
+      setMe({
+        ...(basicReport || {}),
+        rank: leaderboardData.currentUserRank ?? null,
+      });
     }
-  }, [leaderboardData]);
+  }, [leaderboardData, basicReport]);
 
   useEffect(() => {
     if (basicReport) {
-      setMe(basicReport);
+      setMe((prev: any) => ({
+        ...(basicReport || {}),
+        rank: prev?.rank ?? null,
+      }));
     }
   }, [basicReport]);
 
@@ -165,7 +174,7 @@ export function Leaderboard() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-                  <span className="text-lg text-white">{me.rank}</span>
+                  <span className="text-lg text-white">{me.rank ?? "-"}</span>
                 </div>
                 <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
                   <User className="w-6 h-6 text-gray-300" />
@@ -175,7 +184,7 @@ export function Leaderboard() {
                   <div className="text-sm text-gray-400">Keep practicing!</div>
                 </div>
               </div>
-              <div className="text-2xl text-white">{me.score}</div>
+              <div className="text-2xl text-white">{me.score ?? 0}</div>
             </div>
           </motion.div>
         )}
