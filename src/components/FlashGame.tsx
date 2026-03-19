@@ -28,7 +28,7 @@ export function FlashGame() {
   const [tickSound] = useState(() => new Audio(tickSoundAsset));
   const [timer, setTimer] = useState(5);
   const hasSavedResultRef = useRef(false);
-
+  const [icon, setIcon] = useState<any>();
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
   const { settingsData, fetchSettingsData } = useUserStore();
@@ -72,7 +72,7 @@ export function FlashGame() {
     tickSound.play().then(() => {
       tickSound.pause();
       tickSound.currentTime = 0;
-    }).catch(() => {});
+    }).catch(() => { });
 
     fetchGame();
   }
@@ -102,6 +102,10 @@ export function FlashGame() {
       return;
     }
 
+    if(selectedGame.id === 'custom') {
+      return;
+    }
+
     hasSavedResultRef.current = true;
 
     try {
@@ -120,27 +124,33 @@ export function FlashGame() {
   };
 
   useEffect(() => {
+    console.log(selectedGame);
+    const gameIcon = selectedGame.id !== 'custom' ? (selectedGame as IGame | null)?.icon : 1;
+    setIcon(gameIcon);
+  }, [selectedGame]);
+
+  useEffect(() => {
     if (!game) return;
     generateNumbers();
   }, [game]);
 
   useEffect(() => {
     if (gameState === 'input') {
-        setTimer(5);
-        const interval = setInterval(() => {
-            setTimer(t => t - 1);
-        }, 1000);
+      setTimer(5);
+      const interval = setInterval(() => {
+        setTimer(t => t - 1);
+      }, 1000);
 
-        const timeout = setTimeout(() => {
-            if (savedValidate.current) {
-                savedValidate.current();
-            }
-        }, 5000);
+      const timeout = setTimeout(() => {
+        if (savedValidate.current) {
+          savedValidate.current();
+        }
+      }, 5000);
 
-        return () => {
-            clearInterval(interval);
-            clearTimeout(timeout);
-        };
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timeout);
+      };
     }
   }, [gameState]);
 
@@ -196,7 +206,7 @@ export function FlashGame() {
                 <div
                   className={`w-10 h-10 bg-gradient-to-br rounded-xl flex items-center justify-center text-xl`}
                 >
-                  <img src={`${config.imageBaseURL}/${(selectedGame as IGame).icon}.png`} />
+                  <img src={`${config.imageBaseURL}/${icon}.png`} />
                 </div>
                 <div>
                   <h2 className="text-lg text-white">{(selectedGame as IGame).name}</h2>
@@ -228,7 +238,8 @@ export function FlashGame() {
                   <div
                     className={`w-32 h-32 bg-gradient-to-br rounded-full flex items-center justify-center text-6xl mx-auto mb-8 shadow-2xl`}
                   >
-                    <img src={`${config.imageBaseURL}/${(selectedGame as IGame).icon}.png`} />
+                    {/* <img src={`${config.imageBaseURL}/${selectedGame ? (selectedGame as IGame).icon : '1'}.png`} /> */}
+                    <img src={`${config.imageBaseURL}/${icon}.png`} />
                   </div>
                   <h2 className="text-3xl mb-4 text-white">Ready to Train?</h2>
                   <p className="text-gray-400 mb-8 max-w-md mx-auto">
@@ -346,7 +357,7 @@ export function FlashGame() {
                         />
                       </svg>
                       <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
-                          <span className="text-4xl text-white font-bold tabular-nums">{timer}</span>
+                        <span className="text-4xl text-white font-bold tabular-nums">{timer}</span>
                       </div>
                     </div>
                     <h2 className="text-3xl mb-3 text-white">What's the answer?</h2>
