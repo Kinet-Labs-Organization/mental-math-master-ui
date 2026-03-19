@@ -22,11 +22,9 @@ export function Progress() {
 
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchMoreData = () => {
-    fetchActivities(recentActivity.length);
-    if (activities.length >= activitiesTotalCount) {
-      setHasMore(false);
-    }
+  const fetchMoreData = async () => {
+    if (activitiesLoading || !hasMore) return;
+    await fetchActivities(recentActivity.length);
   };
 
   const formatDate = (date: Date) => {
@@ -48,6 +46,14 @@ export function Progress() {
     }));
     setRecentActivity(fetchedActivities);
   }, [activities]);
+
+  useEffect(() => {
+    if (activitiesTotalCount === 0) {
+      setHasMore(false);
+      return;
+    }
+    setHasMore(recentActivity.length < activitiesTotalCount);
+  }, [recentActivity.length, activitiesTotalCount]);
 
   const labels = Array.from({ length: 30 }, (_, i) => {
     const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
