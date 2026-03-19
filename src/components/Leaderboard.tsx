@@ -55,23 +55,25 @@ export function Leaderboard() {
         {!leaderboardLoading && topThree.length > 0 && (
           <div className="flex items-end justify-center gap-4 mb-12">
             {/* 2nd Place */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex-1 max-w-[140px]"
-            >
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <User className="w-8 h-8 text-white" />
+            {topThree[1] && (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="flex-1 max-w-[140px]"
+              >
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="w-8 h-8 text-white" />
+                  </div>
+                  <Medal className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                  <div className="text-white mb-1">{topThree[1].name}</div>
+                  <div className="text-2xl text-white mb-1">{topThree[1].score}</div>
+                  <div className="text-xs text-gray-400">{topThree[1].accuracy}% accuracy</div>
                 </div>
-                <Medal className="w-6 h-6 text-gray-400 mx-auto mb-2" />
-                <div className="text-white mb-1">{topThree[1].name}</div>
-                <div className="text-2xl text-white mb-1">{topThree[1].score}</div>
-                <div className="text-xs text-gray-400">{topThree[1].accuracy} accuracy</div>
-              </div>
-              <div className="h-20 bg-gradient-to-br from-gray-400/20 to-gray-600/20 border border-gray-400/30 rounded-t-2xl mt-2"></div>
-            </motion.div>
+                <div className="h-20 bg-gradient-to-br from-gray-400/20 to-gray-600/20 border border-gray-400/30 rounded-t-2xl mt-2"></div>
+              </motion.div>
+            )}
 
             {/* 1st Place */}
             <motion.div
@@ -87,29 +89,31 @@ export function Leaderboard() {
                 <Crown className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
                 <div className="text-white mb-1">{topThree[0].name}</div>
                 <div className="text-3xl text-white mb-1">{topThree[0].score}</div>
-                <div className="text-xs text-gray-400">{topThree[0].accuracy} accuracy</div>
+                <div className="text-xs text-gray-400">{topThree[0].accuracy}% accuracy</div>
               </div>
               <div className="h-32 bg-gradient-to-br from-yellow-500/20 to-orange-600/20 border-2 border-yellow-400/30 rounded-t-2xl mt-2"></div>
             </motion.div>
 
             {/* 3rd Place */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="flex-1 max-w-[140px]"
-            >
-              <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <User className="w-8 h-8 text-white" />
+            {topThree[2] && (
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="flex-1 max-w-[140px]"
+              >
+                <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-4 text-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <User className="w-8 h-8 text-white" />
+                  </div>
+                  <Medal className="w-6 h-6 text-orange-400 mx-auto mb-2" />
+                  <div className="text-white mb-1">{topThree[2].name}</div>
+                  <div className="text-2xl text-white mb-1">{topThree[2].score}</div>
+                  <div className="text-xs text-gray-400">{topThree[2].accuracy}% accuracy</div>
                 </div>
-                <Medal className="w-6 h-6 text-orange-400 mx-auto mb-2" />
-                <div className="text-white mb-1">{topThree[2].name}</div>
-                <div className="text-2xl text-white mb-1">{topThree[2].score}</div>
-                <div className="text-xs text-gray-400">{topThree[2].accuracy} accuracy</div>
-              </div>
-              <div className="h-12 bg-gradient-to-br from-orange-400/20 to-orange-600/20 border border-orange-400/30 rounded-t-2xl mt-2"></div>
-            </motion.div>
+                <div className="h-12 bg-gradient-to-br from-orange-400/20 to-orange-600/20 border border-orange-400/30 rounded-t-2xl mt-2"></div>
+              </motion.div>
+            )}
           </div>
         )}
 
@@ -136,7 +140,7 @@ export function Leaderboard() {
                       </div>
                       <div>
                         <div className="text-white">{player.name}</div>
-                        <div className="text-sm text-gray-400">{player.accuracy} accuracy</div>
+                        <div className="text-sm text-gray-400">{player.accuracy}% accuracy</div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
