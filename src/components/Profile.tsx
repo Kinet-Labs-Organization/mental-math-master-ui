@@ -83,7 +83,7 @@ export function Profile() {
                 <div className="flex flex-wrap gap-3 justify-center sm:justify-start">
                   <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
                     <Calendar className="w-4 h-4 text-gray-400" />
-                    <span className="text-sm text-gray-400">Joined {new Date(profile?.subscribedOn).toDateString()}</span>
+                    <span className="text-sm text-gray-400">Joined {new Date(profile?.createdAt).toDateString()}</span>
                   </div>
 
                   <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl px-3 py-1.5">
