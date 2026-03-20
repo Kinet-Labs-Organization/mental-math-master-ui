@@ -22,7 +22,7 @@ export function Paywall() {
     navigate(-1);
   };
 
-  const onSubscribe = async (term: string) => {
+  const _onSubscribe = async (term: string) => {
     if (!authenticatedUser?.email) {
       alert('Please log in to subscribe.');
       return;
@@ -69,37 +69,42 @@ export function Paywall() {
     }
   };
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const purchases = Purchases.getSharedInstance();
-        console.log('Purchases.getSharedInstance() - invoked : from init()');
-        console.log(purchases);
+  const onSubscribe = async (term: string) => {
+    console.log(term);
+  }
+
+  // useEffect(() => {
+  //   const init = async () => {
+  //     try {
+  //       const purchases = Purchases.getSharedInstance();
+  //       console.log('Purchases.getSharedInstance() - invoked : from init()');
+  //       console.log(purchases);
         
-        // Fetch offerings
-        const fetchedOfferings = await purchases.getOfferings();
-        console.log('purchases.getOfferings()- invoked : from init()');
-        console.log(fetchedOfferings);
+  //       // Fetch offerings
+  //       const fetchedOfferings = await purchases.getOfferings();
+  //       console.log('purchases.getOfferings()- invoked : from init()');
+  //       console.log(fetchedOfferings);
 
-        setOfferings(fetchedOfferings);
+  //       setOfferings(fetchedOfferings);
 
-        if (!fetchedOfferings.current) {
-          console.error('No current offering available');
-        }
-      } catch (error) {
-        console.error('Error fetching offerings:', error);
-      }
-    };
-    init();
-  }, []);
+  //       if (!fetchedOfferings.current) {
+  //         console.error('No current offering available');
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching offerings:', error);
+  //     }
+  //   };
+  //   init();
+  // }, []);
 
   return (
-    <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-lg flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-lg z-50 p-4 overflow-y-auto">
+      <div className="min-h-full flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="pt-8 relative w-full max-w-lg px-4"
+        className="pt-8 relative w-full max-w-lg bg-transparent rounded-3xl px-5 sm:px-6 pb-6 max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
@@ -149,15 +154,15 @@ export function Paywall() {
             disabled={loading || !offerings}
             className="w-full text-left bg-white/5 hover:bg-white/10 border-2 border-purple-500 rounded-2xl p-5 transition-all relative disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <div className="absolute top-2 right-4 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+            <div className="absolute top-[-10px] right-4 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
               SAVE 25%
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg text-white">Yearly Plan</h3>
-                <p className="text-gray-400">$89.99 / year</p>
+                <h3 className="text-base text-white">Yearly Plan</h3>
+                <p className="text-sm text-gray-400">$89.99 / year</p>
               </div>
-              <div className="text-2xl text-white font-bold">$7.50/mo</div>
+              <div className="text-xl text-white font-bold">$7.50/mo</div>
             </div>
           </motion.button>
 
@@ -171,10 +176,10 @@ export function Paywall() {
           >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg text-white">Monthly Plan</h3>
-                <p className="text-gray-400">Billed monthly</p>
+                <h3 className="text-base text-white">Monthly Plan</h3>
+                <p className="text-sm text-gray-400">Billed monthly</p>
               </div>
-              <div className="text-2xl text-white font-bold">$9.99/mo</div>
+              <div className="text-xl text-white font-bold">$9.99/mo</div>
             </div>
           </motion.button>
         </div>
@@ -185,7 +190,7 @@ export function Paywall() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
           onClick={() => onSubscribe('yearly')}
-          disabled={loading || !offerings}
+          // disabled={loading || !offerings}
           className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-2xl py-4 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 transition-all group flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
@@ -197,6 +202,7 @@ export function Paywall() {
           <p>A subscription is required to access Pro features. You can cancel anytime.</p>
         </div>
       </motion.div>
+      </div>
     </div>
   );
 }
