@@ -97,18 +97,18 @@ export function Profile() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => {
-                  if (['FREE TRIAL', 'TRIAL EXPIRED'].includes(profile?.plan)) {
+                  if (['TRIAL', 'UNSUBSCRIBED'].includes(profile?.plan?.planId)) {
                     navigate('/paywall');
                   }
                 }}
-                className={`bg-white/5 hover:bg-white/10 text-white text-base px-6 py-3 rounded-2xl transition-all border border-white/10 hover:border-white/20 flex items-center gap-2 ${['FREE TRIAL', 'NO PLAN'].includes(profile?.plan) ? 'cursor-pointer hover:border-purple-500/50' : ''}`}
+                className={`bg-white/5 hover:bg-white/10 text-white text-base px-6 py-3 rounded-2xl transition-all border border-white/10 hover:border-white/20 flex items-center gap-2 ${['TRIAL', 'UNSUBSCRIBED'].includes(profile?.plan?.planId) ? 'cursor-pointer hover:border-purple-500/50' : ''}`}
               >
-                {profile?.plan === 'PRO' && <Crown className="w-5 h-5 text-yellow-400" />}
-                <span className={profile?.plan === 'PRO' ? "font-bold text-yellow-400 tracking-wider" : ""}>{profile?.plan}</span>
-                {['FREE TRIAL', 'TRIAL EXPIRED'].includes(profile?.plan) && (
+                {profile?.plan?.planId === 'PRO' && <Crown className="w-5 h-5 text-yellow-400" />}
+                <span className={profile?.plan?.planId === 'PRO' ? "font-bold text-yellow-400 tracking-wider" : ""}>{profile?.plan?.planNameToShow}</span>
+                {['TRIAL', 'UNSUBSCRIBED'].includes(profile?.plan?.planId) && (
                   <div className="flex items-center gap-1 bg-purple-500/20 border border-purple-500/50 rounded-lg px-2 py-1 ml-2">
                     <Zap className="w-3 h-3 text-purple-400" />
-                    <span className="text-xs font-bold text-purple-400">UPGRADE</span>
+                    <span className="text-xs font-bold text-purple-400">{profile?.plan?.planAction}</span>
                   </div>
                 )}
               </motion.button>
