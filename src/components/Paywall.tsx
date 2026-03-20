@@ -1,13 +1,13 @@
 import { motion } from 'motion/react';
 import { Check, Star, Zap, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { Purchases } from '@revenuecat/purchases-js';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
+import api from '../utils/api';
+import ApiURL from '../utils/apiurl';
 
 export function Paywall() {
   const navigate = useNavigate();
-  const [offerings, setOfferings] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
   const { authenticatedUser } = useUserStore();
 
@@ -22,80 +22,32 @@ export function Paywall() {
     navigate(-1);
   };
 
-  const _onSubscribe = async (term: string) => {
+  const onSubscribe = async (plan: 'yearly' | 'monthly' | 'trial') => {
     if (!authenticatedUser?.email) {
       alert('Please log in to subscribe.');
       return;
     }
-    if (!offerings?.current) return;
-    
+
+    const termMap = {
+      yearly: 'd365',
+      monthly: 'd30',
+      trial: 'd7',
+    } as const;
+
     setLoading(true);
     try {
-      // Find the package based on the term (yearly or monthly)
-      const packageToSubscribe = offerings.current.availablePackages.find(
-        (pkg:any) => pkg.identifier.toLowerCase().includes(term.toLowerCase())
-      );
-
-      if (!packageToSubscribe) {
-        console.error('Package not found for term:', term);
-        return;
-      }
-
-      const purchases = Purchases.getSharedInstance();
-      console.log('Purchases.getSharedInstance() - invoked : from onSubscribe()');
-      console.log(purchases);
-      
-      // Purchase the package
-      const { customerInfo } = await purchases.purchase( {rcPackage: packageToSubscribe });
-      console.error('purchases.purchase( {rcPackage: packageToSubscribe }); - invoked');
-      console.log(purchases);
-      console.log('Purchase successful:', customerInfo);
-      
-      // Check if user has active entitlement
-      if (customerInfo.entitlements.active['pro']) {
-        // User now has pro access - handle success
-        alert('Subscription successful!');
-        onClose();
-      }
-    } catch (error: any) {
-      if (error.userCancelled) {
-        console.log('User cancelled the purchase');
-      } else {
-        console.error('Purchase error:', error);
-        alert('Purchase failed. Please try again.');
-      }
+      await api.post(ApiURL.user.upgrade, {
+        term: termMap[plan],
+      });
+      console.log('Subscription updated successfully!');
+      onClose();
+    } catch (error) {
+      console.error('Upgrade API failed:', error);
+      alert('Unable to update subscription. Please try again.');
     } finally {
       setLoading(false);
     }
   };
-
-  const onSubscribe = async (term: string) => {
-    console.log(term);
-  }
-
-  // useEffect(() => {
-  //   const init = async () => {
-  //     try {
-  //       const purchases = Purchases.getSharedInstance();
-  //       console.log('Purchases.getSharedInstance() - invoked : from init()');
-  //       console.log(purchases);
-        
-  //       // Fetch offerings
-  //       const fetchedOfferings = await purchases.getOfferings();
-  //       console.log('purchases.getOfferings()- invoked : from init()');
-  //       console.log(fetchedOfferings);
-
-  //       setOfferings(fetchedOfferings);
-
-  //       if (!fetchedOfferings.current) {
-  //         console.error('No current offering available');
-  //       }
-  //     } catch (error) {
-  //       console.error('Error fetching offerings:', error);
-  //     }
-  //   };
-  //   init();
-  // }, []);
 
   return (
     <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-lg z-50 p-4 overflow-y-auto">
@@ -151,7 +103,7 @@ export function Paywall() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onClick={() => onSubscribe('yearly')}
-            disabled={loading || !offerings}
+            disabled={loading}
             className="w-full text-left bg-white/5 hover:bg-white/10 border-2 border-purple-500 rounded-2xl p-5 transition-all relative disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="absolute top-[-10px] right-4 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -171,7 +123,7 @@ export function Paywall() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
             onClick={() => onSubscribe('monthly')}
-            disabled={loading || !offerings}
+            disabled={loading}
             className="w-full text-left bg-white/5 hover:bg-white/10 border-2 border-white/10 rounded-2xl p-5 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="flex items-center justify-between">
@@ -189,8 +141,8 @@ export function Paywall() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          onClick={() => onSubscribe('yearly')}
-          // disabled={loading || !offerings}
+          onClick={() => onSubscribe('trial')}
+          disabled={loading}
           className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-2xl py-4 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 transition-all group flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
