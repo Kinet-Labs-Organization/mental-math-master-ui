@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
 import api from '../utils/api';
 import ApiURL from '../utils/apiurl';
+import { firebaseAuth } from '../libs/firebaseClient';
 
 export function Paywall() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export function Paywall() {
       await api.post(ApiURL.user.upgrade, {
         term: termMap[plan],
       });
+      await firebaseAuth.currentUser?.getIdToken(true);
       console.log('Subscription updated successfully!');
       onClose();
     } catch (error) {
