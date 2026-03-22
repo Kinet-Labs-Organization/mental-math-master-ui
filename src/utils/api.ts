@@ -3,47 +3,15 @@ import axios, {
   type AxiosRequestConfig,
   type AxiosResponse,
 } from "axios";
-import CONSTANTS from "./constants";
 import { useUserStore } from "../store/useUserStore";
 import config from "../config/env";
 import { useToastStore } from '../store/useToastStore';
-import { signOutFromFirebase } from "../libs/firebaseClient";
+import { firebaseAuth, signOutFromFirebase } from "../libs/firebaseClient";
 
 let navigate: ((path: string) => void) | null = null;
 
 export const setNavigate = (fn: (path: string) => void) => {
   navigate = fn;
-};
-
-// ============================================
-// Safe helper to get auth token
-// ============================================
-const getAuthToken = (): string | null => {
-  try {
-    const storedUser = localStorage.getItem(
-      CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY,
-    );
-
-    if (!storedUser) {
-      return null;
-    }
-
-    const user = JSON.parse(storedUser);
-
-    // Validate structure
-    if (!user || typeof user !== "object" || !user.token) {
-      console.warn("Invalid user data in localStorage");
-      localStorage.removeItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
-      return null;
-    }
-
-    return user.token;
-  } catch (error) {
-    console.error("Error parsing user from localStorage:", error);
-    // Clear corrupted data
-    localStorage.removeItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
-    return null;
-  }
 };
 
 // ============================================
@@ -61,10 +29,12 @@ const api = axios.create({
 // Request interceptor - Add auth token
 // ============================================
 api.interceptors.request.use(
-  (config) => {
-    const token = getAuthToken();
+  async (config) => {
+    const firebaseUser = firebaseAuth.currentUser;
+    const token = firebaseUser ? await firebaseUser.getIdToken() : null;
 
     if (token) {
+      console.log(token);
       // Set Authorization header (standard way)
       config.headers.Authorization = `Bearer ${token}`;
       // Also set custom header if your backend needs it
