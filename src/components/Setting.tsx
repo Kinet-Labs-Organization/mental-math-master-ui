@@ -27,7 +27,7 @@ export function Setting() {
   useEffect(() => {
     if (settingsData) {
       setSoundEnabled(settingsData.soundEffect ?? false);
-      setNotificationsEnabled(settingsData.notification ?? false);
+      setNotificationsEnabled(settingsData.notifications ?? false);
       setNewsletterEnabled(settingsData.newsLetter ?? false);
     }
   }, [settingsData]);
