@@ -26,6 +26,7 @@ export function RegularGame() {
   const [score, setScore] = useState(0);
   const [time, setTime] = useState(0);
   const [isSavingGame, setIsSavingGame] = useState(false);
+  const [icon, setIcon] = useState<any>(1);
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
 
@@ -91,6 +92,15 @@ export function RegularGame() {
     if (!game) return;
     generateQuestions();
   }, [game]);
+
+  useEffect(() => {
+    if (!selectedGame) {
+      setIcon(1);
+      return;
+    }
+    const gameIcon = selectedGame.id !== 'custom' ? (selectedGame as IGame | null)?.icon ?? 1 : 1;
+    setIcon(gameIcon);
+  }, [selectedGame]);
   
   useEffect(() => {
     if (gameState !== 'playing') {
@@ -385,7 +395,7 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
               <div
                 className={`w-10 h-10 bg-gradient-to-br rounded-xl flex items-center justify-center text-xl`}
               >
-                <img src={`${config.imageBaseURL}/${(selectedGame as IGame).icon}.png`} />
+                <img src={`${config.imageBaseURL}/${icon}.png`} />
               </div>
               <div>
                 <h2 className="text-lg text-white">{(selectedGame as IGame).name}</h2>
@@ -411,7 +421,7 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
               <div
                 className={`w-32 h-32 bg-gradient-to-br rounded-full flex items-center justify-center text-6xl mx-auto mb-8 shadow-2xl`}
               >
-                <img src={`${config.imageBaseURL}/${(selectedGame as IGame).icon}.png`} />
+                <img src={`${config.imageBaseURL}/${icon}.png`} />
               </div>
               <h2 className="text-3xl mb-4 text-white">Ready to Train?</h2>
               <p className="text-gray-400 mb-8 max-w-md mx-auto">

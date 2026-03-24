@@ -253,7 +253,7 @@ export function Progress() {
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
                       <span className="text-xl">
-                        <img src={`${config.imageBaseURL}/${activity.icon}.png`} className='w-[30px]'/>
+                        <img src={`${config.imageBaseURL}/${activity.icon ?? 1}.png`} className='w-[30px]'/>
                       </span>
                     </div>
                     <div>

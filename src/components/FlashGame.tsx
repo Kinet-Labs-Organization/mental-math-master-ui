@@ -124,8 +124,7 @@ export function FlashGame() {
   };
 
   useEffect(() => {
-    console.log(selectedGame);
-    const gameIcon = selectedGame.id !== 'custom' ? (selectedGame as IGame | null)?.icon : 1;
+    const gameIcon = selectedGame?.id !== 'custom' ? (selectedGame as IGame | null)?.icon ?? 1 : 1;
     setIcon(gameIcon);
   }, [selectedGame]);
 
