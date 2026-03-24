@@ -108,7 +108,7 @@ export const useUserStore = create<any>((set) => ({
   notifications: null,
   notificationsLoading: false,
   notificationsError: null,
-  fetchNotifications: async (recentMax: number) => {
+  fetchNotifications: async (recentMax?: number) => {
     set({ notificationsLoading: true, notificationsError: null });
     try {
       const result = await api.get(ApiURL.user.fetchNotifications, { params: { recentMax } });
@@ -118,6 +118,13 @@ export const useUserStore = create<any>((set) => ({
         notificationsLoading: false,
         notificationsError: "Failed to fetch notifications",
       });
+    }
+  },
+  markNotificationRead: async (notificationId: number) => {
+    try {
+      await api.post(ApiURL.user.markNotificationRead, { notificationId });
+    } catch (error) {
+      console.error("Failed to mark notification as read", error);
     }
   },
 

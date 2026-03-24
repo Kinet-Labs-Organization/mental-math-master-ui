@@ -17,6 +17,7 @@ const ApiURL = {
     settingsData: `user/settingsData`,
     updateSettings: `user/updateSettings`,
     fetchNotifications: `user/notifications`,
+    markNotificationRead: `user/notifications/read`,
     fetchProfile: `user/profile`,
     fetchAchievements: `user/achievements`,
     upgrade: `user/upgrade`,
