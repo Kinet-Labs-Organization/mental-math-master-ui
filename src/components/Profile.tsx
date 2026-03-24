@@ -272,9 +272,9 @@ export function Profile() {
             </button>
 
             <div className="text-center">
-              <div className="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+              {/* <div className="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
                 {selectedNotification.icon || '🔔'}
-              </div>
+              </div> */}
               <h3 className="text-xl text-white font-semibold mb-2">{selectedNotification.title}</h3>
               <p className="text-gray-400 mb-6">
                 {selectedNotification.message || selectedNotification.description || "No details available"}

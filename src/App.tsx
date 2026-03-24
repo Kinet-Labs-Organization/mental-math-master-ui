@@ -23,7 +23,7 @@ export default function App() {
     useUserStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
-
+  const [isUserSynced, setIsUserSynced] = useState(false);
   useEffect(() => {
     setNavigate(navigate);
   }, [navigate]);
@@ -133,6 +133,7 @@ export default function App() {
     const userSynced = localStorage.getItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
     try {
       if (!userSynced) {
+        setIsUserSynced(true);
         await api.post(ApiURL.user.userSync, { email: user.email, name: user.name, avatar: user.avatar });
         const firebaseUser = firebaseAuth.currentUser;
         if (firebaseUser) {
@@ -143,12 +144,14 @@ export default function App() {
             name: firebaseUser.displayName ?? user.name ?? null,
             avatar: firebaseUser.photoURL ?? user.avatar ?? null,
           };
+          setIsUserSynced(false);
           return updatedAuthUser;
         }
       }
       return null;
     } catch (error) {
       console.error('User sync error:', error);
+      setIsUserSynced(false);
       return null;
     }
   }
@@ -189,6 +192,21 @@ export default function App() {
 
   if (isAuthLoading) {
     return null;
+  }
+
+  if(isUserSynced) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center px-4">
+        <div className="w-full max-w-sm bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl text-center shadow-2xl">
+          <div className="relative mx-auto mb-6 w-16 h-16">
+            <div className="absolute inset-0 rounded-full border-4 border-white/10" />
+            <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-purple-400 border-r-pink-500 animate-spin" />
+          </div>
+          <h2 className="text-white text-xl mb-2">Signing you in</h2>
+          <p className="text-gray-400 text-sm">Syncing your account details...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
