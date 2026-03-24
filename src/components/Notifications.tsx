@@ -4,6 +4,7 @@ import { useUserStore } from '../store/useUserStore';
 import { Bell, ChevronLeft, X } from 'lucide-react';
 import SkeletonLoader from './shared/skeleton-loader';
 import { useNavigate } from 'react-router-dom';
+import { formatNotificationTimeAgo } from '../utils/time';
 
 export function Notifications() {
     const colors = ['bg-blue-500/20 text-blue-400', 'bg-green-500/20 text-green-400', 'bg-purple-500/20 text-purple-400', 'bg-pink-500/20 text-pink-400', 'bg-yellow-500/20 text-yellow-400'];
@@ -59,16 +60,16 @@ export function Notifications() {
                             onClick={() => handleOpenNotification(item)}
                             className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
                         >
-                            <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
+                            {/* <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
                                 {item.icon || '🔔'}
-                            </div>
+                            </div> */}
                             <div className="flex-1">
                                 <div className="flex items-center gap-2">
                                     <h3 className="text-white font-medium text-sm">{item.title}</h3>
                                     {!item.read && <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
                                 </div>
                             </div>
-                            <span className="text-gray-500 text-xs">{item.time || 'Now'}</span>
+                            <span className="text-gray-500 text-xs">{formatNotificationTimeAgo(item.time)}</span>
                         </motion.div>
                     ))) : (
                     <div className="text-gray-400 text-center py-4">No notifications</div>
@@ -90,14 +91,14 @@ export function Notifications() {
                         </button>
 
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
+                            {/* <div className="w-16 h-16 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
                                 {selectedNotification.icon || '🔔'}
-                            </div>
+                            </div> */}
                             <h3 className="text-xl text-white font-semibold mb-2">{selectedNotification.title}</h3>
                             <p className="text-gray-400 mb-6">
                                 {selectedNotification.message || selectedNotification.description || "No details available"}
                             </p>
-                            <span className="text-gray-500 text-xs">{selectedNotification.time || 'Now'}</span>
+                            <span className="text-gray-500 text-xs">{formatNotificationTimeAgo(selectedNotification.time)}</span>
                         </div>
                     </motion.div>
                 </div>

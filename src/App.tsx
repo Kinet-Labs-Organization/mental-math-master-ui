@@ -94,13 +94,12 @@ export default function App() {
           }
 
           try {
-            // console.log('Firebase auth user:', firebaseUser);
             const token = await firebaseUser.getIdToken();
             const email = firebaseUser.email ?? null;
             const name = firebaseUser.displayName ?? null;
             const avatar = firebaseUser.photoURL ?? null;
-            await userSync({ email, name, avatar });
-            setAuthenticatedUser({ token, email, name, avatar });
+            const syncedUser = await userSync({ email, name, avatar });
+            setAuthenticatedUser(syncedUser ?? { token, email, name, avatar });
           } catch (error) {
             console.error('Firebase auth processing error:', error);
             removeAuthenticatedUser();
@@ -133,11 +132,24 @@ export default function App() {
   const userSync = async (user: any) => {
     const userSynced = localStorage.getItem(CONSTANTS.AUTHENTICATED_USER_STORAGE_KEY);
     try {
-      if(!userSynced) {
-      return await api.post(ApiURL.user.userSync, { email: user.email, name: user.name, avatar: user.avatar });
-    }
+      if (!userSynced) {
+        await api.post(ApiURL.user.userSync, { email: user.email, name: user.name, avatar: user.avatar });
+        const firebaseUser = firebaseAuth.currentUser;
+        if (firebaseUser) {
+          const refreshedToken = await firebaseUser.getIdToken(true);
+          const updatedAuthUser = {
+            token: refreshedToken,
+            email: firebaseUser.email ?? user.email ?? null,
+            name: firebaseUser.displayName ?? user.name ?? null,
+            avatar: firebaseUser.photoURL ?? user.avatar ?? null,
+          };
+          return updatedAuthUser;
+        }
+      }
+      return null;
     } catch (error) {
       console.error('User sync error:', error);
+      return null;
     }
   }
 
@@ -181,56 +193,56 @@ export default function App() {
 
   return (
     <>
-    <GlobalToast />
-    <Routes>
-      <Route
-        path="/onboarding"
-        element={
-          authenticatedUser && authenticatedUser.token ? (
-            <Navigate to="/" replace />
-          ) : getOnboardingFlag() ? (
-            <Onboarding />
-          ) : (
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-      <Route
-        path="/login"
-        element={
-          authenticatedUser && authenticatedUser.token ? (
-            <Navigate to="/" replace />
-          ) : (
-            <Login />
-          )
-        }
-      />
-      <Route
-        path="/*"
-        element={
-          authenticatedUser && authenticatedUser.token ? (
-            <div className="h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex flex-col">
-              <div ref={scrollContainerRef} className="flex-1 overflow-auto">
-                {TopEmptySpace && <div style={{ height: '42px' }}></div>}
-                <AppRoutes />
-                {BottomEmptySpace && <div style={{ height: '68px' }}></div>}
+      <GlobalToast />
+      <Routes>
+        <Route
+          path="/onboarding"
+          element={
+            authenticatedUser && authenticatedUser.token ? (
+              <Navigate to="/" replace />
+            ) : getOnboardingFlag() ? (
+              <Onboarding />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            authenticatedUser && authenticatedUser.token ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Login />
+            )
+          }
+        />
+        <Route
+          path="/*"
+          element={
+            authenticatedUser && authenticatedUser.token ? (
+              <div className="h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex flex-col">
+                <div ref={scrollContainerRef} className="flex-1 overflow-auto">
+                  {TopEmptySpace && <div style={{ height: '42px' }}></div>}
+                  <AppRoutes />
+                  {BottomEmptySpace && <div style={{ height: '68px' }}></div>}
+                </div>
+                {FooterNavigation && (
+                  <Navigation
+                    activeSection={pathToSection(location.pathname)}
+                    onSectionChange={section =>
+                      navigate(section === 'dashboard' ? '/' : `/${section}`)
+                    }
+                  />
+                )}
               </div>
-              {FooterNavigation && (
-                <Navigation
-                  activeSection={pathToSection(location.pathname)}
-                  onSectionChange={section =>
-                    navigate(section === 'dashboard' ? '/' : `/${section}`)
-                  }
-                />
-              )}
-            </div>
-          ) : (
-            // <Navigate to="/onboarding" replace />
-            <Navigate to="/login" replace />
-          )
-        }
-      />
-    </Routes>
+            ) : (
+              // <Navigate to="/onboarding" replace />
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+      </Routes>
     </>
   );
 }

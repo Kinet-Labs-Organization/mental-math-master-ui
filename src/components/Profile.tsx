@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useUserStore } from '../store/useUserStore';
 import SkeletonLoader from './shared/skeleton-loader';
 import { useGenericStore } from '../store/useGenericStore';
+import { formatNotificationTimeAgo } from '../utils/time';
 
 
 export function Profile() {
@@ -148,16 +149,16 @@ export function Profile() {
                   onClick={() => setSelectedNotification(item)}
                   className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl hover:bg-white/10 transition-all cursor-pointer border border-white/5 hover:border-white/10"
                 >
-                  <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
+                  {/* <div className={`w-10 h-10 ${colors[i % colors.length]} rounded-full flex items-center justify-center text-lg`}>
                     {item.icon || '🔔'}
-                  </div>
+                  </div> */}
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="text-white font-medium text-sm">{item.title}</h3>
                       {!item.read && <div className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />}
                     </div>
                   </div>
-                  <span className="text-gray-500 text-xs">{item.time || 'Now'}</span>
+                  <span className="text-gray-500 text-xs">{formatNotificationTimeAgo(item.time)}</span>
                 </motion.div>
               ))) : (
               <div className="text-gray-400 text-center py-4">No notifications</div>
@@ -214,7 +215,7 @@ export function Profile() {
               [1, 2, 3, 4].map((i) => (
                 <SkeletonLoader key={i} height={88} width="100%" radius={16} />
               ))
-            ) : (achievements?.map((achievement: any, index: number) => (
+            ) : achievements?.length > 0 ? (achievements.map((achievement: any, index: number) => (
               <motion.div
                 key={achievement.title || index}
                 initial={{ opacity: 0, scale: 0.9 }}
@@ -247,7 +248,11 @@ export function Profile() {
                   </div>
                 </div>
               </motion.div>
-            )))}
+            ))) : (
+              <div className="col-span-1 sm:col-span-2 text-gray-400 text-center py-8">
+                No Achievements
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -274,7 +279,7 @@ export function Profile() {
               <p className="text-gray-400 mb-6">
                 {selectedNotification.message || selectedNotification.description || "No details available"}
               </p>
-              <span className="text-gray-500 text-xs">{selectedNotification.time || 'Now'}</span>
+              <span className="text-gray-500 text-xs">{formatNotificationTimeAgo(selectedNotification.time)}</span>
             </div>
           </motion.div>
         </div>
