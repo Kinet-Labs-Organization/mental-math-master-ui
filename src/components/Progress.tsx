@@ -19,12 +19,11 @@ export function Progress() {
   } = useReportStore();
 
   const [recentActivity, setRecentActivity] = useState<any[]>([]);
-
-  const [hasMore, setHasMore] = useState(true);
+  const hasMore = activitiesTotalCount > 0 && activities.length < activitiesTotalCount;
 
   const fetchMoreData = async () => {
     if (activitiesLoading || !hasMore) return;
-    await fetchActivities(recentActivity.length);
+    await fetchActivities(activities.length);
   };
 
   const formatDate = (date: Date) => {
@@ -46,14 +45,6 @@ export function Progress() {
     }));
     setRecentActivity(fetchedActivities);
   }, [activities]);
-
-  useEffect(() => {
-    if (activitiesTotalCount === 0) {
-      setHasMore(false);
-      return;
-    }
-    setHasMore(recentActivity.length < activitiesTotalCount);
-  }, [recentActivity.length, activitiesTotalCount]);
 
   const labels = Array.from({ length: 30 }, (_, i) => {
     const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
@@ -91,7 +82,6 @@ export function Progress() {
   useEffect(() => {
     resetActivities();
     setRecentActivity([]);
-    setHasMore(true);
     fetchBasicReport();
     fetchProgressReport();
     fetchActivities(0);
@@ -247,8 +237,8 @@ export function Progress() {
             dataLength={recentActivity.length}
             next={fetchMoreData}
             hasMore={hasMore}
-            loader={<p className="text-gray-400 text-center mt-6">Loading....</p>}
-            endMessage={<p className="text-gray-400 text-center mt-6">No more activities</p>}
+            loader={activitiesLoading ? <p className="text-gray-400 text-center mt-6">Loading....</p> : <></>}
+            endMessage={recentActivity.length > 0 ? <p className="text-gray-400 text-center mt-6">No more activities</p> : <></>}
             height={400}
           >
             <div className="space-y-3">
@@ -290,6 +280,9 @@ export function Progress() {
                   </div>)}
                 </motion.div>
               ))}
+              {!activitiesLoading && recentActivity.length === 0 && (
+                <p className="text-gray-400 text-center py-6">No activities yet</p>
+              )}
             </div>
           </InfiniteScroll>
         </div>
