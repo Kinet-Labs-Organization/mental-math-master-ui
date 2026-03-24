@@ -14,6 +14,8 @@ interface Config {
   firebaseMessagingSenderId: string;
   firebaseAppId: string;
   firebaseMeasurementId: string;
+  privacyPolicyURL: string;
+  termsOfUseURL: string;
 }
 
 const config: Config = {
@@ -29,7 +31,9 @@ const config: Config = {
   firebaseStorageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   firebaseMessagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   firebaseAppId: import.meta.env.VITE_FIREBASE_APP_ID,
-  firebaseMeasurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  firebaseMeasurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+  privacyPolicyURL: import.meta.env.VITE_PRIVACY_POLICY_URL,
+  termsOfUseURL: import.meta.env.VITE_TERMS_OF_USE_URL,
 };
 
 // Validate required env vars
@@ -47,7 +51,9 @@ const validateConfig = () => {
     "VITE_FIREBASE_STORAGE_BUCKET",
     "VITE_FIREBASE_MESSAGING_SENDER_ID",
     "VITE_FIREBASE_APP_ID",
-    "VITE_FIREBASE_MEASUREMENT_ID"
+    "VITE_FIREBASE_MEASUREMENT_ID",
+    "VITE_PRIVACY_POLICY_URL",
+    "VITE_TERMS_OF_USE_URL",
   ];
 
   const missing = required.filter((key) => !import.meta.env[key]);

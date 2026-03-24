@@ -252,11 +252,19 @@ export function Login() {
         >
           <p>By continuing, you agree to our</p>
           <div className="mt-1 space-x-3">
-            <button type="button" className="hover:text-gray-400 transition-colors">
+            <button
+              type="button"
+              className="hover:text-gray-400 transition-colors"
+              onClick={() => window.open(config.termsOfUseURL, '_blank', 'noopener,noreferrer')}
+            >
               Terms of Service
             </button>
             <span>·</span>
-            <button type="button" className="hover:text-gray-400 transition-colors">
+            <button
+              type="button"
+              className="hover:text-gray-400 transition-colors"
+              onClick={() => window.open(config.privacyPolicyURL, '_blank', 'noopener,noreferrer')}
+            >
               Privacy Policy
             </button>
           </div>

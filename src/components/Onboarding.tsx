@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
 import { signInWithGoogle } from '../libs/firebaseClient';
+import config from '../config/env';
 
 export function Onboarding() {
   const [step, setStep] = useState(1);
@@ -210,11 +211,11 @@ export function Onboarding() {
               >
                 {/* Decorative gradient orbs */}
                 <div
-                  className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 ${isCorrect ? 'bg-green-400' : 'bg-orange-400'
+                  className={`absolute top-0 right-0 w-64 h-64 rounded-full blur-3xl opacity-20 pointer-events-none ${isCorrect ? 'bg-green-400' : 'bg-orange-400'
                     }`}
                 />
                 <div
-                  className={`absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl opacity-20 ${isCorrect ? 'bg-teal-400' : 'bg-red-400'
+                  className={`absolute bottom-0 left-0 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none ${isCorrect ? 'bg-teal-400' : 'bg-red-400'
                     }`}
                 />
 
@@ -254,7 +255,7 @@ export function Onboarding() {
 
                 <button
                   onClick={() => setStep(3)}
-                  className={`mt-8 w-full max-w-xs mx-auto text-white rounded-2xl py-4 shadow-lg transition-all group flex items-center justify-center gap-2 ${isCorrect
+                  className={`mt-8 w-full max-w-xs mx-auto text-white rounded-2xl py-4 shadow-lg transition-all group flex items-center justify-center gap-2 relative z-20 ${isCorrect
                       ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-teal-600 hover:from-green-600 hover:via-emerald-600 hover:to-teal-700 shadow-green-500/30 hover:shadow-xl hover:shadow-green-500/40'
                       : 'bg-gradient-to-r from-orange-500 via-amber-500 to-red-500 hover:from-orange-600 hover:via-amber-600 hover:to-red-600 shadow-orange-500/30 hover:shadow-xl hover:shadow-orange-500/40'
                     }`}
@@ -369,7 +370,7 @@ export function Onboarding() {
                       <div className="w-full border-t border-white/10"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="bg-gray-900/80 px-4 text-gray-400">Get started with</span>
+                      <span className="px-4 text-gray-400">Get started with</span>
                     </div>
                   </div>
 
@@ -428,7 +429,24 @@ export function Onboarding() {
                 transition={{ delay: 0.6 }}
                 className="mt-6 text-center text-xs text-gray-500"
               >
-                <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
+                <p>By continuing, you agree to our</p>
+                <div className="mt-1 space-x-3">
+                  <button
+                    type="button"
+                    className="hover:text-gray-400 transition-colors"
+                    onClick={() => window.open(config.termsOfUseURL, '_blank', 'noopener,noreferrer')}
+                  >
+                    Terms of Service
+                  </button>
+                  <span>·</span>
+                  <button
+                    type="button"
+                    className="hover:text-gray-400 transition-colors"
+                    onClick={() => window.open(config.privacyPolicyURL, '_blank', 'noopener,noreferrer')}
+                  >
+                    Privacy Policy
+                  </button>
+                </div>
               </motion.div>
             </motion.div>
           )}
