@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
 import { Check, Star, Zap, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
 import api from '../utils/api';
@@ -10,7 +10,23 @@ import { firebaseAuth } from '../libs/firebaseClient';
 export function Paywall() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const { authenticatedUser } = useUserStore();
+  const { authenticatedUser, profile, profileLoading, fetchProfile } = useUserStore();
+
+  useEffect(() => {
+    if (!profile && authenticatedUser?.email) {
+      void fetchProfile();
+    }
+  }, [authenticatedUser?.email, profile, fetchProfile]);
+
+  useEffect(() => {
+    if (profile?.plan?.planId === 'PRO') {
+      navigate('/', { replace: true });
+    }
+  }, [profile?.plan?.planId, navigate]);
+
+  if (profile?.plan?.planId === 'PRO') {
+    return null;
+  }
 
   const features = [
     'Unlock all planetary tournaments',
@@ -52,6 +68,11 @@ export function Paywall() {
   };
 
   return (
+    profileLoading && !profile ? (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center">
+        <div className="loader" />
+      </div>
+    ) : (
     <div className="fixed inset-0 bg-gray-900/80 backdrop-blur-lg z-50 p-4 overflow-y-auto">
       <div className="min-h-full flex items-center justify-center">
       <motion.div
@@ -158,5 +179,6 @@ export function Paywall() {
       </motion.div>
       </div>
     </div>
+    )
   );
 }
