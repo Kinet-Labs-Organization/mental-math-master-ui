@@ -13,9 +13,9 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, T
 
 export function Progress() {
   const {
-    basicReport, basicReportLoading, basicReportError, fetchBasicReport,
-    progressReport, progressReportLoading, progressReportError, fetchProgressReport,
-    activities, activitiesTotalCount, activitiesLoading, activitiesError, fetchActivities, resetActivities
+    basicReport, basicReportLoading, fetchBasicReport,
+    progressReport, progressReportLoading, fetchProgressReport,
+    activities, activitiesTotalCount, activitiesLoading, fetchActivities, resetActivities
   } = useReportStore();
 
   const [recentActivity, setRecentActivity] = useState<any[]>([]);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { Settings, Volume2, Bell, Info, LogOut, Mail, Rss, CircleQuestionMark, HandHelping, Trash, X, ChevronDown } from 'lucide-react';
+import { Settings, Volume2, Bell, Info, LogOut, Mail, CircleQuestionMark, HandHelping, Trash, X, ChevronDown } from 'lucide-react';
 import { useUserStore } from '../store/useUserStore';
 import { useGenericStore } from '../store/useGenericStore';
 import { useToastStore } from '../store/useToastStore';

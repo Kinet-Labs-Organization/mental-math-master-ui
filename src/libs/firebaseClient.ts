@@ -4,11 +4,14 @@ import {
   browserLocalPersistence,
   getAuth,
   GoogleAuthProvider,
-  setPersistence,
+  initializeAuth,
+  signInWithCredential,
+  type Auth,
   signInWithPopup,
-  signInWithRedirect,
   signOut,
 } from 'firebase/auth';
+import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
 import config from '../config/env';
 
 const firebaseApp = initializeApp({
@@ -31,16 +34,36 @@ void isSupported()
     // Analytics is optional here.
   });
 
-export const firebaseAuth = getAuth(firebaseApp);
+const isNativePlatform = Capacitor.isNativePlatform();
+
+export const firebaseAuth: Auth = isNativePlatform
+  ? initializeAuth(firebaseApp, {
+      persistence: browserLocalPersistence,
+    })
+  : getAuth(firebaseApp);
 export const googleProvider = new GoogleAuthProvider();
 
-export const signInWithGoogle = async () => {
-  // await setPersistence(firebaseAuth, browserLocalPersistence);
-  // return signInWithRedirect(firebaseAuth, googleProvider);
-  const result = await signInWithPopup(firebaseAuth, googleProvider);
-  // console.log(result.user);
-  return result;
+const signInWithGoogleNative = async () => {
+  const result = await FirebaseAuthentication.signInWithGoogle({
+    skipNativeAuth: true,
+  });
+  const idToken = result.credential?.idToken;
+  const accessToken = result.credential?.accessToken;
+  if (!idToken && !accessToken) {
+    throw new Error('Google authentication did not return tokens.');
+  }
+  const credential = GoogleAuthProvider.credential(idToken ?? undefined, accessToken ?? undefined);
+  return signInWithCredential(firebaseAuth, credential);
 };
+
+const signInWithGoogleWeb = async () => {
+  return signInWithPopup(firebaseAuth, googleProvider);
+};
+
+export const signInWithGoogle = async () => {
+  return isNativePlatform ? signInWithGoogleNative() : signInWithGoogleWeb();
+};
+
 export const signOutFromFirebase = () => signOut(firebaseAuth);
 
 export default firebaseApp;

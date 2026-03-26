@@ -2,7 +2,7 @@ import { create } from "zustand";
 import ApiURL from "../utils/apiurl";
 import api from "../utils/api";
 
-export const useGenericStore = create<any>((set, get) => ({
+export const useGenericStore = create<any>((set) => ({
     faqs: [],
     faqsLoading: false,
     faqsError: null,

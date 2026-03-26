@@ -9,12 +9,11 @@ import { useConfigStore } from './store/useConfigStore';
 import { Login } from './components/Login';
 import { Onboarding } from './components/Onboarding';
 import { firebaseAuth, signOutFromFirebase } from './libs/firebaseClient';
-import config from './config/env';
 import api, { setNavigate } from './utils/api';
 import ApiURL from './utils/apiurl';
-import { Purchases, ReservedCustomerAttribute } from "@revenuecat/purchases-js";
 import { GlobalToast } from './components/GlobalToast';
 import CONSTANTS from './utils/constants';
+import { Capacitor } from '@capacitor/core';
 
 export default function App() {
   const navigate = useNavigate();
@@ -47,6 +46,9 @@ export default function App() {
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
+    const authBootstrapTimeout = window.setTimeout(() => {
+      setIsAuthLoading(false);
+    }, 10000);
     // let appUserId = localStorage.getItem('rc_app_user_id');
     // if (!appUserId) {
     //   appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
@@ -72,42 +74,41 @@ export default function App() {
         //   console.error('Error checking subscription:', e);
         // }
         UXConfigLogics(location.pathname);
-        // console.log('Firebase runtime config:', {
-        //   origin: window.location.origin,
-        //   authDomain: config.firebaseAuthDomain,
-        //   projectId: config.firebaseProjectId,
-        //   apiKeyPreview: config.firebaseApiKey?.slice(0, 8),
-        // });
-        try {
-          const redirectResult = await getRedirectResult(firebaseAuth);
-          // console.log('Firebase redirect result:', redirectResult);
-        } catch (error) {
-          console.error('Firebase redirect result error:', error);
+        unsubscribe = onAuthStateChanged(
+          firebaseAuth,
+          async (firebaseUser) => {
+            if (!firebaseUser) {
+              removeAuthenticatedUser();
+              setIsAuthLoading(false);
+              return;
+            }
+
+            try {
+              const token = await firebaseUser.getIdToken();
+              const email = firebaseUser.email ?? null;
+              const name = firebaseUser.displayName ?? null;
+              const avatar = firebaseUser.photoURL ?? null;
+              const syncedUser = await userSync({ email, name, avatar });
+              setAuthenticatedUser(syncedUser ?? { token, email, name, avatar });
+            } catch (error) {
+              console.error('Firebase auth processing error:', error);
+              removeAuthenticatedUser();
+              await signOutFromFirebase();
+            } finally {
+              setIsAuthLoading(false);
+            }
+          },
+          (error) => {
+            console.error('onAuthStateChanged error:', error);
+            setIsAuthLoading(false);
+          }
+        );
+
+        if (!Capacitor.isNativePlatform()) {
+          void getRedirectResult(firebaseAuth).catch((error) => {
+            console.error('Firebase redirect result error:', error);
+          });
         }
-
-        unsubscribe = onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
-          // console.log('onAuthStateChanged fired:', firebaseUser);
-          if (!firebaseUser) {
-            removeAuthenticatedUser();
-            setIsAuthLoading(false);
-            return;
-          }
-
-          try {
-            const token = await firebaseUser.getIdToken();
-            const email = firebaseUser.email ?? null;
-            const name = firebaseUser.displayName ?? null;
-            const avatar = firebaseUser.photoURL ?? null;
-            const syncedUser = await userSync({ email, name, avatar });
-            setAuthenticatedUser(syncedUser ?? { token, email, name, avatar });
-          } catch (error) {
-            console.error('Firebase auth processing error:', error);
-            removeAuthenticatedUser();
-            await signOutFromFirebase();
-          } finally {
-            setIsAuthLoading(false);
-          }
-        });
       } catch (err) {
         console.error('Firebase auth init error:', err);
       } finally {
@@ -120,6 +121,7 @@ export default function App() {
     init();
 
     return () => {
+      window.clearTimeout(authBootstrapTimeout);
       try {
         unsubscribe?.();
       } catch (e) {
@@ -147,6 +149,7 @@ export default function App() {
           setIsUserSynced(false);
           return updatedAuthUser;
         }
+        setIsUserSynced(false);
       }
       return null;
     } catch (error) {
@@ -191,10 +194,17 @@ export default function App() {
   );
 
   if (isAuthLoading) {
-    return null;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center px-4">
+        <div className="relative mx-auto mb-6 w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-white/10" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-400 border-r-cyan-400 animate-spin" />
+        </div>
+      </div>
+    );
   }
 
-  if(isUserSynced) {
+  if (isUserSynced) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center px-4">
         <div className="w-full max-w-sm bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl text-center shadow-2xl">

@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { formatNotificationTimeAgo } from '../utils/time';
 
 export function Notifications() {
-    const colors = ['bg-blue-500/20 text-blue-400', 'bg-green-500/20 text-green-400', 'bg-purple-500/20 text-purple-400', 'bg-pink-500/20 text-pink-400', 'bg-yellow-500/20 text-yellow-400'];
     const navigate = useNavigate();
     const { notifications, notificationsLoading, fetchNotifications, markNotificationRead } = useUserStore();
     const [selectedNotification, setSelectedNotification] = useState<any>(null);

@@ -10,7 +10,6 @@ import {
   Zap,
 
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
 import { signInWithGoogle } from '../libs/firebaseClient';
 import config from '../config/env';
@@ -19,7 +18,6 @@ export function Onboarding() {
   const [step, setStep] = useState(1);
   const [answer, setAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const navigate = useNavigate();
   const { setOnboardingFlag } = useUserStore.getState();
 
   const correctAnswer = 25; // 10 + 15

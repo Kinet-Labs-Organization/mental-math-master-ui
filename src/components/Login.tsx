@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowRight, Apple } from 'lucide-react';
+import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useUserStore } from '../store/useUserStore';
 import { signInWithGoogle } from '../libs/firebaseClient';
