@@ -31,9 +31,6 @@ export default function App() {
   const revenueCatLastSnapshotRef = useRef<string | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isUserSynced, setIsUserSynced] = useState(false);
-  // useEffect(() => {
-  //   setNavigate(navigate);
-  // }, [navigate]);
 
   const pathToSection = (pathname: string): NavSection => {
     switch (pathname) {
@@ -57,30 +54,9 @@ export default function App() {
     const authBootstrapTimeout = window.setTimeout(() => {
       setIsAuthLoading(false);
     }, 10000);
-    // let appUserId = localStorage.getItem('rc_app_user_id');
-    // if (!appUserId) {
-    //   appUserId = Purchases.generateRevenueCatAnonymousAppUserId();
-    //   localStorage.setItem('rc_app_user_id', appUserId);
-    // }
-    // console.log('Purchases.generateRevenueCatAnonymousAppUserId() - invoked : from App.tsx');
-    // console.log(appUserId);
-
-    // const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks", appUserId: appUserId, });
-    // const purchases = Purchases.configure({ apiKey: "test_eZwgKpwPadYrtvseGiBbwEoIbks" });
-    // console.log('Purchases.configure(...) - invoked : from App.tsx');
-    // console.log(purchases);
 
     const init = async () => {
       try {
-        // try {
-        //   const customerInfo = await purchases.getCustomerInfo();
-        //   console.log(customerInfo);
-        //   if (customerInfo.entitlements.active['pro']) {
-        //     console.log('User has active subscription');
-        //   }
-        // } catch (e) {
-        //   console.error('Error checking subscription:', e);
-        // }
         UXConfigLogics(location.pathname);
         unsubscribe = onAuthStateChanged(
           firebaseAuth,
@@ -96,8 +72,8 @@ export default function App() {
               const email = firebaseUser.email ?? null;
               const name = firebaseUser.displayName ?? null;
               const avatar = firebaseUser.photoURL ?? null;
-              const syncedUser = await userSync({ email, name, avatar });
-              setAuthenticatedUser(syncedUser ?? { token, email, name, avatar });
+              await userSync({ email, name, avatar });
+              setAuthenticatedUser({ token, email, name, avatar });
             } catch (error) {
               console.error('Firebase auth processing error:', error);
               removeAuthenticatedUser();
@@ -145,18 +121,18 @@ export default function App() {
       if (!userSynced) {
         setIsUserSynced(true);
         await api.post(ApiURL.user.userSync, { email: user.email, name: user.name, avatar: user.avatar });
-        const firebaseUser = firebaseAuth.currentUser;
-        if (firebaseUser) {
-          const refreshedToken = await firebaseUser.getIdToken(true);
-          const updatedAuthUser = {
-            token: refreshedToken,
-            email: firebaseUser.email ?? user.email ?? null,
-            name: firebaseUser.displayName ?? user.name ?? null,
-            avatar: firebaseUser.photoURL ?? user.avatar ?? null,
-          };
-          setIsUserSynced(false);
-          return updatedAuthUser;
-        }
+        // const firebaseUser = firebaseAuth.currentUser;
+        // if (firebaseUser) {
+        //   const refreshedToken = await firebaseUser.getIdToken(true);
+        //   const updatedAuthUser = {
+        //     token: refreshedToken,
+        //     email: firebaseUser.email ?? user.email ?? null,
+        //     name: firebaseUser.displayName ?? user.name ?? null,
+        //     avatar: firebaseUser.photoURL ?? user.avatar ?? null,
+        //   };
+        //   setIsUserSynced(false);
+        //   return updatedAuthUser;
+        // }
         setIsUserSynced(false);
       }
       return null;
@@ -197,9 +173,10 @@ export default function App() {
           status: snapshot.status,
           subscriptionExpiration: snapshot.subscriptionExpiration,
         });
+        
         await firebaseAuth.currentUser?.getIdToken(true);
       } catch (error) {
-        console.error('Failed to sync RevenueCat subscription snapshot to backend:', error);
+        console.error('Failed to sync RevenueCat subscription snapshot to backend', error);
       }
     };
 
