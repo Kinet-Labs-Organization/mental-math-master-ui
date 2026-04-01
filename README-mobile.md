@@ -60,3 +60,22 @@ npx cap sync
 
 If needed, clean native build in IDE and run again.
 
+## RevenueCat (Native)
+
+Set these env values before building native apps:
+
+```bash
+VITE_REVENUECAT_IOS_API_KEY=appl_xxx
+VITE_REVENUECAT_ANDROID_API_KEY=goog_xxx
+VITE_REVENUECAT_OFFERING_ID=default
+```
+
+Then run:
+
+```bash
+npm run build
+npx cap sync ios
+npx cap sync android
+```
+
+Web app keeps using existing backend upgrade flow and does not require native RevenueCat keys.

@@ -8,11 +8,11 @@ import config from "../config/env";
 import { useToastStore } from '../store/useToastStore';
 import { firebaseAuth, signOutFromFirebase } from "../libs/firebaseClient";
 
-let navigate: ((path: string) => void) | null = null;
+// let navigate: ((path: string) => void) | null = null;
 
-export const setNavigate = (fn: (path: string) => void) => {
-  navigate = fn;
-};
+// export const setNavigate = (fn: (path: string) => void) => {
+//   navigate = fn;
+// };
 
 // ============================================
 // Create axios instance
@@ -31,7 +31,7 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const firebaseUser = firebaseAuth.currentUser;
-    const token = firebaseUser ? await firebaseUser.getIdToken() : null;
+    const token = firebaseUser ? await firebaseUser.getIdToken(true) : null;
 
     if (token) {
       console.log(token);
@@ -205,11 +205,12 @@ const appActions = (actionCode: string) => {
   switch (actionCode) {
     case 'UNSUBSCRIBED_USER': {
       // showToast(error.response?.data?.appMessage, 'info');
-      if (navigate) {
-        navigate('/paywall');
-      } else if (typeof window !== 'undefined' && window.location.pathname !== '/paywall') {
-        window.location.href = '/paywall';
-      }
+      // if (navigate) {
+      //   navigate('/paywall');
+      // } else if (typeof window !== 'undefined' && window.location.pathname !== '/paywall') {
+      //   window.location.href = '/paywall';
+      // }
+      window.location.href = '/paywall';
       break;
     }
     default: break;

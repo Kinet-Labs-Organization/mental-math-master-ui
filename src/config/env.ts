@@ -16,6 +16,9 @@ interface Config {
   firebaseMeasurementId: string;
   privacyPolicyURL: string;
   termsOfUseURL: string;
+  revenueCatIOSApiKey?: string;
+  revenueCatAndroidApiKey?: string;
+  revenueCatOfferingId?: string;
 }
 
 const config: Config = {
@@ -34,6 +37,9 @@ const config: Config = {
   firebaseMeasurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
   privacyPolicyURL: import.meta.env.VITE_PRIVACY_POLICY_URL,
   termsOfUseURL: import.meta.env.VITE_TERMS_OF_USE_URL,
+  revenueCatIOSApiKey: import.meta.env.VITE_REVENUECAT_IOS_API_KEY,
+  revenueCatAndroidApiKey: import.meta.env.VITE_REVENUECAT_ANDROID_API_KEY,
+  revenueCatOfferingId: import.meta.env.VITE_REVENUECAT_OFFERING_ID,
 };
 
 // Validate required env vars

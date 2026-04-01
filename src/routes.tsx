@@ -16,8 +16,11 @@ const Notifications = lazy(() => import('./components/Notifications').then(m => 
 export function AppRoutes() {
   return (
     <Suspense fallback={
-      <div className="loader-container">
-        <div className="loader"></div>
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex items-center justify-center px-4">
+        <div className="relative mx-auto mt-[-110px] w-16 h-16">
+          <div className="absolute inset-0 rounded-full border-4 border-white/10" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-400 border-r-cyan-400 animate-spin" />
+        </div>
       </div>
     }>
       <Routes>

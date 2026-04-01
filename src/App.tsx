@@ -9,11 +9,18 @@ import { useConfigStore } from './store/useConfigStore';
 import { Login } from './components/Login';
 import { Onboarding } from './components/Onboarding';
 import { firebaseAuth, signOutFromFirebase } from './libs/firebaseClient';
-import api, { setNavigate } from './utils/api';
+import api from './utils/api';
 import ApiURL from './utils/apiurl';
 import { GlobalToast } from './components/GlobalToast';
 import CONSTANTS from './utils/constants';
 import { Capacitor } from '@capacitor/core';
+import {
+  addRevenueCatSubscriptionListener,
+  configureRevenueCat,
+  getRevenueCatSubscriptionSnapshot,
+  isNativeRevenueCatEnabled,
+  type RevenueCatSubscriptionSnapshot,
+} from './services/revenuecat';
 
 export default function App() {
   const navigate = useNavigate();
@@ -21,11 +28,12 @@ export default function App() {
   const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser, removeAuthenticatedUser } =
     useUserStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const revenueCatLastSnapshotRef = useRef<string | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isUserSynced, setIsUserSynced] = useState(false);
-  useEffect(() => {
-    setNavigate(navigate);
-  }, [navigate]);
+  // useEffect(() => {
+  //   setNavigate(navigate);
+  // }, [navigate]);
 
   const pathToSection = (pathname: string): NavSection => {
     switch (pathname) {
@@ -165,6 +173,64 @@ export default function App() {
       scrollContainerRef.current.scrollTop = 0;
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!authenticatedUser?.email) {
+      return;
+    }
+    if (!Capacitor.isNativePlatform() || !isNativeRevenueCatEnabled()) {
+      return;
+    }
+
+    let removeRevenueCatListener: (() => Promise<void>) | null = null;
+    let cancelled = false;
+
+    const syncSnapshotToBackend = async (snapshot: RevenueCatSubscriptionSnapshot) => {
+      const signature = `${snapshot.status}:${snapshot.subscriptionExpiration ?? ''}`;
+      if (revenueCatLastSnapshotRef.current === signature) {
+        return;
+      }
+      revenueCatLastSnapshotRef.current = signature;
+
+      try {
+        await api.post(ApiURL.user.syncSubscription, {
+          status: snapshot.status,
+          subscriptionExpiration: snapshot.subscriptionExpiration,
+        });
+        await firebaseAuth.currentUser?.getIdToken(true);
+      } catch (error) {
+        console.error('Failed to sync RevenueCat subscription snapshot to backend:', error);
+      }
+    };
+
+    const initRevenueCatSync = async () => {
+      try {
+        await configureRevenueCat(authenticatedUser.email);
+        const initialSnapshot = await getRevenueCatSubscriptionSnapshot();
+        await syncSnapshotToBackend(initialSnapshot);
+
+        removeRevenueCatListener = await addRevenueCatSubscriptionListener(
+          async (snapshot) => {
+            if (cancelled) {
+              return;
+            }
+            await syncSnapshotToBackend(snapshot);
+          },
+        );
+      } catch (error) {
+        console.error('Failed to initialize RevenueCat subscription listener:', error);
+      }
+    };
+
+    void initRevenueCatSync();
+
+    return () => {
+      cancelled = true;
+      if (removeRevenueCatListener) {
+        void removeRevenueCatListener();
+      }
+    };
+  }, [authenticatedUser?.email]);
 
   const {
     FooterNavigation,

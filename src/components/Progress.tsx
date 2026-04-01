@@ -114,9 +114,14 @@ export function Progress() {
               <Calendar className="w-6 h-6 text-white" />
             </div>
             <div className="text-3xl text-white mb-1">
-              {
+              {basicReportLoading ? (
+                <div className="relative w-8 h-8 mb-2">
+                  <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-blue-400 border-r-cyan-400 animate-spin" />
+                </div>
+              ) : (
                 basicReport?.totalSessions
-              }
+              )}
             </div>
             <div className="text-sm text-gray-400">Total Sessions</div>
           </motion.div>)}
@@ -137,7 +142,10 @@ export function Progress() {
             </div>
             <div className="text-3xl text-white mb-1">
               {basicReportLoading ? (
-                <div className="loader" style={{ width: 38, padding: 5 }}></div>
+                <div className="relative w-8 h-8 mb-2">
+                  <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-blue-400 border-r-cyan-400 animate-spin" />
+                </div>
               ) : (
                 basicReport?.accuracyRate && `${basicReport?.accuracyRate}%`
               )}
@@ -161,7 +169,10 @@ export function Progress() {
             </div>
             <div className="text-3xl text-white mb-1">
               {progressReportLoading ? (
-                <div className="loader" style={{ width: 38, padding: 5 }}></div>
+                <div className="relative w-8 h-8 mb-2">
+                  <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-blue-400 border-r-cyan-400 animate-spin" />
+                </div>
               ) : (
                 basicReport?.currentStreak
               )}
@@ -185,7 +196,10 @@ export function Progress() {
             </div>
             <div className="text-3xl text-white mb-1">
               {basicReportLoading ? (
-                <div className="loader" style={{ width: 38, padding: 5 }}></div>
+                <div className="relative w-8 h-8 mb-2">
+                  <div className="absolute inset-0 rounded-full border-2 border-white/10" />
+                  <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-blue-400 border-r-cyan-400 animate-spin" />
+                </div>
               ) : (
                 basicReport?.achievements?.length
               )}
@@ -253,7 +267,7 @@ export function Progress() {
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
                       <span className="text-xl">
-                        <img src={`${config.imageBaseURL}/${activity.icon ?? 1}.png`} className='w-[30px]'/>
+                        <img src={`${config.imageBaseURL}/${activity.icon ?? 1}.png`} className='w-[30px]' />
                       </span>
                     </div>
                     <div>

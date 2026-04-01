@@ -2,14 +2,21 @@ import { motion } from 'motion/react';
 import { Check, Star, Zap, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Capacitor } from '@capacitor/core';
 import { useUserStore } from '../store/useUserStore';
 import api from '../utils/api';
 import ApiURL from '../utils/apiurl';
 import { firebaseAuth } from '../libs/firebaseClient';
+import { configureRevenueCat, isNativeRevenueCatEnabled, purchasePlanWithRevenueCat, type PaywallPlan, getOfferings } from '../services/revenuecat';
 
 export function Paywall() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [plans, setPlans] = useState<any>({
+    yearly: {yearly: null, monthly: null, numericPricePerMonth: 0},
+    monthly: {yearly: null, monthly: null, numericPricePerMonth: 0},
+  });
+  const [discount, setDiscount] = useState(0);
   const { authenticatedUser, profile, profileLoading, fetchProfile } = useUserStore();
 
   useEffect(() => {
@@ -29,7 +36,7 @@ export function Paywall() {
   }
 
   const features = [
-    'Unlock all planetary tournaments',
+    'Unlock all level of tournaments',
     'Unlimited custom practice sessions',
     'Advanced performance analytics & charts',
     'Track your global leaderboard rank',
@@ -39,9 +46,44 @@ export function Paywall() {
     navigate(-1);
   };
 
-  const onSubscribe = async (plan: 'yearly' | 'monthly' | 'trial') => {
+  useEffect(() => {
     if (!authenticatedUser?.email) {
-      alert('Please log in to subscribe.');
+      return;
+    }
+    if (!isNativeRevenueCatEnabled()) {
+      return;
+    }
+    void configureRevenueCat(authenticatedUser.email).catch((error) => {
+      console.error('RevenueCat configure failed:', error);
+    });
+    void getOfferings().then(({ selectedOffering }) => {
+      const yearlyPkg = selectedOffering?.availablePackages.find((p:any) => p.packageType === 'ANNUAL');
+      const monthlyPkg = selectedOffering?.availablePackages.find((p:any) => p.packageType === 'MONTHLY');
+      const yearlyPricePerMonth = Number(yearlyPkg?.product.pricePerMonth ?? 0);
+      const monthlyPricePerMonth = Number(monthlyPkg?.product.pricePerMonth ?? 0);
+      setPlans({
+        yearly: {
+          yearly: yearlyPkg?.product.pricePerYearString ?? null,
+          monthly: yearlyPkg?.product.pricePerMonthString ?? null,
+          numericPricePerMonth: yearlyPricePerMonth
+        },
+        monthly: {
+          yearly: monthlyPkg?.product.pricePerYearString ?? null,
+          monthly: monthlyPkg?.product.pricePerMonthString ?? null,
+          numericPricePerMonth: monthlyPricePerMonth
+        }
+      });
+      if (monthlyPricePerMonth > 0 && yearlyPricePerMonth >= 0) {
+        const discountPercent = ((monthlyPricePerMonth - yearlyPricePerMonth) * 100) / monthlyPricePerMonth;
+        setDiscount(Number.isFinite(discountPercent) ? Math.max(0, Math.round(discountPercent)) : 0);
+      } else {
+        setDiscount(0);
+      }
+    });
+  }, [authenticatedUser?.email]);
+
+  const onSubscribe = async (plan: PaywallPlan) => {
+    if (!authenticatedUser?.email) {
       return;
     }
 
@@ -53,6 +95,14 @@ export function Paywall() {
 
     setLoading(true);
     try {
+      const isNative = Capacitor.isNativePlatform();
+      if (isNative) {
+        if (!isNativeRevenueCatEnabled()) {
+          throw new Error('RevenueCat is not configured for this native platform. Please set native RevenueCat API key.');
+        }
+        await configureRevenueCat(authenticatedUser.email);
+        await purchasePlanWithRevenueCat(plan);
+      }
       await api.post(ApiURL.user.upgrade, {
         term: termMap[plan],
       });
@@ -60,8 +110,16 @@ export function Paywall() {
       console.log('Subscription updated successfully!');
       onClose();
     } catch (error) {
-      console.error('Upgrade API failed:', error);
-      alert('Unable to update subscription. Please try again.');
+      console.error('Subscribe flow failed:', error);
+      const errorObj = error as any;
+      const code = errorObj?.code ? ` (${errorObj.code})` : '';
+      const message = errorObj?.message || 'Unknown subscription error';
+      const cancelled = errorObj?.userCancelled === true || errorObj?.code === '1';
+      if (cancelled) {
+        alert('Purchase cancelled.');
+      } else {
+        alert(`Unable to subscribe${code}: ${message}`);
+      }
     } finally {
       setLoading(false);
     }
@@ -79,7 +137,7 @@ export function Paywall() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
-        className="pt-8 relative w-full max-w-lg bg-transparent rounded-3xl px-5 sm:px-6 pb-6 max-h-[90vh] overflow-y-auto"
+        className="pt-8 relative w-full max-w-lg bg-transparent rounded-3xl px-5 sm:px-6 pb-6 mt-6"
       >
         <button
           onClick={onClose}
@@ -130,14 +188,14 @@ export function Paywall() {
             className="w-full text-left bg-white/5 hover:bg-white/10 border-2 border-purple-500 rounded-2xl p-5 transition-all relative disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="absolute top-[-10px] right-4 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
-              SAVE 25%
+              SAVE {discount}%
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base text-white">Yearly Plan</h3>
-                <p className="text-sm text-gray-400">$89.99 / year</p>
+                <p className="text-sm text-gray-400">{plans.yearly.yearly}/year</p>
               </div>
-              <div className="text-xl text-white font-bold">$7.50/mo</div>
+              <div className="text-xl text-white font-bold">{plans.yearly.monthly}/mo</div>
             </div>
           </motion.button>
 
@@ -154,7 +212,7 @@ export function Paywall() {
                 <h3 className="text-base text-white">Monthly Plan</h3>
                 <p className="text-sm text-gray-400">Billed monthly</p>
               </div>
-              <div className="text-xl text-white font-bold">$9.99/mo</div>
+              <div className="text-xl text-white font-bold">{plans.monthly.monthly}/mo</div>
             </div>
           </motion.button>
         </div>
@@ -169,7 +227,7 @@ export function Paywall() {
           className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-2xl py-4 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 transition-all group flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <span>{loading ? 'Processing...' : 'Start Free 7-Day Trial'}</span>
+          <span>{loading ? 'Processing...' : 'XStart Free 7-Day Trial'}</span>
         </motion.button>
 
         {/* Footer */}

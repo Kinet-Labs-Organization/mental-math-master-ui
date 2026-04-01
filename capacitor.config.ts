@@ -5,6 +5,8 @@ const config: CapacitorConfig = {
   appName: 'Mental Math Master',
   webDir: 'dist',
   server: {
+    url: 'http://192.168.29.174:3000',
+    cleartext: true,
     iosScheme: 'https',
   },
   plugins: {

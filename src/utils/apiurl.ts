@@ -21,6 +21,8 @@ const ApiURL = {
     fetchProfile: `user/profile`,
     fetchAchievements: `user/achievements`,
     upgrade: `user/upgrade`,
+    unsubscribe: `user/unsubscribe`,
+    syncSubscription: `user/subscription/sync`,
   },
   generic: {
     fetchFaqs: `generic/faqs`,
