@@ -65,6 +65,7 @@ export const useUserStore = create<any>((set) => ({
   loginLoading: false,
   loginError: null,
 
+  //unused because firebase Google OAuth used
   login: async (_email: string, _password: string) => {
     set({ loginError: null, loginLoading: true });
     try {
