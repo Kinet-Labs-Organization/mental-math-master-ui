@@ -59,11 +59,14 @@
     linear-gradient(#1a2335 100%, transparent 0); */
   /* background-size: 500px 100%, 1000px 1000px, 100% 100%; */
   background-image:
-    linear-gradient(90deg,
-      rgba(154, 160, 174, 0),
-      rgba(154, 160, 174, 0.8) 50%,
-      rgba(154, 160, 174, 0) 100%),
-    linear-gradient(#3b444e 100%, transparent 0), linear-gradient(#1a2335 100%, transparent 0);
+    linear-gradient(
+      90deg,
+      rgba(120, 132, 160, 0),
+      rgba(120, 132, 160, 0.32) 50%,
+      rgba(120, 132, 160, 0) 100%
+    ),
+    linear-gradient(#273348 100%, transparent 0),
+    linear-gradient(#1b2438 100%, transparent 0);
   background-size:
     500px 100%,
     100% 100%,

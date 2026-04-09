@@ -21,11 +21,12 @@ import {
   isNativeRevenueCatEnabled,
   type RevenueCatSubscriptionSnapshot,
 } from './services/revenuecat';
+import { Paywall } from './components/Paywall';
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser, removeAuthenticatedUser } =
+  const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser, removeAuthenticatedUser, getOnboardingPaywallFlag } =
     useUserStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const revenueCatLastSnapshotRef = useRef<string | null>(null);
@@ -173,7 +174,7 @@ export default function App() {
           status: snapshot.status,
           subscriptionExpiration: snapshot.subscriptionExpiration,
         });
-        
+
         await firebaseAuth.currentUser?.getIdToken(true);
       } catch (error) {
         console.error('Failed to sync RevenueCat subscription snapshot to backend', error);
@@ -292,24 +293,24 @@ export default function App() {
           path="/*"
           element={
             authenticatedUser && authenticatedUser.token ? (
-              <div className="h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex flex-col">
-                <div ref={scrollContainerRef} className="flex-1 overflow-auto">
-                  {TopEmptySpace && <div style={{ height: '42px' }}></div>}
-                  <AppRoutes />
-                  {BottomEmptySpace && <div style={{ height: '68px' }}></div>}
-                </div>
-                {FooterNavigation && (
-                  <Navigation
-                    activeSection={pathToSection(location.pathname)}
-                    onSectionChange={section =>
-                      navigate(section === 'dashboard' ? '/' : `/${section}`)
-                    }
-                  />
-                )}
-              </div>
-            ) : (
-              // <Navigate to="/onboarding" replace />
-              <Navigate to="/login" replace />
+                  <div className="h-screen bg-gradient-to-br from-gray-900 via-slate-900 to-black flex flex-col">
+                    <div ref={scrollContainerRef} className="flex-1 overflow-auto">
+                      {TopEmptySpace && <div style={{ height: '42px' }}></div>}
+                      <AppRoutes />
+                      {BottomEmptySpace && <div style={{ height: '68px' }}></div>}
+                    </div>
+                    {FooterNavigation && (
+                      <Navigation
+                        activeSection={pathToSection(location.pathname)}
+                        onSectionChange={section =>
+                          navigate(section === 'dashboard' ? '/' : `/${section}`)
+                        }
+                      />
+                    )}
+                  </div>
+                ) : (
+              <Navigate to="/onboarding" replace />
+              // <Navigate to="/login" replace />
             )
           }
         />

@@ -62,6 +62,20 @@ export const useUserStore = create<any>((set) => ({
     localStorage.setItem(CONSTANTS.ONBOARDING_FLAG_STORAGE_KEY, "present");
   },
 
+  getOnboardingPaywallFlag: () => {
+    if (
+      localStorage.getItem(CONSTANTS.PAYWALL_FLAG_STORAGE_KEY) === "present"
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  },
+
+  setOnboardingPaywallFlag: () => {
+    localStorage.setItem(CONSTANTS.PAYWALL_FLAG_STORAGE_KEY, "present");
+  },
+
   loginLoading: false,
   loginError: null,
 

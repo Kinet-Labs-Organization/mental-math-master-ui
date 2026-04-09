@@ -51,10 +51,10 @@ export function Profile() {
               <SkeletonLoader width={96} height={96} radius={999} />
               <div className="flex-1 flex flex-col items-center sm:items-start w-full">
                 <div className="mb-2">
-                  <SkeletonLoader width={200} height={36} />
+                  <SkeletonLoader width={200} height={36} radius={12} />
                 </div>
                 <div className="mb-4">
-                  <SkeletonLoader width={150} height={24} />
+                  <SkeletonLoader width={150} height={24} radius={10} />
                 </div>
                 <div className="flex flex-wrap gap-3 justify-center sm:justify-start w-full">
                   <SkeletonLoader width={140} height={32} radius={12} />
