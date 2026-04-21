@@ -34,8 +34,6 @@ export const getOfferings = async () => {
   const selectedOffering = config.revenueCatOfferingId
     ? offerings.all[config.revenueCatOfferingId]
     : offerings.current;
-  console.log(offerings);
-  console.log(selectedOffering);
   return {
     offerings,
     selectedOffering,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, List, X, Check, Timer, Plus, Divide, Minus } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -41,7 +41,7 @@ export function RegularGame() {
     (selectedGame as IGame | null)?.operations?.includes('divide')
   );
 
-  const evaluateAnswer = (numList: number[], operationList: string[]): number => {
+  const evaluateAnswer = useCallback((numList: number[], operationList: string[]): number => {
   let result = numList[0];
   
   for (let i = 1; i < numList.length; i++) {
@@ -68,10 +68,10 @@ export function RegularGame() {
   }
   
   return result;
-};
+}, []);
 
 
-  const generateQuestions = () => {
+  const generateQuestions = useCallback(() => {
   const questionsList: Question[] = [];
   for (let i = 0; i < game.length; i++) {
     const numList = [];
@@ -93,16 +93,14 @@ export function RegularGame() {
       answer,
     });
   }
-  console.log(questionsList);
-
   setQuestions(questionsList);
   setGameState('playing');
-};
+}, [evaluateAnswer, game]);
 
   useEffect(() => {
     if (!game) return;
     generateQuestions();
-  }, [game]);
+  }, [game, generateQuestions]);
 
   useEffect(() => {
     if (!selectedGame) {

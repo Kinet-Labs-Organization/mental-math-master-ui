@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useGenericStore } from '../store/useGenericStore';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
@@ -7,16 +7,11 @@ import SkeletonLoader from './shared/skeleton-loader';
 
 export function Blogs() {
     const { blogs: data, blogsLoading: loading, fetchBlogs } = useGenericStore();
-    const [dataList, setDataList] = useState<any[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchBlogs();
-    }, []);
-
-    useEffect(() => {
-        setDataList(data || []);
-    }, [data]);
+    }, [fetchBlogs]);
 
     return (
         <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -35,7 +30,7 @@ export function Blogs() {
                 </div>
 
                 {!loading && <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
-                    {dataList.map((data: any, index: number) => (
+                    {(data || []).map((data: any, index: number) => (
                         <motion.div
                             key={index}
                             initial={{ opacity: 0, x: -20 }}

@@ -2,7 +2,7 @@
 import { motion } from 'motion/react';
 import { TrendingUp, Calendar, Target, Zap, Award, WandSparkles, Check, X } from 'lucide-react';
 import { useReportStore } from '../store/useReportStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -11,6 +11,17 @@ import config from '../config/env';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+type RecentActivityItem = {
+  gameName: string;
+  gamePlayedAt: string;
+  gameType: string;
+  totalQuestions: number;
+  correctAnswers: number;
+  correctness: boolean;
+  score: number | null;
+  icon: string | number | null;
+};
+
 export function Progress() {
   const {
     basicReport, basicReportLoading, fetchBasicReport,
@@ -18,7 +29,7 @@ export function Progress() {
     activities, activitiesTotalCount, activitiesLoading, fetchActivities, resetActivities
   } = useReportStore();
 
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const nowRef = useRef(Date.now());
   const hasMore = activitiesTotalCount > 0 && activities.length < activitiesTotalCount;
 
   const fetchMoreData = async () => {
@@ -32,8 +43,8 @@ export function Progress() {
     return Math.floor((today - date.getTime()) / millisecondsInADay);
   }
 
-  useEffect(() => {
-    const fetchedActivities = activities.map((activity: any) => ({
+  const recentActivity = useMemo<RecentActivityItem[]>(
+    () => activities.map((activity: any) => ({
       gameName: activity.gameName,
       gamePlayedAt: formatDate(new Date(activity.gamePlayedAt)) === 0 ? 'Today' : `${formatDate(new Date(activity.gamePlayedAt))} days ago`,
       gameType: activity.gameType,
@@ -42,14 +53,18 @@ export function Progress() {
       correctness: activity.correctAnswers > activity.wrongAnswers,
       score: activity.gameType === 'regular' ? activity.score : null,
       icon: activity.icon,
-    }));
-    setRecentActivity(fetchedActivities);
-  }, [activities]);
+    })),
+    [activities]
+  );
 
-  const labels = Array.from({ length: 30 }, (_, i) => {
-    const date = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-    return `${date.getDate()}/${date.getMonth() + 1}`;
-  });
+  const labels = useMemo(
+    () =>
+      Array.from({ length: 30 }, (_, i) => {
+        const date = new Date(nowRef.current - i * 24 * 60 * 60 * 1000);
+        return `${date.getDate()}/${date.getMonth() + 1}`;
+      }),
+    []
+  );
   const scores = progressReport?.performanceTrend || [];
 
   const chartData = {
@@ -81,11 +96,10 @@ export function Progress() {
 
   useEffect(() => {
     resetActivities();
-    setRecentActivity([]);
     fetchBasicReport();
     fetchProgressReport();
     fetchActivities(0);
-  }, []);
+  }, [fetchActivities, fetchBasicReport, fetchProgressReport, resetActivities]);
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">

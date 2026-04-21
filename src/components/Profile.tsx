@@ -17,7 +17,7 @@ export function Profile() {
     achievements, achievementsLoading, fetchAchievements
   } = useUserStore();
   const [selectedNotification, setSelectedNotification] = useState<any>(null);
-  const [imgError, setImgError] = useState(false);
+  const [failedAvatar, setFailedAvatar] = useState<string | null>(null);
 
   const {
     fetchBlogs, blogs, blogsLoading
@@ -30,11 +30,7 @@ export function Profile() {
     fetchBlogs(4);
     fetchProfile();
     fetchAchievements();
-  }, []);
-
-  useEffect(() => {
-    setImgError(false);
-  }, [authenticatedUser?.avatar]);
+  }, [fetchAchievements, fetchBlogs, fetchNotifications, fetchProfile]);
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">
@@ -66,12 +62,13 @@ export function Profile() {
           ) : (
             <div className="flex flex-col sm:flex-row items-center gap-6">
               <div className="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-5xl shadow-xl overflow-hidden">
-                {authenticatedUser?.avatar && !imgError ? (
+                {authenticatedUser?.avatar && failedAvatar !== authenticatedUser.avatar ? (
                   <img 
+                    key={authenticatedUser.avatar}
                     src={authenticatedUser.avatar} 
                     alt="Avatar" 
                     className="w-full h-full object-cover" 
-                    onError={() => setImgError(true)}
+                    onError={() => setFailedAvatar(authenticatedUser.avatar)}
                     referrerPolicy="no-referrer"
                   />
                 ) : (

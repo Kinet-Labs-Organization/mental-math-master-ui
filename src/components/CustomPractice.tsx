@@ -12,8 +12,6 @@ type CustomPracticeSettings = {
 };
 
 interface CustomPracticeProps {
-  // Name is only for readability in the type; eslint may flag it as unused — disable the rule for this line
-  // eslint-disable-next-line no-unused-vars
   onStart: (settings: CustomPracticeSettings) => void;
 }
 

@@ -13,7 +13,7 @@ export function Notifications() {
 
     useEffect(() => {
         fetchNotifications();
-    }, []);
+    }, [fetchNotifications]);
 
     const handleOpenNotification = async (item: any) => {
         if (!item.read && item.id) {

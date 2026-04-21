@@ -7,9 +7,6 @@ import { useToastStore } from '../store/useToastStore';
 import { signOutFromFirebase } from '../libs/firebaseClient';
 
 export function Setting() {
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-  const [newsletterEnabled, setNewsletterEnabled] = useState(false);
   const { removeAuthenticatedUser, settingsData, updateSettingsData: updateSettings, fetchSettingsData } = useUserStore();
   const [showSupportPopup, setShowSupportPopup] = useState(false);
   const [showFaqPopup, setShowFaqPopup] = useState(false);
@@ -22,28 +19,17 @@ export function Setting() {
   useEffect(() => {
     fetchSettingsData();
     fetchFaqs();
-  }, []);
-
-  useEffect(() => {
-    if (settingsData) {
-      setSoundEnabled(settingsData.soundEffect ?? false);
-      setNotificationsEnabled(settingsData.notifications ?? false);
-      setNewsletterEnabled(settingsData.newsLetter ?? false);
-    }
-  }, [settingsData]);
+  }, [fetchFaqs, fetchSettingsData]);
 
   const handleSoundChange = (val: boolean) => {
-    setSoundEnabled(val);
     updateSettings?.({ sound: val });
   };
 
   const handleNotificationChange = (val: boolean) => {
-    setNotificationsEnabled(val);
     updateSettings?.({ notifications: val });
   };
 
   const handleNewsletterChange = (val: boolean) => {
-    setNewsletterEnabled(val);
     updateSettings?.({ newsletter: val });
   };
 
@@ -51,13 +37,13 @@ export function Setting() {
     {
       title: 'Preferences',
       items: [
-        { icon: Volume2, label: 'Sound Effects', type: 'toggle', value: soundEnabled, onChange: handleSoundChange, color: 'from-blue-500 to-cyan-600' },
-        { icon: Bell, label: 'Notifications', type: 'toggle', value: notificationsEnabled, onChange: handleNotificationChange, color: 'from-purple-500 to-pink-600' },
+        { icon: Volume2, label: 'Sound Effects', type: 'toggle', value: settingsData?.soundEffect ?? false, onChange: handleSoundChange, color: 'from-blue-500 to-cyan-600' },
+        { icon: Bell, label: 'Notifications', type: 'toggle', value: settingsData?.notifications ?? false, onChange: handleNotificationChange, color: 'from-purple-500 to-pink-600' },
         {
           icon: Mail,
           label: 'News Letter',
           type: 'toggle',
-          value: newsletterEnabled,
+          value: settingsData?.newsLetter ?? false,
           onChange: handleNewsletterChange,
           color: 'from-indigo-500 to-purple-600',
         },

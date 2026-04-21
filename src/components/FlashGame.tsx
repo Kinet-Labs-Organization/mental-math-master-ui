@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, Plus, Minus, Check, X, Divide } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
@@ -33,7 +33,7 @@ export function FlashGame() {
   const [userAnswer, setUserAnswer] = useState('');
   const [correctAnswer, setCorrectAnswer] = useState(0);
   const [isCorrect, setIsCorrect] = useState(false);
-  const [tickSound] = useState(() => new Audio(tickSoundAsset));
+  const tickSoundRef = useRef(new Audio(tickSoundAsset));
   const [timer, setTimer] = useState(5);
   const hasSavedResultRef = useRef(false);
   const [icon, setIcon] = useState<any>();
@@ -46,9 +46,9 @@ export function FlashGame() {
 
   useEffect(() => {
     fetchSettingsData();
-  }, []);
+  }, [fetchSettingsData]);
 
-  const generateNumbers = () => {
+  const generateNumbers = useCallback(() => {
     const nums = JSON.parse(JSON.stringify(game));
     if (!nums || nums.length === 0) {
       return;
@@ -77,44 +77,14 @@ export function FlashGame() {
     setCurrentIndex(0);
     setUserAnswer('');
     setGameState('playing');
-  };
+  }, [game]);
 
-  const startGame = () => {
-    // Unlock audio context on user interaction
-    tickSound.play().then(() => {
-      tickSound.pause();
-      tickSound.currentTime = 0;
-    }).catch(() => { });
-
-    fetchGame();
-  }
-
-  const handleValidate = () => {
-    const parsedAnswer = toRoundedNumber(userAnswer);
-    const expectedAnswer = toRoundedNumber(correctAnswer);
-    const answerIsCorrect =
-      parsedAnswer !== null && expectedAnswer !== null && parsedAnswer === expectedAnswer;
-
-    setIsCorrect(answerIsCorrect);
-    setGameState('result');
-    void saveGame(answerIsCorrect);
-  };
-
-  const savedValidate = useRef(handleValidate);
-  useEffect(() => {
-    savedValidate.current = handleValidate;
-  });
-
-  const handlePlayAgain = () => {
-    setGameState('ready');
-  };
-
-  const saveGame = async (answerIsCorrect: boolean) => {
+  const saveGame = useCallback(async (answerIsCorrect: boolean) => {
     if (!selectedGame || numbers.length === 0 || hasSavedResultRef.current) {
       return;
     }
 
-    if(selectedGame.id === 'custom') {
+    if (selectedGame.id === 'custom') {
       return;
     }
 
@@ -133,6 +103,37 @@ export function FlashGame() {
       hasSavedResultRef.current = false;
       console.error('Failed to save flash game:', error);
     }
+  }, [numbers.length, selectedGame]);
+
+  const startGame = () => {
+    // Unlock audio context on user interaction
+    const tickSound = tickSoundRef.current;
+    tickSound.play().then(() => {
+      tickSound.pause();
+      tickSound.currentTime = 0;
+    }).catch(() => { });
+
+    fetchGame();
+  };
+
+  const handleValidate = useCallback(() => {
+    const parsedAnswer = toRoundedNumber(userAnswer);
+    const expectedAnswer = toRoundedNumber(correctAnswer);
+    const answerIsCorrect =
+      parsedAnswer !== null && expectedAnswer !== null && parsedAnswer === expectedAnswer;
+
+    setIsCorrect(answerIsCorrect);
+    setGameState('result');
+    void saveGame(answerIsCorrect);
+  }, [correctAnswer, saveGame, userAnswer]);
+
+  const savedValidate = useRef(handleValidate);
+  useEffect(() => {
+    savedValidate.current = handleValidate;
+  }, [handleValidate]);
+
+  const handlePlayAgain = () => {
+    setGameState('ready');
   };
 
   useEffect(() => {
@@ -143,7 +144,7 @@ export function FlashGame() {
   useEffect(() => {
     if (!game) return;
     generateNumbers();
-  }, [game]);
+  }, [game, generateNumbers]);
 
   useEffect(() => {
     if (gameState === 'input') {
@@ -167,9 +168,10 @@ export function FlashGame() {
 
   useEffect(() => {
     if (gameState === 'playing' && currentIndex < numbers.length) {
+      const tickSound = tickSoundRef.current;
       if (settingsData?.soundEffect !== false) {
         tickSound.currentTime = 0;
-        tickSound.play().catch(e => console.error("Error playing sound:", e));
+        tickSound.play().catch(error => console.error('Error playing sound:', error));
       }
 
       const timer = setTimeout(
@@ -185,7 +187,7 @@ export function FlashGame() {
         setGameState('input');
       }, 500);
     }
-  }, [gameState, currentIndex, numbers.length, selectedGame, settingsData, tickSound]);
+  }, [gameState, currentIndex, numbers.length, selectedGame, settingsData]);
 
   const currentNumber = numbers[currentIndex];
   const progress = ((currentIndex + 1) / numbers.length) * 100;

@@ -40,17 +40,17 @@ export function Dashboard() {
 
   useEffect(() => {
     fetchBasicReport();
-  }, []);
+  }, [fetchBasicReport]);
 
   useEffect(() => {
     localStorage.setItem(CONSTANTS.FLASH_GAME_LEVEL_STORAGE_KEY, flashGameLevel);
     fetchFlashGameLevels(flashGameLevel);
-  }, [flashGameLevel]);
+  }, [fetchFlashGameLevels, flashGameLevel]);
 
   useEffect(() => {
     localStorage.setItem(CONSTANTS.REGULAR_GAME_LEVEL_STORAGE_KEY, regularGameLevel);
     fetchRegularGameLevels(regularGameLevel);
-  }, [regularGameLevel]);
+  }, [fetchRegularGameLevels, regularGameLevel]);
 
   // no local copy of store state needed
 

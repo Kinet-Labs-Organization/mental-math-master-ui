@@ -7,25 +7,27 @@ import { defineConfig, loadEnv } from "vite"
 // https://vite.dev/config/
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-const env = loadEnv(process.env.NODE_ENV as string, process.cwd(), '');
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
 
-export default defineConfig({
-  mode: process.env.NODE_ENV,
-  plugins: [react(), tailwindcss()],
-  server: {
-    port: env.VITE_PORT ? Number(env.VITE_PORT) : 3000,
-    headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+  return {
+    mode,
+    plugins: [react(), tailwindcss()],
+    server: {
+      port: env.VITE_PORT ? Number(env.VITE_PORT) : 3000,
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      },
     },
-  },
-  preview: {
-    headers: {
-      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    preview: {
+      headers: {
+        'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+      },
     },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
     },
-  },
-})
+  };
+});

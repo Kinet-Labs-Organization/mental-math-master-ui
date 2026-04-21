@@ -32,6 +32,33 @@ export default function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isUserSynced, setIsUserSynced] = useState(false);
 
+  const {
+    FooterNavigation,
+    TopEmptySpace,
+    BottomEmptySpace,
+    showTopEmptySpace,
+    showBottomEmptySpace,
+    showFooterNavigation,
+    hideFooterNavigation,
+    hideTopEmptySpace,
+    hideBottomEmptySpace,
+  } = useConfigStore();
+
+  const UXConfigLogics = useCallback(
+    (pathname?: string) => {
+      if (pathname === '/regulargame' || pathname === '/flashgame' || pathname === '/paywall') {
+        hideTopEmptySpace();
+        hideBottomEmptySpace();
+        hideFooterNavigation();
+      } else {
+        showTopEmptySpace();
+        showBottomEmptySpace();
+        showFooterNavigation();
+      }
+    },
+    [showTopEmptySpace, showBottomEmptySpace, showFooterNavigation, hideFooterNavigation, hideTopEmptySpace, hideBottomEmptySpace]
+  );
+
   const pathToSection = (pathname: string): NavSection => {
     switch (pathname) {
       case '/progress':
@@ -57,7 +84,6 @@ export default function App() {
 
     const init = async () => {
       try {
-        UXConfigLogics(location.pathname);
         unsubscribe = onAuthStateChanged(
           firebaseAuth,
           async (firebaseUser) => {
@@ -106,11 +132,7 @@ export default function App() {
 
     return () => {
       window.clearTimeout(authBootstrapTimeout);
-      try {
-        unsubscribe?.();
-      } catch (e) {
-        // ignore
-      }
+      unsubscribe?.();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -148,7 +170,7 @@ export default function App() {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }
-  }, [location.pathname]);
+  }, [location.pathname, UXConfigLogics]);
 
   useEffect(() => {
     if (!authenticatedUser?.email) {
@@ -208,33 +230,6 @@ export default function App() {
       }
     };
   }, [authenticatedUser?.email]);
-
-  const {
-    FooterNavigation,
-    TopEmptySpace,
-    BottomEmptySpace,
-    showTopEmptySpace,
-    showBottomEmptySpace,
-    showFooterNavigation,
-    hideFooterNavigation,
-    hideTopEmptySpace,
-    hideBottomEmptySpace,
-  } = useConfigStore();
-
-  const UXConfigLogics = useCallback(
-    (pathname?: string) => {
-      if (pathname === '/regulargame' || pathname === '/flashgame' || pathname === '/paywall') {
-        hideTopEmptySpace();
-        hideBottomEmptySpace();
-        hideFooterNavigation();
-      } else {
-        showTopEmptySpace();
-        showBottomEmptySpace();
-        showFooterNavigation();
-      }
-    },
-    [showTopEmptySpace, showBottomEmptySpace, showFooterNavigation, hideFooterNavigation, hideTopEmptySpace, hideBottomEmptySpace]
-  );
 
   if (isAuthLoading) {
     return (

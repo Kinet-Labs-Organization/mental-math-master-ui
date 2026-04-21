@@ -1,17 +1,13 @@
 'use client';
 import { motion } from 'motion/react';
 import { Trophy, Medal, Award, Crown, User } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useGenericStore } from '../store/useGenericStore';
 import SkeletonLoader from './shared/skeleton-loader';
 import { useReportStore } from '../store/useReportStore';
 
 export function Leaderboard() {
   const iconColors = ["text-yellow-400", "text-gray-400", "text-orange-400", "text-purple-400", "text-pink-400", "text-green-400", "text-red-400", "text-blue-400", "text-cyan-400", "text-teal-400"];
-
-  const [topThree, setTopThree] = useState<any[]>([]);
-  const [others, setOthers] = useState<any[]>([]);
-  const [me, setMe] = useState<any>(null);
 
   const {
     fetchLeaderboard, leaderboardData, leaderboardLoading,
@@ -24,30 +20,21 @@ export function Leaderboard() {
   useEffect(() => {
     fetchLeaderboard();
     fetchBasicReport();
-  }, []);
+  }, [fetchBasicReport, fetchLeaderboard]);
 
-  useEffect(() => {
-    if (leaderboardData) {
-      const leaderboardList = Array.isArray(leaderboardData)
-        ? leaderboardData
-        : (leaderboardData.leaderboard || []);
-      setTopThree(leaderboardList.slice(0, 3) || []);
-      setOthers(leaderboardList.slice(3) || []);
-      setMe({
-        ...(basicReport || {}),
-        rank: leaderboardData.currentUserRank ?? null,
-      });
-    }
-  }, [leaderboardData, basicReport]);
-
-  useEffect(() => {
-    if (basicReport) {
-      setMe((prev: any) => ({
-        ...(basicReport || {}),
-        rank: prev?.rank ?? null,
-      }));
-    }
-  }, [basicReport]);
+  const leaderboardList = useMemo(
+    () => (Array.isArray(leaderboardData) ? leaderboardData : (leaderboardData?.leaderboard || [])),
+    [leaderboardData]
+  );
+  const topThree = useMemo(() => leaderboardList.slice(0, 3), [leaderboardList]);
+  const others = useMemo(() => leaderboardList.slice(3), [leaderboardList]);
+  const me = useMemo(
+    () => ({
+      ...(basicReport || {}),
+      rank: leaderboardData?.currentUserRank ?? null,
+    }),
+    [basicReport, leaderboardData]
+  );
 
   return (
     <div className="min-h-screen px-4 py-8 sm:px-6 lg:px-8">

@@ -5,8 +5,6 @@ export type NavSection = 'dashboard' | 'progress' | 'leaderboard' | 'profile' | 
 
 interface NavigationProps {
   activeSection: NavSection;
-   
-  // eslint-disable-next-line no-unused-vars
   onSectionChange: (section: NavSection) => void;
 }
 
