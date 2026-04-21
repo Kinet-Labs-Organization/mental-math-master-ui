@@ -21,12 +21,11 @@ import {
   isNativeRevenueCatEnabled,
   type RevenueCatSubscriptionSnapshot,
 } from './services/revenuecat';
-import { Paywall } from './components/Paywall';
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser, removeAuthenticatedUser, getOnboardingPaywallFlag } =
+  const { getOnboardingFlag, authenticatedUser, setAuthenticatedUser, removeAuthenticatedUser } =
     useUserStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const revenueCatLastSnapshotRef = useRef<string | null>(null);
