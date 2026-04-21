@@ -4,6 +4,7 @@ import { Settings, Plus, Minus, Play, ChevronDown, X, Divide } from 'lucide-reac
 
 type CustomPracticeSettings = {
   digitCount: number;
+  divisorDigits?: number;
   operations: string;
   numberCount: number;
   gameType: string;
@@ -18,17 +19,27 @@ interface CustomPracticeProps {
 export function CustomPractice({ onStart }: CustomPracticeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [digitCount, setDigitCount] = useState(3);
+  const [divisorDigits, setDivisorDigits] = useState(1);
   const [operations, setOperations] = useState('add-subtract');
   const [numberCount, setNumberCount] = useState(5);
   const [numberOfQuestions, setNumberOfQuestions] = useState(5);
   const [delay, setDelay] = useState(1000);
   const [gameType, setGameType] = useState('flash');
+  const isDivideSelected = operations === 'divide';
+
+  const handleOperationChange = (operation: string) => {
+    setOperations(operation);
+    if (operation === 'divide') {
+      setNumberCount(2);
+    }
+  };
 
   const handleStart = () => {
     onStart({
       digitCount,
+      divisorDigits: isDivideSelected ? divisorDigits : undefined,
       operations,
-      numberCount,
+      numberCount: isDivideSelected ? 2 : numberCount,
       gameType,
       delay,
       numberOfQuestions,
@@ -65,7 +76,9 @@ export function CustomPractice({ onStart }: CustomPracticeProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             {/* Digit Count */}
             <div>
-              <label className="block text-sm text-gray-400 mb-3">Number of Digits</label>
+              <label className="block text-sm text-gray-400 mb-3">
+                {isDivideSelected ? 'Number of Digits in Dividend' : 'Number of Digits'}
+              </label>
               <div className="flex gap-2">
                 {[2, 3, 4, 5, 6].map(count => (
                   <button
@@ -82,22 +95,45 @@ export function CustomPractice({ onStart }: CustomPracticeProps) {
               </div>
             </div>
 
+            {/* Divisor Digit Count */}
+            {isDivideSelected && (
+              <div>
+                <label className="block text-sm text-gray-400 mb-3">Number of Digits in Divisor</label>
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4, 5].map(count => (
+                    <button
+                      key={count}
+                      onClick={() => setDivisorDigits(count)}
+                      className={`flex-1 py-3 rounded-xl text-base transition-all ${divisorDigits === count
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
+                        : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10 hover:text-white hover:border-white/20'
+                        }`}
+                    >
+                      {count}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Number Count */}
             <div>
               <label className="block text-sm text-gray-400 mb-3">Total Numbers</label>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setNumberCount(Math.max(3, numberCount - 1))}
-                  className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white transition-all flex items-center justify-center"
+                  disabled={isDivideSelected}
+                  className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/10"
                 >
                   <Minus className="w-5 h-5" />
                 </button>
                 <div className="flex-1 bg-white/10 border border-white/20 rounded-xl py-3 text-center text-white text-xl">
-                  {numberCount}
+                  {isDivideSelected ? 2 : numberCount}
                 </div>
                 <button
                   onClick={() => setNumberCount(Math.min(20, numberCount + 1))}
-                  className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white transition-all flex items-center justify-center"
+                  disabled={isDivideSelected}
+                  className="w-12 h-12 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl text-white transition-all flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white/5 disabled:hover:border-white/10"
                 >
                   <Plus className="w-5 h-5" />
                 </button>
@@ -110,7 +146,7 @@ export function CustomPractice({ onStart }: CustomPracticeProps) {
               <div className="flex gap-2">
                 
                 <button
-                  onClick={() => setOperations('add-subtract')}
+                  onClick={() => handleOperationChange('add-subtract')}
                   className={`w-full flex justify-evenly py-3 rounded-xl text-base transition-all ${operations === 'add-subtract'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
                       : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10 hover:text-white hover:border-white/20'
@@ -122,7 +158,7 @@ export function CustomPractice({ onStart }: CustomPracticeProps) {
                 </button>
 
                 <button
-                  onClick={() => setOperations('multiply')}
+                  onClick={() => handleOperationChange('multiply')}
                   className={`w-full flex justify-evenly py-3 rounded-xl text-base transition-all ${operations === 'multiply'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
                       : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10 hover:text-white hover:border-white/20'
@@ -133,7 +169,7 @@ export function CustomPractice({ onStart }: CustomPracticeProps) {
                 </button>
 
                 <button
-                  onClick={() => setOperations('divide')}
+                  onClick={() => handleOperationChange('divide')}
                   className={`w-full flex justify-evenly py-3 rounded-xl text-base transition-all ${operations === 'divide'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
                       : 'bg-white/5 text-gray-400 hover:bg-white/10 border border-white/10 hover:text-white hover:border-white/20'

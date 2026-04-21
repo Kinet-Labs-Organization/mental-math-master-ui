@@ -65,6 +65,7 @@ export function Dashboard() {
 
   const onCustomPractice = (settings: {
     digitCount: number;
+    divisorDigits?: number;
     operations: string;
     numberCount: number;
     gameType: string;
@@ -75,6 +76,7 @@ export function Dashboard() {
       id: 'custom',
       name: 'Custom Practice',
       digitCount: settings.digitCount,
+      divisorDigits: settings.divisorDigits ?? null,
       operations: settings.operations,
       numberCount: settings.numberCount,
       gameType: settings.gameType,
