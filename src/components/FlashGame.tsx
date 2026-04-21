@@ -17,6 +17,14 @@ interface NumberItem {
   operation: 'add' | 'subtract' | 'multiply' | 'divide';
 }
 
+const toRoundedNumber = (value: string | number): number | null => {
+  const parsed = typeof value === 'number' ? value : Number(value.trim());
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return Number(parsed.toFixed(2));
+};
+
 export function FlashGame() {
   const navigate = useNavigate();
   const [gameState, setGameState] = useState<GameState>('ready');
@@ -49,16 +57,17 @@ export function FlashGame() {
     // Calculate correct answer
     let total = 0;
     nums.forEach((item: any) => {
+      const value = Number(item.value);
       if (item.operation === 'add') {
-        total += item.value;
+        total += value;
       } else if (item.operation === 'subtract') {
-        total -= item.value;
+        total -= value;
       } else if (item.operation === 'multiply') {
-        total *= item.value;
+        total *= value;
       } else if (item.operation === 'divide') {
-        total /= item.value;
+        total = Number((total / value).toFixed(2));
       } else {
-        total = item.value;
+        total = value;
       }
     });
     setCorrectAnswer(total);
@@ -78,10 +87,10 @@ export function FlashGame() {
   }
 
   const handleValidate = () => {
-    const normalizedAnswer = userAnswer.trim();
-    const parsedAnswer = normalizedAnswer === '' ? null : Number(normalizedAnswer);
+    const parsedAnswer = toRoundedNumber(userAnswer);
+    const expectedAnswer = toRoundedNumber(correctAnswer);
     const answerIsCorrect =
-      parsedAnswer !== null && Number.isFinite(parsedAnswer) && parsedAnswer === correctAnswer;
+      parsedAnswer !== null && expectedAnswer !== null && parsedAnswer === expectedAnswer;
 
     setIsCorrect(answerIsCorrect);
     setGameState('result');

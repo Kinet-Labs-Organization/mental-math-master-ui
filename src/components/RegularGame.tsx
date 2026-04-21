@@ -17,6 +17,14 @@ interface Question {
 
 type GameState = 'ready' | 'playing' | 'submitted';
 
+const toRoundedNumber = (value: string | number): number | null => {
+  const parsed = typeof value === 'number' ? value : Number(value.trim());
+  if (!Number.isFinite(parsed)) {
+    return null;
+  }
+  return Number(parsed.toFixed(2));
+};
+
 export function RegularGame() {
   const navigate = useNavigate();
   const [gameState, setGameState] = useState<GameState>('ready');
@@ -48,7 +56,7 @@ export function RegularGame() {
         result *= currentNum;
         break;
       case 'divide':
-        result /= currentNum;
+        result = Number(Number(result/currentNum).toFixed(2));
         break;
       default:
         // Handle empty string or unknown operations
@@ -66,7 +74,7 @@ export function RegularGame() {
     const numList = [];
     let operationList = [];
     for (let j = 0; j < game[i].length; j++) {
-      numList.push(game[i][j].value);
+      numList.push(Number(game[i][j].value));
       operationList.push(game[i][j].operation);
     }
     const question = QuestionTemplate(numList, operationList);
@@ -163,7 +171,9 @@ export function RegularGame() {
   const handleSubmit = () => {
     let correctCount = 0;
     questions.forEach(q => {
-      if (answers[q.id] === q.answer) {
+      const userAnswer = toRoundedNumber(answers[q.id] ?? '');
+      const correctAnswer = toRoundedNumber(q.answer);
+      if (userAnswer !== null && correctAnswer !== null && userAnswer === correctAnswer) {
         correctCount++;
       }
     });
@@ -201,7 +211,12 @@ export function RegularGame() {
 
   const isCorrect = (questionId: number) => {
     const question = questions.find(q => q.id === questionId);
-    return question && answers[questionId] === question.answer;
+    if (!question) {
+      return false;
+    }
+    const userAnswer = toRoundedNumber(answers[questionId] ?? '');
+    const correctAnswer = toRoundedNumber(question.answer);
+    return userAnswer !== null && correctAnswer !== null && userAnswer === correctAnswer;
   };
 
   const allQuestionsAnswered = questions.every(q => isAnswered(q.id));
