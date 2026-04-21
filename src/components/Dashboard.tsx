@@ -167,6 +167,7 @@ export function Dashboard() {
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
                     <GameCard
                       tournament={tournament}
+                      mode="flash"
                       onSelect={() => onGameSelect({ ...tournament, type: 'flash' })}
                     />
                   </div>
@@ -193,6 +194,7 @@ export function Dashboard() {
                   <div key={tournament.id} className="snap-start shrink-0 w-[280px] first:ml-0">
                     <GameCard
                       tournament={tournament}
+                      mode="regular"
                       onSelect={() => onGameSelect({ ...tournament, type: 'regular' })}
                     />
                   </div>

@@ -5,9 +5,13 @@ import config from '../config/env';
 interface TournamentCardProps {
   tournament: any;
   onSelect: () => void;
+  mode?: 'flash' | 'regular';
 }
 
-export function GameCard({ tournament, onSelect }: TournamentCardProps) {
+export function GameCard({ tournament, onSelect, mode }: TournamentCardProps) {
+  const isRegular = mode === 'regular';
+  const regularQuestionCount = Number(tournament.numberOfQuestions);
+
   return (
     <motion.button
       whileHover={{ scale: 1.02, y: -4 }}
@@ -48,7 +52,11 @@ export function GameCard({ tournament, onSelect }: TournamentCardProps) {
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-400">
             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-            <span>{tournament.delay / 1000}s interval</span>
+            <span>
+              {isRegular
+                ? `${regularQuestionCount} questions`
+                : `${tournament.delay / 1000}s interval`}
+            </span>
           </div>
         </div>
 

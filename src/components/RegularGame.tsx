@@ -40,6 +40,7 @@ export function RegularGame() {
   const hasDivideOperation = Boolean(
     (selectedGame as IGame | null)?.operations?.includes('divide')
   );
+  const readyQuestionCount = Number((selectedGame as any)?.numberOfQuestions ?? (selectedGame as IGame).numberCount);
 
   const evaluateAnswer = useCallback((numList: number[], operationList: string[]): number => {
   let result = numList[0];
@@ -441,8 +442,10 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
               </div>
               <h2 className="text-3xl mb-4 text-white">Ready to Train?</h2>
               <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                You will be presented with {(selectedGame as IGame).numberCount} questions.
-                Answer them as quickly and accurately as possible.
+                Answer the questions as quickly and accurately as possible.
+              </p>
+              <p className="text-gray-400 mb-8 max-w-md mx-auto text-sm">
+                No. of Questions: {readyQuestionCount}
               </p>
               {hasDivideOperation && (
                 <div className="mb-8 mx-auto max-w-md rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-gray-400">
