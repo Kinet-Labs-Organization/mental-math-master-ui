@@ -40,6 +40,9 @@ export function FlashGame() {
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
   const { settingsData, fetchSettingsData } = useUserStore();
+  const hasDivideOperation = Boolean(
+    (selectedGame as IGame | null)?.operations?.includes('divide')
+  );
 
   useEffect(() => {
     fetchSettingsData();
@@ -196,7 +199,6 @@ export function FlashGame() {
     <>
       {selectedGame ? (
         <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-900 via-slate-900 to-black">
-
           {/* Header */}
           <div
             className="bg-white/5 backdrop-blur-xl border-b border-white/10 px-4 pb-4 pt-14 sticky top-0 z-50 w-full"
@@ -254,6 +256,11 @@ export function FlashGame() {
                     {(selectedGame as IGame).numberCount} numbers will appear one by one.
                     Calculate the result in your mind!
                   </p>
+                  {hasDivideOperation && (
+                    <div className="mb-8 mx-auto max-w-md rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-gray-400">
+                      Tip: Division answers are rounded to 2 decimal places before checking.
+                    </div>
+                  )}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
@@ -370,6 +377,11 @@ export function FlashGame() {
                     </div>
                     <h2 className="text-3xl mb-3 text-white">What's the answer?</h2>
                     <p className="text-gray-400 mb-8">Enter your calculated result</p>
+                    {hasDivideOperation && (
+                      <div className="mb-6 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-400">
+                        Tip: Division answers are rounded to 2 decimal places before checking.
+                      </div>
+                    )}
 
                     <input
                       type="number"

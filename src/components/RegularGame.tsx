@@ -37,6 +37,9 @@ export function RegularGame() {
   const [icon, setIcon] = useState<any>(1);
 
   const { selectedGame, game, fetchGame, gameLoading, setGame } = useGameStore();
+  const hasDivideOperation = Boolean(
+    (selectedGame as IGame | null)?.operations?.includes('divide')
+  );
 
   const evaluateAnswer = (numList: number[], operationList: string[]): number => {
   let result = numList[0];
@@ -443,6 +446,11 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
                 You will be presented with {(selectedGame as IGame).numberCount} questions.
                 Answer them as quickly and accurately as possible.
               </p>
+              {hasDivideOperation && (
+                <div className="mb-8 mx-auto max-w-md rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-left text-sm text-gray-400">
+                  Tip: Division answers are rounded to 2 decimal places before checking.
+                </div>
+              )}
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -517,6 +525,11 @@ const [slidingWindowParams, setSlidingWindowParams] = useState<any>({
                       {/* Answer Input */}
                       <div className="mb-8">
                         <label className="block text-gray-400 mb-3">Your Answer</label>
+                        {hasDivideOperation && (
+                          <div className="mb-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-gray-400">
+                            Tip: Division answers are rounded to 2 decimal places before checking.
+                          </div>
+                        )}
                         <input
                           type="number"
                           value={answers[currentQuestion.id] || ''}
