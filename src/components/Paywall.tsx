@@ -8,6 +8,7 @@ import api from '../utils/api';
 import ApiURL from '../utils/apiurl';
 import { firebaseAuth } from '../libs/firebaseClient';
 import { configureRevenueCat, isNativeRevenueCatEnabled, purchasePlanWithRevenueCat, type PaywallPlan, getOfferings } from '../services/revenuecat';
+import CONSTANTS from '../utils/constants';
 
 export function Paywall() {
   const navigate = useNavigate();
@@ -47,10 +48,7 @@ export function Paywall() {
   //   setOnboardingPaywallFlag();
   // }, [setOnboardingPaywallFlag]);
 
-  useEffect(() => {
-    if (!authenticatedUser?.email) {
-      return
-    }
+  const setNativePricing = () => {
     void configureRevenueCat(authenticatedUser.email).catch((error) => {
       console.error('RevenueCat configure failed:', error);
     });
@@ -78,6 +76,23 @@ export function Paywall() {
         setDiscount(0);
       }
     });
+  }
+
+  const setWebPricing = () => {
+    setPlans(CONSTANTS.PRICING_PACKAGES);
+    setDiscount(CONSTANTS.PRICING_PACKAGES_DOSCOUNT_ON_YEARLY);
+  }
+
+  useEffect(() => {
+    if (!authenticatedUser?.email) {
+      return
+    }
+    if (Capacitor.isNativePlatform()) {
+      setNativePricing();
+    }
+    else {
+      setWebPricing();
+    }
   }, [authenticatedUser?.email]);
 
   if (authenticatedUser?.email && !profile) {
@@ -243,7 +258,7 @@ export function Paywall() {
               className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white rounded-2xl py-4 shadow-lg shadow-purple-500/25 hover:shadow-xl hover:shadow-purple-500/30 transition-all group flex items-center justify-center gap-2 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              <span>{loading ? 'Processing...' : 'XStart Free 7-Day Trial'}</span>
+              <span>{loading ? 'Processing...' : 'Start Free 7-Day Trial'}</span>
             </motion.button>
 
             {/* Footer */}
