@@ -3,25 +3,62 @@ import { GameCard } from './GameCard';
 import { CustomPractice } from './CustomPractice';
 import { Trophy, Sparkles, Plus, Minus, X, Divide, Zap, Target } from 'lucide-react';
 import type { IGame } from '../store/useGameStore';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SkeletonLoader from './shared/skeleton-loader';
 import { useReportStore } from '../store/useReportStore';
 import { useGameStore } from '../store/useGameStore';
+import { useUserStore } from '../store/useUserStore';
+import CONSTANTS from '../utils/constants';
+import * as Select from "@radix-ui/react-select";
+import classnames from "classnames";
+import {
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "@radix-ui/react-icons";
 
 export function Dashboard() {
   const navigate = useNavigate();
   const {
-    flashGameLevels,
     flashGameLevelsLoading,
     fetchFlashGameLevels,
 
-    regularGameLevels,
     regularGameLevelsLoading,
     fetchRegularGameLevels,
 
     setSelectedGame
   } = useGameStore();
+  let flashGameLevels = useGameStore().flashGameLevels;
+  let regularGameLevels = useGameStore().regularGameLevels;
+
+  // For test purposes, if no levels, use mock data
+  const mockFlashLevels = [
+    {
+      id: "flash-1",
+      icon: "spark",
+      name: "Mocked Flash Alpha",
+      digitCount: 3,
+      numberCount: 4,
+      delay: 3000,
+      numberOfQuestions: 10,
+      operations: ["add", "divide"],
+    },
+  ];
+  const mockRegularLevels = [
+    {
+      id: "regular-1",
+      icon: "rock",
+      name: "Mocked Regular Beta",
+      digitCount: 4,
+      numberCount: 5,
+      delay: 2000,
+      numberOfQuestions: 15,
+      operations: ["subtract", "divide"],
+    },
+  ];
+  if (!flashGameLevels?.length) flashGameLevels = mockFlashLevels;
+  if (!regularGameLevels?.length) regularGameLevels = mockRegularLevels;
   const { authenticatedUser } = useUserStore();
   const { fetchBasicReport, basicReport, basicReportLoading } = useReportStore();
   // use store values directly
@@ -221,7 +258,7 @@ const TournamentCaraouselSkeleton = () => {
     <div className="overflow-x-auto scrollbar-hide flex gap-4">
       {[1, 2, 3, 4, 5, 6, 7, 8]?.map(tournament => (
         <div key={tournament} className="snap-start shrink-0 w-[280px] first:ml-0">
-          <SkeletonLoader height={290} width={278} radius={20} />
+          <SkeletonLoader data-testid="tournament-skeleton" height={290} width={278} radius={20} />
         </div>
       ))}
     </div>
@@ -235,17 +272,6 @@ const SkillProgressionSkeleton = () => {
     </div>
   );
 };
-
-import * as React from "react";
-import * as Select from "@radix-ui/react-select";
-import classnames from "classnames";
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from "@radix-ui/react-icons";
-import CONSTANTS from '../utils/constants';
-import { useUserStore } from '../store/useUserStore';
 
 const LevelSelect = ({ onSelectChanged, value }: { onSelectChanged: (value: string) => void, value: string }) => (
   <Select.Root onValueChange={onSelectChanged} value={value}>

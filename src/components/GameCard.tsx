@@ -17,6 +17,7 @@ export function GameCard({ tournament, onSelect, mode }: TournamentCardProps) {
       whileHover={{ scale: 1.02, y: -4 }}
       whileTap={{ scale: 0.98 }}
       onClick={onSelect}
+      data-testid="game-card"
       className="relative bg-white/5 backdrop-blur-xl rounded-3xl p-6 shadow-sm border border-white/10 hover:bg-white/10 transition-all duration-300 text-left overflow-hidden group w-full h-full"
     >
       {/* Gradient Background */}

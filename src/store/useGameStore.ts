@@ -53,6 +53,11 @@ export const useGameStore = create<any>((set, get) => ({
     return;
   },
 
+  score: 0,
+  answers: [],
+  incrementScore: (by: number) => set((state: any) => ({ score: (state.score ?? 0) + by })),
+  addAnswer: (answer: any) => set((state: any) => ({ answers: [ ...(state.answers ?? []), answer ] })),
+
   selectedGame: null,
   setSelectedGame: (game: any) => {
     set({ selectedGame: game });

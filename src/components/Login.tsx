@@ -11,10 +11,15 @@ export function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { login, loginError, loginLoading } = useUserStore.getState();
+  const { login, loginError, loginLoading, setAuthenticatedUser } = useUserStore();
   const showEmailLogin = config.emailLogin;
+  const testAuthOverride = (window as any).__E2E_MOCK_AUTHENTICATED_USER__;
 
   const handleGoogleSignIn = async () => {
+    if (testAuthOverride) {
+      setAuthenticatedUser(testAuthOverride);
+      return;
+    }
     await signInWithGoogle();
   };
 

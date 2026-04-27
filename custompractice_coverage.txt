@@ -1,0 +1,60 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.5 [39m[90m/Users/user/Documents/Workspace/Mental Math Master App/code latest/mental-math-master/mental-math-master-ui[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+Not implemented: Window's scrollTo() method
+Not implemented: Window's scrollTo() method
+ [32m✓[39m src/components/CustomPractice.test.tsx [2m([22m[2m10 tests[22m[2m)[22m[33m 1057[2mms[22m[39m
+     [33m[2m✓[22m[39m toggles expansion when header is clicked [33m 746[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m10 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 17:57:05
+[2m   Duration [22m 2.41s[2m (transform 64ms, setup 90ms, import 270ms, tests 1.06s, environment 551ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     2.5 |     4.81 |       4 |    2.63 |                   
+ src               |       0 |        0 |       0 |       0 |                   
+  App.tsx          |       0 |        0 |       0 |       0 | 26-300            
+  routes.tsx       |       0 |      100 |       0 |       0 | 4-17              
+ src/components    |    4.17 |     6.15 |    5.96 |     4.3 |                   
+  Blogs.tsx        |       0 |        0 |       0 |       0 | 9-67              
+  ...mPractice.tsx |   81.25 |      100 |   68.42 |   81.25 | 106-134,212-239   
+  Dashboard.tsx    |       0 |        0 |       0 |       0 | 13-451            
+  ...rBoundary.tsx |       0 |        0 |       0 |       0 | 11-108            
+  FlashGame.tsx    |       0 |        0 |       0 |       0 | 20-397            
+  GameCard.tsx     |       0 |        0 |       0 |       0 | 12-15             
+  GlobalToast.tsx  |       0 |        0 |       0 |       0 | 6-8               
+  Leaderboard.tsx  |       0 |        0 |       0 |       0 | 10-196            
+  Login.tsx        |       0 |        0 |       0 |       0 | 9-266             
+  Navigation.tsx   |       0 |        0 |       0 |       0 | 11-61             
+  ...fications.tsx |       0 |        0 |       0 |       0 | 10-86             
+  Onboarding.tsx   |       0 |        0 |       0 |       0 | 18-456            
+  Paywall.tsx      |       0 |        0 |       0 |       0 | 14-256            
+  Profile.tsx      |       0 |        0 |       0 |       0 | 12-265            
+  Progress.tsx     |       0 |        0 |       0 |       0 | 12-324            
+  RegularGame.tsx  |       0 |        0 |       0 |       0 | 20-617            
+  ScoreDisplay.tsx |       0 |      100 |       0 |       0 | 7-8               
+  Setting.tsx      |       0 |        0 |       0 |       0 | 10-272            
+  ...onsDialog.tsx |       0 |        0 |       0 |       0 | 13-111            
+ ...ponents/shared |       0 |      100 |       0 |       0 |                   
+  ...on-loader.tsx |       0 |      100 |       0 |       0 | 1-10              
+ src/services      |       0 |        0 |       0 |       0 |                   
+  revenuecat.ts    |       0 |        0 |       0 |       0 | 12-125            
+ src/store         |       0 |        0 |       0 |       0 |                   
+  ...onfigStore.ts |       0 |      100 |       0 |       0 | 3-25              
+  useGameStore.ts  |       0 |        0 |       0 |       0 | 17-85             
+  ...nericStore.ts |       0 |      100 |       0 |       0 | 5-40              
+  ...eportStore.ts |       0 |      100 |       0 |       0 | 18-72             
+  useToastStore.ts |       0 |        0 |       0 |       0 | 11-21             
+  useUserStore.ts  |       0 |        0 |       0 |       0 | 13-171            
+ src/utils         |       0 |        0 |       0 |       0 |                   
+  api.ts           |       0 |        0 |       0 |       0 | 20-216            
+  apiurl.ts        |       0 |      100 |     100 |       0 | 1                 
+  constants.ts     |       0 |      100 |     100 |       0 | 1                 
+  formatters.ts    |       0 |        0 |       0 |       0 | 1-5               
+  time.ts          |       0 |        0 |       0 |       0 | 1-21              
+-------------------|---------|----------|---------|---------|-------------------
