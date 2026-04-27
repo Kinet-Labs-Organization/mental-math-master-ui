@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useUserStore } from '../store/useUserStore';
 import api from '../utils/api';
+import ApiURL from '../utils/apiurl';
 import CONSTANTS from '../utils/constants';
 
 vi.mock('../utils/api', () => ({
@@ -32,6 +33,11 @@ describe('useUserStore', () => {
       achievements: null,
       achievementsLoading: false,
       achievementsError: null,
+      loginLoading: false,
+      loginError: null,
+      settingsData: null,
+      settingsDataLoading: false,
+      settingsDataError: null,
     });
   });
 
@@ -87,5 +93,92 @@ describe('useUserStore', () => {
 
     expect(useUserStore.getState().notificationsLoading).toBe(false);
     expect(useUserStore.getState().notificationsError).toBe('Failed to fetch notifications');
+  });
+
+  it('returns false for paywall flag once set', () => {
+    useUserStore.getState().setOnboardingPaywallFlag();
+
+    expect(useUserStore.getState().getOnboardingPaywallFlag()).toBe(false);
+  });
+
+  it('logs in successfully and stores authenticated user', async () => {
+    const email = 'test@example.com';
+    const password = 'password';
+    const response = { data: { access_token: 'token123', name: 'Test User' } };
+    mockedApi.post.mockResolvedValue(response);
+
+    await useUserStore.getState().login(email, password);
+
+    expect(mockedApi.post).toHaveBeenCalledWith(ApiURL.auth.signin, {
+      email,
+      password,
+    });
+    expect(useUserStore.getState().authenticatedUser).toEqual({
+      token: 'token123',
+      email,
+      name: 'Test User',
+    });
+    expect(useUserStore.getState().loginLoading).toBe(false);
+    expect(useUserStore.getState().loginError).toBeNull();
+  });
+
+  it('handles login failure', async () => {
+    mockedApi.post.mockRejectedValue(new Error('Invalid credentials'));
+
+    await useUserStore.getState().login('test@example.com', 'wrong');
+
+    expect(useUserStore.getState().loginLoading).toBe(false);
+    expect(useUserStore.getState().loginError).toBe('Invalid Credential');
+  });
+
+  it('fetches settings data successfully', async () => {
+    const settingsData = { theme: 'dark' };
+    mockedApi.get.mockResolvedValue({ data: settingsData });
+
+    await useUserStore.getState().fetchSettingsData();
+
+    expect(mockedApi.get).toHaveBeenCalledWith(ApiURL.user.settingsData);
+    expect(useUserStore.getState().settingsData).toEqual(settingsData);
+    expect(useUserStore.getState().settingsDataLoading).toBe(false);
+    expect(useUserStore.getState().settingsDataError).toBeNull();
+  });
+
+  it('handles settings fetch failure', async () => {
+    const error = new Error('Fetch failed');
+    mockedApi.get.mockRejectedValue(error);
+
+    await useUserStore.getState().fetchSettingsData();
+
+    expect(useUserStore.getState().settingsDataLoading).toBe(false);
+    expect(useUserStore.getState().settingsDataError).toBe(error);
+  });
+
+  it('updates settings data successfully', async () => {
+    const updatedSettings = { name: 'language', value: 'en' };
+    const response = { data: { language: 'en' } };
+    mockedApi.post.mockResolvedValue(response);
+
+    await useUserStore.getState().updateSettingsData(updatedSettings);
+
+    expect(mockedApi.post).toHaveBeenCalledWith(ApiURL.user.updateSettings, updatedSettings);
+    expect(useUserStore.getState().settingsData).toEqual(response.data);
+    expect(useUserStore.getState().settingsDataLoading).toBe(false);
+    expect(useUserStore.getState().settingsDataError).toBeNull();
+  });
+
+  it('handles settings update failure', async () => {
+    mockedApi.post.mockRejectedValue(new Error('Update failed'));
+
+    await useUserStore.getState().updateSettingsData({ name: 'language', value: 'en' });
+
+    expect(useUserStore.getState().settingsDataLoading).toBe(false);
+    expect(useUserStore.getState().settingsDataError).toBeInstanceOf(Error);
+  });
+
+  it('marks a notification as read without throwing', async () => {
+    mockedApi.post.mockResolvedValue({});
+
+    await expect(useUserStore.getState().markNotificationRead(123)).resolves.toBeUndefined();
+    expect(mockedApi.post).toHaveBeenCalledWith(ApiURL.user.markNotificationRead, { notificationId: 123 });
   });
 });

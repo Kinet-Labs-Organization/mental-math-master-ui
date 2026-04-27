@@ -40,7 +40,9 @@ export function RegularGame() {
   const hasDivideOperation = Boolean(
     (selectedGame as IGame | null)?.operations?.includes('divide')
   );
-  const readyQuestionCount = Number((selectedGame as any)?.numberOfQuestions ?? (selectedGame as IGame).numberCount);
+  const readyQuestionCount = Number(
+    (selectedGame as any)?.numberOfQuestions ?? (selectedGame as IGame | null)?.numberCount ?? 0
+  );
 
   const evaluateAnswer = useCallback((numList: number[], operationList: string[]): number => {
   let result = numList[0];
