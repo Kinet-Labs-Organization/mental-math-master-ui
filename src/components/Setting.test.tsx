@@ -2,14 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Setting } from './Setting';
 
-const mocks = {
-  fetchSettingsData: vi.fn(),
-  updateSettings: vi.fn(),
-  removeAuthenticatedUser: vi.fn(),
-  fetchFaqs: vi.fn(),
-  showToast: vi.fn(),
-  signOutFromFirebase: vi.fn().mockResolvedValue(undefined),
-};
+const fetchSettingsData = vi.hoisted(() => vi.fn());
+const updateSettings = vi.hoisted(() => vi.fn());
+const removeAuthenticatedUser = vi.hoisted(() => vi.fn());
+const fetchFaqs = vi.hoisted(() => vi.fn());
+const showToast = vi.hoisted(() => vi.fn());
+const signOutFromFirebase = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 
 let settingsData: any = {
   soundEffect: true,
@@ -24,10 +22,10 @@ let faqs: any[] = [
 
 vi.mock('../store/useUserStore', () => ({
   useUserStore: () => ({
-    removeAuthenticatedUser: mocks.removeAuthenticatedUser,
+    removeAuthenticatedUser,
     settingsData,
-    updateSettings: mocks.updateSettings,
-    fetchSettingsData: mocks.fetchSettingsData,
+    updateSettingsData: updateSettings,
+    fetchSettingsData,
   }),
 }));
 
@@ -35,18 +33,18 @@ vi.mock('../store/useGenericStore', () => ({
   useGenericStore: () => ({
     faqs,
     faqsLoading: false,
-    fetchFaqs: mocks.fetchFaqs,
+    fetchFaqs,
   }),
 }));
 
 vi.mock('../store/useToastStore', () => ({
   useToastStore: () => ({
-    showToast: mocks.showToast,
+    showToast,
   }),
 }));
 
 vi.mock('../libs/firebaseClient', () => ({
-  signOutFromFirebase: mocks.signOutFromFirebase,
+  signOutFromFirebase,
 }));
 
 describe('Setting', () => {
@@ -67,25 +65,26 @@ describe('Setting', () => {
     render(<Setting />);
 
     await waitFor(() => {
-      expect(mocks.fetchSettingsData).toHaveBeenCalledTimes(1);
-      expect(mocks.fetchFaqs).toHaveBeenCalledTimes(1);
+      expect(fetchSettingsData).toHaveBeenCalledTimes(1);
+      expect(fetchFaqs).toHaveBeenCalledTimes(1);
     });
   });
 
   it('toggles a preference and updates settings', () => {
     render(<Setting />);
 
-    const soundSection = screen.getByText('Sound Effects').closest('div');
-    expect(soundSection).toBeTruthy();
+    const soundLabel = screen.getByText('Sound Effects');
+    const soundItem = soundLabel.closest('div')?.parentElement;
+    expect(soundItem).toBeTruthy();
 
-    const toggleButton = soundSection?.querySelector('button');
+    const toggleButton = soundItem?.querySelector('button');
     expect(toggleButton).toBeTruthy();
 
     if (toggleButton) {
       fireEvent.click(toggleButton);
     }
 
-    expect(mocks.updateSettings).toHaveBeenCalledWith({ sound: false });
+    expect(updateSettings).toHaveBeenCalledWith({ sound: false });
   });
 
   it('opens the FAQ popup and shows questions', async () => {
@@ -115,7 +114,7 @@ describe('Setting', () => {
     fireEvent.click(screen.getByText('Yes, Clear'));
 
     await waitFor(() => {
-      expect(mocks.showToast).toHaveBeenCalledWith('Successfully deleted data', 'success');
+      expect(showToast).toHaveBeenCalledWith('Successfully deleted data', 'success');
     });
   });
 
@@ -125,8 +124,8 @@ describe('Setting', () => {
     fireEvent.click(screen.getByText('Sign Out'));
 
     await waitFor(() => {
-      expect(mocks.removeAuthenticatedUser).toHaveBeenCalledTimes(1);
-      expect(mocks.signOutFromFirebase).toHaveBeenCalledTimes(1);
+      expect(removeAuthenticatedUser).toHaveBeenCalledTimes(1);
+      expect(signOutFromFirebase).toHaveBeenCalledTimes(1);
     });
   });
 });
