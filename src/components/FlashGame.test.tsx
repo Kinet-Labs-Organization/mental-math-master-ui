@@ -9,14 +9,14 @@ const mockUseUserStore = vi.hoisted(() => vi.fn(() => ({})));
 const mockUseNavigate = vi.hoisted(() => vi.fn(() => vi.fn()));
 const mockApiPost = vi.hoisted(() => vi.fn());
 
-const advanceToInputState = () => {
-  act(() => {
+const advanceToInputState = async () => {
+  await act(async () => {
     vi.advanceTimersByTime(1000);
   });
-  act(() => {
+  await act(async () => {
     vi.advanceTimersByTime(1000);
   });
-  act(() => {
+  await act(async () => {
     vi.advanceTimersByTime(500);
   });
 };
@@ -322,7 +322,7 @@ describe('FlashGame', () => {
   });
 
   it('renders input state', async () => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     const mockSelectedGame = {
       id: 'test-game',
       name: 'Test Game',
@@ -350,14 +350,14 @@ describe('FlashGame', () => {
 
     render(<FlashGame />);
 
-    await new Promise(resolve => setTimeout(resolve, 2600));
+    await advanceToInputState();
 
     expect(screen.getByText("What's the answer?")).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Enter result')).toBeInTheDocument();
   });
 
   it('validates correct answer', async () => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     const mockSelectedGame = {
       id: 'test-game',
       name: 'Test Game',
@@ -385,7 +385,7 @@ describe('FlashGame', () => {
 
     render(<FlashGame />);
 
-    await new Promise(resolve => setTimeout(resolve, 2600));
+    await advanceToInputState();
 
     const input = screen.getByPlaceholderText('Enter result');
     fireEvent.change(input, { target: { value: '8' } });
@@ -397,7 +397,7 @@ describe('FlashGame', () => {
   });
 
   it('validates incorrect answer', async () => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     const mockSelectedGame = {
       id: 'test-game',
       name: 'Test Game',
@@ -425,7 +425,7 @@ describe('FlashGame', () => {
 
     render(<FlashGame />);
 
-    await new Promise(resolve => setTimeout(resolve, 2600));
+    await advanceToInputState();
 
     const input = screen.getByPlaceholderText('Enter result');
     fireEvent.change(input, { target: { value: '10' } });
@@ -437,7 +437,7 @@ describe('FlashGame', () => {
   });
 
   it('saves game result for non-custom games', async () => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     const mockSelectedGame = {
       id: 'test-game',
       name: 'Test Game',
@@ -465,7 +465,7 @@ describe('FlashGame', () => {
 
     render(<FlashGame />);
 
-    await new Promise(resolve => setTimeout(resolve, 2600));
+    await advanceToInputState();
 
     const input = screen.getByPlaceholderText('Enter result');
     fireEvent.change(input, { target: { value: '8' } });
@@ -483,7 +483,7 @@ describe('FlashGame', () => {
   });
 
   it('does not save game result for custom games', async () => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     const mockSelectedGame = {
       id: 'custom',
       name: 'Custom Practice',
@@ -511,7 +511,7 @@ describe('FlashGame', () => {
 
     render(<FlashGame />);
 
-    await new Promise(resolve => setTimeout(resolve, 2600));
+    await advanceToInputState();
 
     const input = screen.getByPlaceholderText('Enter result');
     fireEvent.change(input, { target: { value: '8' } });
@@ -553,7 +553,7 @@ describe('FlashGame', () => {
   });
 
   it('plays again when play again button clicked', async () => {
-    vi.useRealTimers();
+    vi.useFakeTimers();
     const mockSelectedGame = {
       id: 'test-game',
       name: 'Test Game',
@@ -581,7 +581,7 @@ describe('FlashGame', () => {
 
     render(<FlashGame />);
 
-    await new Promise(resolve => setTimeout(resolve, 2600));
+    await advanceToInputState();
 
     const input = screen.getByPlaceholderText('Enter result');
     fireEvent.change(input, { target: { value: '8' } });

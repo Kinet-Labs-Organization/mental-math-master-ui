@@ -19,6 +19,9 @@ vi.mock('../libs/firebaseClient', () => ({
 
 describe('ErrorBoundary', () => {
   const mockRemoveAuthenticatedUser = vi.fn();
+  const ThrowError = ({ message = 'Test error' }: { message?: string } = {}) => {
+    throw new Error(message);
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -39,10 +42,6 @@ describe('ErrorBoundary', () => {
   });
 
   it('renders error fallback when error occurs', () => {
-    const ThrowError = () => {
-      throw new Error('Test error');
-    };
-
     render(
       <ErrorBoundary>
         <ThrowError />
@@ -56,13 +55,13 @@ describe('ErrorBoundary', () => {
   });
 
   it('renders default error message when no error message', () => {
-    const ThrowError = () => {
+    const ThrowEmptyError = () => {
       throw new Error();
     };
 
     render(
       <ErrorBoundary>
-        <ThrowError />
+        <ThrowEmptyError />
       </ErrorBoundary>
     );
 
@@ -70,10 +69,6 @@ describe('ErrorBoundary', () => {
   });
 
   it('calls resetErrorBoundary when Try Again clicked', async () => {
-    const ThrowError = () => {
-      throw new Error('Test error');
-    };
-
     render(
       <ErrorBoundary>
         <ThrowError />
@@ -89,10 +84,6 @@ describe('ErrorBoundary', () => {
   });
 
   it('calls removeAuthenticatedUser and signOutFromFirebase when Go to Home clicked', async () => {
-    const ThrowError = () => {
-      throw new Error('Test error');
-    };
-
     render(
       <ErrorBoundary>
         <ThrowError />
@@ -106,5 +97,37 @@ describe('ErrorBoundary', () => {
       expect(mockRemoveAuthenticatedUser).toHaveBeenCalled();
       expect(mockSignOutFromFirebase).toHaveBeenCalled();
     });
+  });
+
+  it('updates Go to Home button background on hover', () => {
+    render(
+      <ErrorBoundary>
+        <ThrowError />
+      </ErrorBoundary>
+    );
+
+    const goHomeButton = screen.getByText('Go to Home');
+
+    fireEvent.mouseOver(goHomeButton);
+    expect(goHomeButton).toHaveStyle({ backgroundColor: '#2563eb' });
+
+    fireEvent.mouseOut(goHomeButton);
+    expect(goHomeButton).toHaveStyle({ backgroundColor: '#3b82f6' });
+  });
+
+  it('updates Try Again button background on hover', () => {
+    render(
+      <ErrorBoundary>
+        <ThrowError />
+      </ErrorBoundary>
+    );
+
+    const tryAgainButton = screen.getByText('Try Again');
+
+    fireEvent.mouseOver(tryAgainButton);
+    expect(tryAgainButton).toHaveStyle({ backgroundColor: '#525252' });
+
+    fireEvent.mouseOut(tryAgainButton);
+    expect(tryAgainButton).toHaveStyle({ backgroundColor: '#404040' });
   });
 });
